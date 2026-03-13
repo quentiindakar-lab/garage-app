@@ -82,11 +82,12 @@ export default function DashboardPage() {
         const data = await chantiersListRes.value.json();
         if (Array.isArray(data)) {
           const now = new Date();
-          const upcoming = data
-            .filter((c: any) => c.dateDebut && new Date(c.dateDebut) >= now && c.statut !== "ANNULE" && c.statut !== "TERMINE")
-            .sort((a: any, b: any) => new Date(a.dateDebut).getTime() - new Date(b.dateDebut).getTime())
+          interface ChantierData { id: string; nom: string; adresse: string; dateDebut: string; statut: string }
+          const upcoming = (data as ChantierData[])
+            .filter((c) => c.dateDebut && new Date(c.dateDebut) >= now && c.statut !== "ANNULE" && c.statut !== "TERMINE")
+            .sort((a, b) => new Date(a.dateDebut).getTime() - new Date(b.dateDebut).getTime())
             .slice(0, 4)
-            .map((c: any) => ({ id: c.id, nom: c.nom, dateDebut: c.dateDebut, adresse: c.adresse }));
+            .map((c) => ({ id: c.id, nom: c.nom, dateDebut: c.dateDebut, adresse: c.adresse }));
           setProchains(upcoming);
         }
       }

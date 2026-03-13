@@ -18,8 +18,6 @@ export default function ParametresPage() {
   const { theme, toggleTheme } = useTheme();
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [loadingSettings, setLoadingSettings] = useState(true);
-
   const [form, setForm] = useState({
     nom: "",
     adresse: "",
@@ -58,7 +56,7 @@ export default function ParametresPage() {
             smtpPassword: data.smtpPassword || "",
           });
         }
-      } catch {} finally { setLoadingSettings(false); }
+      } catch {}
     })();
   }, []);
 
