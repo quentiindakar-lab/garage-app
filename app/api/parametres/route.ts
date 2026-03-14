@@ -19,7 +19,7 @@ export async function GET() {
 export async function PATCH(req: NextRequest) {
   try {
     const body = await req.json();
-    const { id, ...data } = body;
+    const { id: _id, ...data } = body;
 
     if (data.tva !== undefined) data.tva = parseFloat(data.tva);
     if (data.margeDefaut !== undefined) data.margeDefaut = parseFloat(data.margeDefaut);
