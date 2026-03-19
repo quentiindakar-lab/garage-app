@@ -92,8 +92,8 @@ export default function ParametresPage() {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white">Paramètres</h1>
-        <p className="text-slate-400 mt-1">Configuration de l&apos;application</p>
+        <h1 className="text-3xl font-bold text-gray-900">Paramètres</h1>
+        <p className="text-gray-500 mt-1">Configuration de l&apos;application</p>
       </div>
 
       {/* Entreprise */}
@@ -115,12 +115,12 @@ export default function ParametresPage() {
       <Section icon={Palette} title="Apparence">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-white">Mode {theme === "dark" ? "sombre" : "clair"}</p>
-            <p className="text-xs text-slate-500">Basculer entre mode clair et sombre</p>
+            <p className="text-sm font-medium text-gray-900">Mode {theme === "dark" ? "sombre" : "clair"}</p>
+            <p className="text-xs text-gray-400">Basculer entre mode clair et sombre</p>
           </div>
           <button onClick={toggleTheme}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-700 bg-slate-800 text-sm text-slate-300 hover:text-white transition-colors">
-            {theme === "dark" ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4" />}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 bg-gray-50 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+            {theme === "dark" ? <Sun className="h-4 w-4 text-[#f59e0b]" /> : <Moon className="h-4 w-4" />}
             {theme === "dark" ? "Mode clair" : "Mode sombre"}
           </button>
         </div>
@@ -146,7 +146,7 @@ export default function ParametresPage() {
 
       <div className="flex items-center gap-3">
         <button onClick={handleSave} disabled={saving}
-          className="flex-1 flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-700 text-slate-900 disabled:text-slate-500 font-semibold py-3 rounded-lg transition-colors">
+          className="flex-1 flex items-center justify-center gap-2 bg-[#f59e0b] hover:bg-[#e8960a] disabled:bg-gray-200 text-black disabled:text-gray-400 font-semibold py-3 rounded-lg transition-colors">
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : saved ? <CheckCircle2 className="h-4 w-4" /> : <Save className="h-4 w-4" />}
           {saving ? "Enregistrement..." : saved ? "Enregistré !" : "Enregistrer les paramètres"}
         </button>
@@ -157,9 +157,9 @@ export default function ParametresPage() {
 
 function Section({ icon: Icon, title, children }: { icon: typeof Building2; title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900 p-6 space-y-4">
-      <h2 className="text-base font-semibold text-white flex items-center gap-2">
-        <Icon className="h-4 w-4 text-amber-400" /> {title}
+    <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-4 shadow-sm">
+      <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2">
+        <Icon className="h-4 w-4 text-[#4a7c59]" /> {title}
       </h2>
       {children}
     </div>
@@ -169,9 +169,9 @@ function Section({ icon: Icon, title, children }: { icon: typeof Building2; titl
 function Field({ label, value, onChange, placeholder, type = "text" }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-slate-300 mb-1.5">{label}</label>
+      <label className="block text-sm font-medium text-gray-600 mb-1.5">{label}</label>
       <input type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30" />
     </div>
   );
 }
