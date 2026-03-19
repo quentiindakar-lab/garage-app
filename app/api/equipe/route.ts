@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
     if (error) throw error;
 
     const result = (membres || []).map((m: any) => ({
-      ...toCamel(m),
+      ...(toCamel(m) as Record<string, unknown>),
       chantiersActuels: (m.affectations || [])
         .filter((a: any) => a.chantier?.statut === "EN_COURS")
         .map((a: any) => ({ id: a.chantier.id, nom: a.chantier.nom })),

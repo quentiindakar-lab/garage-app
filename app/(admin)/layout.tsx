@@ -3,7 +3,7 @@
 import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
 import { useTheme } from "@/components/theme-provider";
-import { BTP_CONFIG } from "@/config/btp.config";
+
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,

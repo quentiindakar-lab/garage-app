@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
         0
       );
 
-      return NextResponse.json({ ...toCamel(client), caTotal });
+      return NextResponse.json({ ...(toCamel(client) as Record<string, unknown>), caTotal });
     }
 
     const { data: clients, error } = await supabase
@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
     if (error) throw error;
 
     const result = (clients || []).map((c: any) => ({
-      ...toCamel(c),
+      ...(toCamel(c) as Record<string, unknown>),
       nbChantiers: (c.chantiers || []).length,
       caTotal: (c.chantiers || []).reduce(
         (sum: number, ch: any) =>
