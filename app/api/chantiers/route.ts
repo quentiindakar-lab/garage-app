@@ -61,10 +61,10 @@ export async function GET(req: NextRequest) {
     if (error) throw error;
 
     const result = (chantiers || []).map((c: any) => {
-      const { photos, ...rest } = c;
+      const { photos, ...rest } = c as Record<string, unknown>;
       return {
-        ...toCamel(rest),
-        _count: { photos: (photos || []).length },
+        ...(toCamel(rest) as Record<string, unknown>),
+        _count: { photos: (Array.isArray(photos) ? photos : []).length },
       };
     });
 

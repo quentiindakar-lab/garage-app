@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { anthropic } from "@/lib/ai/anthropic";
-import { supabase, toCamel } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 
 export async function POST(req: NextRequest) {
   try {
