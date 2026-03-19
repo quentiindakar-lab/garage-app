@@ -1,9 +1,18 @@
 import { createClient } from "@supabase/supabase-js";
 
-export const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const supabaseUrl =
+  process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || "";
+
+const supabaseKey =
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  "";
+
+if (!supabaseUrl) {
+  console.error("SUPABASE_URL manquant");
+}
+
+export const supabase = createClient(supabaseUrl, supabaseKey);
 
 export function toCamel(obj: unknown): unknown {
   if (Array.isArray(obj)) return obj.map(toCamel);
