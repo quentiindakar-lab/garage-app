@@ -106,40 +106,40 @@ export default function EmailsIAPage() {
       ]} />
 
       <div className="flex items-center gap-3">
-        <button onClick={() => router.push("/admin/crm")} className="p-2 rounded-lg border border-slate-700 bg-slate-800/50 text-slate-400 hover:text-white transition-colors">
+        <button onClick={() => router.push("/admin/crm")} className="p-2 rounded-lg border border-gray-200 bg-white text-gray-500 hover:text-gray-900 transition-colors shadow-sm">
           <ArrowLeft className="h-4 w-4" />
         </button>
         <div>
-          <h1 className="text-2xl font-bold text-white">Emails automatiques IA</h1>
-          <p className="text-sm text-slate-400">Générez des emails dans le style de votre entreprise</p>
+          <h1 className="text-2xl font-bold text-gray-900">Emails automatiques IA</h1>
+          <p className="text-sm text-gray-500">Générez des emails dans le style de votre entreprise</p>
         </div>
       </div>
 
       {/* Onboarding Step 1 */}
       {step === "onboarding_emails" && (
-        <div className="rounded-xl border border-slate-800 bg-slate-900 p-6 space-y-5">
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-5 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-full bg-amber-500/20 flex items-center justify-center">
-              <span className="text-sm font-bold text-amber-400">1</span>
+            <div className="h-8 w-8 rounded-full bg-[#4a7c59]/10 flex items-center justify-center">
+              <span className="text-sm font-bold text-[#4a7c59]">1</span>
             </div>
             <div>
-              <h2 className="text-base font-semibold text-white">Importez vos emails existants</h2>
-              <p className="text-sm text-slate-400">Collez le contenu de 5 emails envoyés par votre entreprise</p>
+              <h2 className="text-base font-semibold text-gray-900">Importez vos emails existants</h2>
+              <p className="text-sm text-gray-500">Collez le contenu de 5 emails envoyés par votre entreprise</p>
             </div>
           </div>
           <div className="space-y-3">
             {sampleEmails.map((email, i) => (
               <div key={i}>
-                <label className="block text-sm font-medium text-slate-400 mb-1">Email {i + 1} {i < 5 && "*"}</label>
+                <label className="block text-sm font-medium text-gray-600 mb-1">Email {i + 1} {i < 5 && "*"}</label>
                 <textarea rows={3} value={email}
                   onChange={(e) => { const arr = [...sampleEmails]; arr[i] = e.target.value; setSampleEmails(arr); }}
-                  className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white resize-none focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                  className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 resize-none focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30"
                   placeholder="Collez le texte d'un email envoyé..." />
               </div>
             ))}
           </div>
           <button onClick={analyzeEmails} disabled={analyzing || sampleEmails.filter(Boolean).length < 3}
-            className="w-full flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-700 text-slate-900 disabled:text-slate-500 font-semibold py-3 rounded-lg transition-colors">
+            className="w-full flex items-center justify-center gap-2 bg-[#f59e0b] hover:bg-[#e8960a] disabled:bg-gray-200 text-black disabled:text-gray-400 font-semibold py-3 rounded-lg transition-colors">
             {analyzing ? <><Loader2 className="h-4 w-4 animate-spin" /> Analyse en cours...</> : <><Sparkles className="h-4 w-4" /> Analyser mes emails</>}
           </button>
         </div>
@@ -147,39 +147,39 @@ export default function EmailsIAPage() {
 
       {/* Onboarding Step 2 */}
       {step === "onboarding_quiz" && (
-        <div className="rounded-xl border border-slate-800 bg-slate-900 p-6 space-y-5">
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-5 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-full bg-amber-500/20 flex items-center justify-center">
-              <span className="text-sm font-bold text-amber-400">2</span>
+            <div className="h-8 w-8 rounded-full bg-[#4a7c59]/10 flex items-center justify-center">
+              <span className="text-sm font-bold text-[#4a7c59]">2</span>
             </div>
             <div>
-              <h2 className="text-base font-semibold text-white">Personnalisez votre style</h2>
-              <p className="text-sm text-slate-400">Quelques questions pour affiner la génération</p>
+              <h2 className="text-base font-semibold text-gray-900">Personnalisez votre style</h2>
+              <p className="text-sm text-gray-500">Quelques questions pour affiner la génération</p>
             </div>
           </div>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Ton de vos communications</label>
+              <label className="block text-sm font-medium text-gray-600 mb-2">Ton de vos communications</label>
               <div className="flex gap-2">
                 {(["professionnel", "chaleureux", "direct"] as TonType[]).map((t) => (
                   <button key={t} onClick={() => setQuiz({ ...quiz, ton: t })}
-                    className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors ${quiz.ton === t ? "bg-amber-500 text-slate-900" : "bg-slate-800 text-slate-400 hover:text-white"}`}>
+                    className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors ${quiz.ton === t ? "bg-[#4a7c59] text-white" : "bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200"}`}>
                     {t.charAt(0).toUpperCase() + t.slice(1)}
                   </button>
                 ))}
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">Secteur principal</label>
+              <label className="block text-sm font-medium text-gray-600 mb-1.5">Secteur principal</label>
               <input type="text" value={quiz.secteur} onChange={(e) => setQuiz({ ...quiz, secteur: e.target.value })}
-                className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+                className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Longueur préférée</label>
+              <label className="block text-sm font-medium text-gray-600 mb-2">Longueur préférée</label>
               <div className="flex gap-2">
                 {(["court", "moyen", "detaille"] as LengthType[]).map((l) => (
                   <button key={l} onClick={() => setQuiz({ ...quiz, longueur: l })}
-                    className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors ${quiz.longueur === l ? "bg-amber-500 text-slate-900" : "bg-slate-800 text-slate-400 hover:text-white"}`}>
+                    className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors ${quiz.longueur === l ? "bg-[#4a7c59] text-white" : "bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200"}`}>
                     {l === "detaille" ? "Détaillé" : l.charAt(0).toUpperCase() + l.slice(1)}
                   </button>
                 ))}
@@ -187,7 +187,7 @@ export default function EmailsIAPage() {
             </div>
           </div>
           <button onClick={trainAI} disabled={training}
-            className="w-full flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-700 text-slate-900 disabled:text-slate-500 font-semibold py-3 rounded-lg transition-colors">
+            className="w-full flex items-center justify-center gap-2 bg-[#f59e0b] hover:bg-[#e8960a] disabled:bg-gray-200 text-black disabled:text-gray-400 font-semibold py-3 rounded-lg transition-colors">
             {training ? <><Loader2 className="h-4 w-4 animate-spin" /> Entraînement...</> : <><Sparkles className="h-4 w-4" /> Entraîner l&apos;IA</>}
           </button>
         </div>
@@ -196,10 +196,10 @@ export default function EmailsIAPage() {
       {/* Main email interface */}
       {step === "main" && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="rounded-xl border border-slate-800 bg-slate-900 p-6 space-y-4">
-            <h2 className="text-base font-semibold text-white">Composer un email</h2>
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-4 shadow-sm">
+            <h2 className="text-base font-semibold text-gray-900">Composer un email</h2>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">Type d&apos;email</label>
+              <label className="block text-sm font-medium text-gray-600 mb-1.5">Type d&apos;email</label>
               <div className="grid grid-cols-2 gap-2">
                 {[
                   { id: "devis", label: "Devis", icon: FileText },
@@ -208,7 +208,7 @@ export default function EmailsIAPage() {
                   { id: "remerciement", label: "Remerciement", icon: CheckCircle2 },
                 ].map((t) => (
                   <button key={t.id} onClick={() => setEmailType(t.id)}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${emailType === t.id ? "bg-amber-500/20 text-amber-400 border border-amber-500/30" : "bg-slate-800 text-slate-400 border border-transparent hover:text-white"}`}>
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${emailType === t.id ? "bg-[#4a7c59]/10 text-[#4a7c59] border border-[#4a7c59]/30" : "bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100"}`}>
                     <t.icon className="h-3.5 w-3.5" /> {t.label}
                   </button>
                 ))}
@@ -217,39 +217,39 @@ export default function EmailsIAPage() {
             <Field label="Destinataire" type="email" value={dest} onChange={setDest} placeholder="client@email.com" />
             <Field label="Objet" value={objet} onChange={setObjet} placeholder="Votre devis pour..." />
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">Contexte</label>
+              <label className="block text-sm font-medium text-gray-600 mb-1.5">Contexte</label>
               <textarea rows={3} value={contexte} onChange={(e) => setContexte(e.target.value)}
-                className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white resize-none focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 resize-none focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30"
                 placeholder="Décrivez en quelques mots..." />
             </div>
             <button onClick={generateEmail} disabled={generating || !dest || !objet}
-              className="w-full flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-700 text-slate-900 disabled:text-slate-500 font-semibold py-2.5 rounded-lg transition-colors">
+              className="w-full flex items-center justify-center gap-2 bg-[#f59e0b] hover:bg-[#e8960a] disabled:bg-gray-200 text-black disabled:text-gray-400 font-semibold py-2.5 rounded-lg transition-colors">
               {generating ? <><Loader2 className="h-4 w-4 animate-spin" /> Génération...</> : <><Sparkles className="h-4 w-4" /> Générer l&apos;email</>}
             </button>
           </div>
 
-          <div className="rounded-xl border border-slate-800 bg-slate-900 p-6 space-y-4">
-            <h2 className="text-base font-semibold text-white">Aperçu</h2>
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-4 shadow-sm">
+            <h2 className="text-base font-semibold text-gray-900">Aperçu</h2>
             {!generatedEmail ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
-                <Mail className="h-12 w-12 text-slate-700 mb-3" />
-                <p className="text-sm text-slate-500">L&apos;email généré apparaîtra ici</p>
+                <Mail className="h-12 w-12 text-gray-300 mb-3" />
+                <p className="text-sm text-gray-400">L&apos;email généré apparaîtra ici</p>
               </div>
             ) : (
               <>
                 <textarea rows={12} value={generatedEmail} onChange={(e) => setGeneratedEmail(e.target.value)}
-                  className="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-sm text-white resize-none focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+                  className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 resize-none focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30" />
                 <div className="flex gap-2">
                   <button onClick={() => setGeneratedEmail("")}
-                    className="flex-1 py-2.5 rounded-lg border border-slate-700 text-sm text-slate-400 hover:text-white transition-colors">
+                    className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-colors">
                     Annuler
                   </button>
                   <button onClick={generateEmail} disabled={generating}
-                    className="py-2.5 px-4 rounded-lg border border-slate-700 text-sm text-slate-400 hover:text-white transition-colors">
+                    className="py-2.5 px-4 rounded-lg border border-gray-200 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-colors">
                     <Sparkles className="h-4 w-4" />
                   </button>
                   <button onClick={sendEmail} disabled={sending}
-                    className="flex-1 flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold py-2.5 rounded-lg text-sm transition-colors">
+                    className="flex-1 flex items-center justify-center gap-2 bg-[#f59e0b] hover:bg-[#e8960a] text-black font-semibold py-2.5 rounded-lg text-sm transition-colors">
                     {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                     Envoyer
                   </button>
@@ -266,9 +266,9 @@ export default function EmailsIAPage() {
 function Field({ label, value, onChange, placeholder, type = "text" }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-slate-300 mb-1.5">{label}</label>
+      <label className="block text-sm font-medium text-gray-600 mb-1.5">{label}</label>
       <input type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30" />
     </div>
   );
 }
