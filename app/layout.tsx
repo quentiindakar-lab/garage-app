@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { SessionProvider } from "@/components/session-provider";
 import { BTP_CONFIG } from "@/config/btp.config";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: `${BTP_CONFIG.nom} — ${BTP_CONFIG.slogan}`,
@@ -19,12 +16,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr" suppressHydrationWarning>
-      <body className={inter.className}>
-        <SessionProvider>
-          <ThemeProvider>
-            {children}
-          </ThemeProvider>
-        </SessionProvider>
+      <body className={GeistSans.className} suppressHydrationWarning>
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

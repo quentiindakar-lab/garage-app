@@ -1,4 +1,12 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const isTurbopack = process.env.TURBOPACK === "1" || process.env.NEXT_TURBOPACK === "1";
+
+const nextConfig = {
+  reactStrictMode: false,
+  swcMinify: true,
+  experimental: {
+    ...(isTurbopack ? {} : { forceSwcTransforms: true }),
+  },
+};
 
 export default nextConfig;

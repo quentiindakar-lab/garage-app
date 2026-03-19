@@ -1,13 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { supabase, toCamel, toSnake } from "@/lib/supabase";
 
 export async function GET() {
   try {
-    const prospects = await prisma.prospect.findMany({
-      include: { actions: { orderBy: { sentAt: "desc" }, take: 5 } },
-      orderBy: { createdAt: "desc" },
+    const { data: prospects, error } = await supabase
+      .from("prospects")
+      .select("*, actions:prospect_actions(id, type, contenu, sent_at)")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    const result = (prospects || []).map((p: any) => {
+      const camelP = toCamel(p) as any;
+      if (camelP.actions) {
+        camelP.actions = [...camelP.actions]
+          .sort(
+            (a: any, b: any) =>
+              new Date(b.sentAt).getTime() - new Date(a.sentAt).getTime()
+          )
+          .slice(0, 5);
+      }
+      return camelP;
     });
-    return NextResponse.json(prospects);
+
+    return NextResponse.json(result);
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
@@ -17,17 +33,20 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const prospect = await prisma.prospect.create({
-      data: {
+    const { data: prospect, error } = await supabase
+      .from("prospects")
+      .insert({
         nom: body.nom,
         email: body.email || null,
         telephone: body.telephone || null,
-        typeChantier: body.typeChantier || null,
+        type_chantier: body.typeChantier || null,
         notes: body.notes || null,
         colonne: "TOUS_PROSPECTS",
-      },
-    });
-    return NextResponse.json(prospect, { status: 201 });
+      })
+      .select()
+      .single();
+    if (error) throw error;
+    return NextResponse.json(toCamel(prospect), { status: 201 });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Erreur création prospect" }, { status: 500 });
@@ -39,43 +58,61 @@ export async function PATCH(req: NextRequest) {
     const body = await req.json();
     const { id, colonne, ...rest } = body;
 
-    const currentProspect = await prisma.prospect.findUnique({ where: { id } });
-    if (!currentProspect) return NextResponse.json({ error: "Prospect non trouvé" }, { status: 404 });
+    const { data: currentProspect } = await supabase
+      .from("prospects")
+      .select("*")
+      .eq("id", id)
+      .single();
 
-    let clientId = currentProspect.clientId;
+    if (!currentProspect)
+      return NextResponse.json({ error: "Prospect non trouvé" }, { status: 404 });
+
+    let clientId = currentProspect.client_id;
 
     if (colonne === "GAGNE" && !clientId) {
-      const client = await prisma.client.create({
-        data: {
+      const { data: client } = await supabase
+        .from("clients")
+        .insert({
           nom: currentProspect.nom,
           email: currentProspect.email,
           telephone: currentProspect.telephone,
-          typeClient: "PARTICULIER",
-          notes: `Converti depuis prospect CRM. Type chantier: ${currentProspect.typeChantier || "N/A"}`,
-        },
-      });
-      clientId = client.id;
+          type_client: "PARTICULIER",
+          notes: `Converti depuis prospect CRM. Type chantier: ${currentProspect.type_chantier || "N/A"}`,
+        })
+        .select()
+        .single();
+      clientId = client?.id;
     }
 
-    const prospect = await prisma.prospect.update({
-      where: { id },
-      data: { colonne, clientId, ...rest },
-      include: { client: true },
-    });
+    const dbRest = toSnake(rest);
+    const updateData: Record<string, unknown> = {
+      ...dbRest,
+      colonne,
+      client_id: clientId,
+      updated_at: new Date().toISOString(),
+    };
+
+    const { data: prospect, error } = await supabase
+      .from("prospects")
+      .update(updateData)
+      .eq("id", id)
+      .select("*, client:clients(*)")
+      .single();
+
+    if (error) throw error;
 
     if (colonne) {
-      await prisma.prospectAction.create({
-        data: {
-          prospectId: id,
-          type: `MOVED_TO_${colonne}`,
-          contenu: colonne === "GAGNE"
-            ? `Prospect gagné — client créé automatiquement`
+      await supabase.from("prospect_actions").insert({
+        prospect_id: id,
+        type: `MOVED_TO_${colonne}`,
+        contenu:
+          colonne === "GAGNE"
+            ? "Prospect gagné — client créé automatiquement"
             : `Déplacé vers ${colonne}`,
-        },
       });
     }
 
-    return NextResponse.json(prospect);
+    return NextResponse.json(toCamel(prospect));
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Erreur mise à jour" }, { status: 500 });
@@ -86,7 +123,8 @@ export async function DELETE(req: NextRequest) {
   try {
     const id = req.nextUrl.searchParams.get("id");
     if (!id) return NextResponse.json({ error: "ID requis" }, { status: 400 });
-    await prisma.prospect.delete({ where: { id } });
+    const { error } = await supabase.from("prospects").delete().eq("id", id);
+    if (error) throw error;
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error(error);

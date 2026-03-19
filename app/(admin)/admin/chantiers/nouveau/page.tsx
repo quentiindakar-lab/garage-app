@@ -70,13 +70,15 @@ export default function NouveauChantierPage() {
         .then((r) => r.json())
         .then((data: ClientOption[]) => {
           const q = clientSearch.toLowerCase();
-          setClientResults(
-            data.filter((c) =>
-              c.nom.toLowerCase().includes(q) ||
-              (c.prenom?.toLowerCase().includes(q)) ||
-              (c.email?.toLowerCase().includes(q))
-            ).slice(0, 5)
-          );
+          const filtered = Array.isArray(data)
+            ? data.filter(
+                (c) =>
+                  c.nom.toLowerCase().includes(q) ||
+                  c.prenom?.toLowerCase().includes(q) ||
+                  c.email?.toLowerCase().includes(q)
+              )
+            : [];
+          setClientResults(filtered.slice(0, 5));
         })
         .catch(() => {});
     }, 300);

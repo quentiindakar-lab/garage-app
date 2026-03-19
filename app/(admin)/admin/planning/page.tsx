@@ -96,7 +96,9 @@ export default function PlanningPage() {
     });
   };
 
-  const filteredChantiers = chantiers.filter((c) => {
+  const chantiersSafe = useMemo(() => (Array.isArray(chantiers) ? chantiers : []), [chantiers]);
+
+  const filteredChantiers = chantiersSafe.filter((c) => {
     if (filterChantierId && c.id !== filterChantierId) return false;
     if (filterMembre && c.chef !== filterMembre && !c.membres?.includes(filterMembre)) return false;
     return true;
@@ -104,47 +106,50 @@ export default function PlanningPage() {
 
   const allMembres = useMemo(() => {
     const set = new Set<string>();
-    chantiers.forEach((c) => { if (c.chef) set.add(c.chef); c.membres?.forEach((m) => set.add(m)); });
+    chantiersSafe.forEach((c) => {
+      if (c.chef) set.add(c.chef);
+      c.membres?.forEach((m) => set.add(m));
+    });
     return Array.from(set);
-  }, [chantiers]);
+  }, [chantiersSafe]);
 
   return (
     <div className="space-y-6 h-full flex flex-col">
       <div className="flex items-center justify-between flex-wrap gap-4 shrink-0">
         <div>
-          <h1 className="text-3xl font-bold text-white">Planning</h1>
-          <p className="text-slate-400 mt-1">
+          <h1 className="text-3xl font-bold text-gray-900">Planning</h1>
+          <p className="text-gray-500 mt-1">
             {filterChantierId
-              ? <span>Filtré par chantier — <button onClick={() => router.push("/admin/planning")} className="text-amber-400 hover:underline">Voir tout</button></span>
+              ? <span>Filtré par chantier — <button onClick={() => router.push("/admin/planning")} className="text-[#4a7c59] hover:underline">Voir tout</button></span>
               : "Vue d'ensemble des chantiers"}
           </p>
         </div>
         <div className="flex items-center gap-2">
           {allMembres.length > 0 && (
             <select value={filterMembre || ""} onChange={(e) => setFilterMembre(e.target.value || null)}
-              className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-300 focus:outline-none">
+              className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30">
               <option value="">Tous les membres</option>
               {allMembres.map((m) => <option key={m} value={m}>{m}</option>)}
             </select>
           )}
-          <div className="flex rounded-lg overflow-hidden border border-slate-700">
-            <button onClick={() => setVue("mois")} className={`px-3 py-2 text-sm font-medium transition-colors ${vue === "mois" ? "bg-amber-500 text-slate-900" : "bg-slate-800 text-slate-400"}`}>Mois</button>
-            <button onClick={() => setVue("semaine")} className={`px-3 py-2 text-sm font-medium transition-colors ${vue === "semaine" ? "bg-amber-500 text-slate-900" : "bg-slate-800 text-slate-400"}`}>Semaine</button>
+          <div className="flex rounded-lg overflow-hidden border border-gray-200">
+            <button onClick={() => setVue("mois")} className={`px-3 py-2 text-sm font-medium transition-colors ${vue === "mois" ? "bg-[#4a7c59] text-white" : "bg-white text-gray-600 hover:bg-gray-50"}`}>Mois</button>
+            <button onClick={() => setVue("semaine")} className={`px-3 py-2 text-sm font-medium transition-colors ${vue === "semaine" ? "bg-[#4a7c59] text-white" : "bg-white text-gray-600 hover:bg-gray-50"}`}>Semaine</button>
           </div>
         </div>
       </div>
 
       <div className="flex items-center justify-between shrink-0">
-        <button onClick={() => navigate(-1)} className="p-2 rounded-lg border border-slate-700 bg-slate-800/50 text-slate-400 hover:text-white transition-colors">
+        <button onClick={() => navigate(-1)} className="p-2 rounded-lg border border-gray-200 bg-white text-gray-500 hover:text-gray-900 transition-colors shadow-sm">
           <ChevronLeft className="h-4 w-4" />
         </button>
-        <h2 className="text-lg font-semibold text-white">
+        <h2 className="text-lg font-semibold text-gray-900">
           {vue === "mois"
             ? `${MONTHS_FR[currentDate.getMonth()]} ${currentDate.getFullYear()}`
             : `Semaine du ${getMonday(currentDate).toLocaleDateString("fr-FR")}`
           }
         </h2>
-        <button onClick={() => navigate(1)} className="p-2 rounded-lg border border-slate-700 bg-slate-800/50 text-slate-400 hover:text-white transition-colors">
+        <button onClick={() => navigate(1)} className="p-2 rounded-lg border border-gray-200 bg-white text-gray-500 hover:text-gray-900 transition-colors shadow-sm">
           <ChevronRight className="h-4 w-4" />
         </button>
       </div>
@@ -156,21 +161,21 @@ export default function PlanningPage() {
       )}
 
       {selected && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setSelected(null)}>
-          <div className="w-full max-w-md mx-4 rounded-xl border border-slate-700 bg-slate-900 p-6 space-y-4" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setSelected(null)}>
+          <div className="w-full max-w-md mx-4 rounded-2xl border border-gray-200 bg-white p-6 space-y-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-white">{selected.nom}</h3>
-              <button onClick={() => setSelected(null)} className="text-slate-500 hover:text-white"><X className="h-5 w-5" /></button>
+              <h3 className="text-lg font-semibold text-gray-900">{selected.nom}</h3>
+              <button onClick={() => setSelected(null)} className="text-gray-400 hover:text-gray-700"><X className="h-5 w-5" /></button>
             </div>
             <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2 text-slate-400"><MapPin className="h-4 w-4 text-slate-600" /> {selected.adresse}</div>
-              <div className="flex items-center gap-2 text-slate-400"><CalendarDays className="h-4 w-4 text-slate-600" /> {new Date(selected.dateDebut).toLocaleDateString("fr-FR")} → {new Date(selected.dateFin).toLocaleDateString("fr-FR")}</div>
+              <div className="flex items-center gap-2 text-gray-500"><MapPin className="h-4 w-4 text-gray-400" /> {selected.adresse}</div>
+              <div className="flex items-center gap-2 text-gray-500"><CalendarDays className="h-4 w-4 text-gray-400" /> {new Date(selected.dateDebut).toLocaleDateString("fr-FR")} → {new Date(selected.dateFin).toLocaleDateString("fr-FR")}</div>
               {selected.clientNom && (
-                <div className="flex items-center gap-2 text-slate-400">
-                  <UserCheck className="h-4 w-4 text-slate-600" /> Client :
+                <div className="flex items-center gap-2 text-gray-500">
+                  <UserCheck className="h-4 w-4 text-gray-400" /> Client :
                   {selected.clientId ? (
                     <button onClick={() => { setSelected(null); router.push(`/admin/clients/${selected.clientId}`); }}
-                      className="text-amber-400 hover:text-amber-300 flex items-center gap-1">
+                      className="text-[#4a7c59] hover:text-[#3d6a4a] flex items-center gap-1">
                       {selected.clientNom} <ExternalLink className="h-3 w-3" />
                     </button>
                   ) : (
@@ -178,17 +183,17 @@ export default function PlanningPage() {
                   )}
                 </div>
               )}
-              {selected.chef && <div className="flex items-center gap-2 text-slate-400"><HardHat className="h-4 w-4 text-slate-600" /> Chef : {selected.chef}</div>}
+              {selected.chef && <div className="flex items-center gap-2 text-gray-500"><HardHat className="h-4 w-4 text-gray-400" /> Chef : {selected.chef}</div>}
               {selected.membres && selected.membres.length > 0 && (
-                <div className="flex items-center gap-2 text-slate-400"><Users className="h-4 w-4 text-slate-600" /> {selected.membres.join(", ")}</div>
+                <div className="flex items-center gap-2 text-gray-500"><Users className="h-4 w-4 text-gray-400" /> {selected.membres.join(", ")}</div>
               )}
             </div>
             <div className="flex items-center gap-2">
               <span className="w-3 h-3 rounded-full" style={{ backgroundColor: selected.couleur }} />
-              <span className="text-sm text-slate-300">{selected.statut.replace(/_/g, " ")}</span>
+              <span className="text-sm text-gray-600">{selected.statut.replace(/_/g, " ")}</span>
             </div>
             <button onClick={() => { setSelected(null); router.push(`/admin/chantiers/${selected.id}`); }}
-              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-gradient-to-r from-amber-500 to-orange-600 text-white text-sm font-semibold transition-colors">
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#4a7c59] hover:bg-[#3d6a4a] text-white text-sm font-semibold transition-colors">
               <ExternalLink className="h-4 w-4" /> Voir la fiche complète
             </button>
           </div>
@@ -222,32 +227,31 @@ function MonthView({ currentDate, chantiers, onSelect }: { currentDate: Date; ch
   };
 
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900 overflow-hidden flex-1">
-      <div className="grid grid-cols-7 border-b border-slate-800">
+    <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden flex-1 shadow-sm">
+      <div className="grid grid-cols-7 border-b border-gray-200 bg-gray-50">
         {DAYS_FR.map((d) => (
-          <div key={d} className="p-2 text-center text-xs font-semibold text-slate-500 uppercase">{d}</div>
+          <div key={d} className="p-2 text-center text-xs font-semibold text-gray-500 uppercase">{d}</div>
         ))}
       </div>
       <div className="grid grid-cols-7">
         {cells.map((day, i) => {
-          if (!day) return <div key={i} className="min-h-[80px] border-b border-r border-slate-800/50 bg-slate-950/30" />;
+          if (!day) return <div key={i} className="min-h-[80px] border-b border-r border-gray-100 bg-gray-50/50" />;
           const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
           const dc = dayChantiers(day);
           return (
-            <div key={i} className="min-h-[80px] border-b border-r border-slate-800/50 p-1 hover:bg-slate-800/20 transition-colors">
-              <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-medium ${isToday ? "bg-amber-500 text-slate-900" : "text-slate-400"}`}>
+            <div key={i} className="min-h-[80px] border-b border-r border-gray-100 p-1 bg-white hover:bg-gray-50/50 transition-colors">
+              <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-medium ${isToday ? "bg-[#4a7c59] text-white" : "text-gray-500"}`}>
                 {day}
               </span>
               <div className="mt-1 space-y-0.5">
                 {dc.slice(0, 2).map((c) => (
                   <button key={c.id} onClick={() => onSelect(c)}
-                    className="w-full text-left px-1.5 py-0.5 rounded text-[10px] font-medium truncate text-white hover:opacity-80 transition-opacity"
-                    style={{ backgroundColor: c.couleur + "40", borderLeft: `2px solid ${c.couleur}` }}>
+                    className="w-full text-left px-1.5 py-0.5 rounded text-[10px] font-medium truncate text-[#4a7c59] hover:opacity-80 transition-opacity bg-[#4a7c59]/10 border-l-2 border-[#4a7c59]">
                     {c.nom}
                   </button>
                 ))}
                 {dc.length > 2 && (
-                  <span className="text-[10px] text-slate-500 px-1">+{dc.length - 2} autre{dc.length - 2 > 1 ? "s" : ""}</span>
+                  <span className="text-[10px] text-gray-400 px-1">+{dc.length - 2} autre{dc.length - 2 > 1 ? "s" : ""}</span>
                 )}
               </div>
             </div>
@@ -276,24 +280,23 @@ function WeekView({ currentDate, chantiers, onSelect }: { currentDate: Date; cha
   };
 
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900 overflow-hidden flex-1">
-      <div className="grid grid-cols-7 divide-x divide-slate-800">
+    <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden flex-1 shadow-sm">
+      <div className="grid grid-cols-7 divide-x divide-gray-200">
         {days.map((d, i) => {
           const isToday = d.toDateString() === today.toDateString();
           const dc = dayChantiers(d);
           return (
             <div key={i} className="min-h-[300px]">
-              <div className={`p-3 text-center border-b border-slate-800 ${isToday ? "bg-amber-500/10" : ""}`}>
-                <div className="text-xs text-slate-500 uppercase">{DAYS_FR[i]}</div>
-                <div className={`text-lg font-bold ${isToday ? "text-amber-400" : "text-white"}`}>{d.getDate()}</div>
+              <div className={`p-3 text-center border-b border-gray-200 ${isToday ? "bg-[#4a7c59]/5" : "bg-gray-50"}`}>
+                <div className="text-xs text-gray-500 uppercase">{DAYS_FR[i]}</div>
+                <div className={`text-lg font-bold ${isToday ? "text-[#4a7c59]" : "text-gray-900"}`}>{d.getDate()}</div>
               </div>
               <div className="p-2 space-y-1.5">
                 {dc.map((c) => (
                   <button key={c.id} onClick={() => onSelect(c)}
-                    className="w-full text-left rounded-lg p-2 hover:opacity-80 transition-opacity"
-                    style={{ backgroundColor: c.couleur + "20", borderLeft: `3px solid ${c.couleur}` }}>
-                    <p className="text-xs font-medium text-white truncate">{c.nom}</p>
-                    {c.chef && <p className="text-[10px] text-slate-500 mt-0.5">{c.chef}</p>}
+                    className="w-full text-left rounded-lg p-2 hover:opacity-80 transition-opacity bg-[#4a7c59]/10 border-l-2 border-[#4a7c59]">
+                    <p className="text-xs font-medium text-[#4a7c59] truncate">{c.nom}</p>
+                    {c.chef && <p className="text-[10px] text-gray-500 mt-0.5">{c.chef}</p>}
                   </button>
                 ))}
               </div>

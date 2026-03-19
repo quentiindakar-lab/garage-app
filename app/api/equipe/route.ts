@@ -1,32 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { supabase, toCamel, toSnake } from "@/lib/supabase";
 
 export async function GET(req: NextRequest) {
   try {
     const stats = req.nextUrl.searchParams.get("stats");
 
     if (stats === "true") {
-      const actifs = await prisma.membreEquipe.count({ where: { actif: true } });
-      return NextResponse.json({ actifs });
+      const { count } = await supabase
+        .from("membres_equipe")
+        .select("*", { count: "exact", head: true })
+        .eq("actif", true);
+      return NextResponse.json({ actifs: count || 0 });
     }
 
-    const membres = await prisma.membreEquipe.findMany({
-      include: {
-        affectations: {
-          include: { chantier: { select: { id: true, nom: true, statut: true } } },
-        },
-      },
-      orderBy: { createdAt: "desc" },
-    });
+    const { data: membres, error } = await supabase
+      .from("membres_equipe")
+      .select(`
+        *,
+        affectations:chantier_membres(
+          *,
+          chantier:chantiers(id, nom, statut)
+        )
+      `)
+      .order("created_at", { ascending: false });
 
-    const result = membres.map((m) => ({
-      ...m,
-      chantiersActuels: m.affectations
-        .filter((a) => a.chantier.statut === "EN_COURS")
-        .map((a) => ({ id: a.chantier.id, nom: a.chantier.nom })),
-      chantiersPasses: m.affectations
-        .filter((a) => a.chantier.statut === "TERMINE")
-        .map((a) => ({ id: a.chantier.id, nom: a.chantier.nom })),
+    if (error) throw error;
+
+    const result = (membres || []).map((m: any) => ({
+      ...toCamel(m),
+      chantiersActuels: (m.affectations || [])
+        .filter((a: any) => a.chantier?.statut === "EN_COURS")
+        .map((a: any) => ({ id: a.chantier.id, nom: a.chantier.nom })),
+      chantiersPasses: (m.affectations || [])
+        .filter((a: any) => a.chantier?.statut === "TERMINE")
+        .map((a: any) => ({ id: a.chantier.id, nom: a.chantier.nom })),
     }));
 
     return NextResponse.json(result);
@@ -39,17 +46,20 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const membre = await prisma.membreEquipe.create({
-      data: {
+    const { data: membre, error } = await supabase
+      .from("membres_equipe")
+      .insert({
         nom: body.nom,
         prenom: body.prenom || null,
         email: body.email || null,
         telephone: body.telephone || null,
         role: body.role || "Ouvrier",
         specialite: body.specialite || null,
-      },
-    });
-    return NextResponse.json(membre, { status: 201 });
+      })
+      .select()
+      .single();
+    if (error) throw error;
+    return NextResponse.json(toCamel(membre), { status: 201 });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Erreur création membre" }, { status: 500 });
@@ -62,14 +72,35 @@ export async function PATCH(req: NextRequest) {
     const { id, toggleActif, ...rest } = body;
 
     if (toggleActif) {
-      const membre = await prisma.membreEquipe.findUnique({ where: { id } });
-      if (!membre) return NextResponse.json({ error: "Membre non trouvé" }, { status: 404 });
-      const updated = await prisma.membreEquipe.update({ where: { id }, data: { actif: !membre.actif } });
-      return NextResponse.json(updated);
+      const { data: membre } = await supabase
+        .from("membres_equipe")
+        .select("actif")
+        .eq("id", id)
+        .single();
+      if (!membre)
+        return NextResponse.json({ error: "Membre non trouvé" }, { status: 404 });
+
+      const { data: updated, error } = await supabase
+        .from("membres_equipe")
+        .update({ actif: !membre.actif, updated_at: new Date().toISOString() })
+        .eq("id", id)
+        .select()
+        .single();
+      if (error) throw error;
+      return NextResponse.json(toCamel(updated));
     }
 
-    const updated = await prisma.membreEquipe.update({ where: { id }, data: rest });
-    return NextResponse.json(updated);
+    const dbData = toSnake(rest);
+    dbData.updated_at = new Date().toISOString();
+
+    const { data: updated, error } = await supabase
+      .from("membres_equipe")
+      .update(dbData)
+      .eq("id", id)
+      .select()
+      .single();
+    if (error) throw error;
+    return NextResponse.json(toCamel(updated));
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Erreur mise à jour" }, { status: 500 });
@@ -80,7 +111,8 @@ export async function DELETE(req: NextRequest) {
   try {
     const id = req.nextUrl.searchParams.get("id");
     if (!id) return NextResponse.json({ error: "ID requis" }, { status: 400 });
-    await prisma.membreEquipe.delete({ where: { id } });
+    const { error } = await supabase.from("membres_equipe").delete().eq("id", id);
+    if (error) throw error;
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error(error);

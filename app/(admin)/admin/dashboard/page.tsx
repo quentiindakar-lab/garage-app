@@ -39,10 +39,10 @@ interface ProchainChantier {
 }
 
 const TYPE_CONFIG: Record<string, { icon: typeof HardHat; color: string; bg: string }> = {
-  chantier: { icon: HardHat, color: "text-amber-400", bg: "bg-amber-500/10" },
-  client: { icon: UserCheck, color: "text-emerald-400", bg: "bg-emerald-500/10" },
-  prospect: { icon: Users, color: "text-blue-400", bg: "bg-blue-500/10" },
-  depense: { icon: Receipt, color: "text-red-400", bg: "bg-red-500/10" },
+  chantier: { icon: HardHat, color: "text-[var(--primary)]", bg: "bg-[#dcf0e4]" },
+  client: { icon: UserCheck, color: "text-[var(--primary)]", bg: "bg-[#dcf0e4]" },
+  prospect: { icon: Users, color: "text-[var(--primary)]", bg: "bg-[#dce8f0]" },
+  depense: { icon: Receipt, color: "text-[#c04040]", bg: "bg-[#f0dcdc]" },
 };
 
 export default function DashboardPage() {
@@ -80,16 +80,21 @@ export default function DashboardPage() {
       }
       if (chantiersListRes.status === "fulfilled" && chantiersListRes.value.ok) {
         const data = await chantiersListRes.value.json();
-        if (Array.isArray(data)) {
-          const now = new Date();
-          interface ChantierData { id: string; nom: string; adresse: string; dateDebut: string; statut: string }
-          const upcoming = (data as ChantierData[])
-            .filter((c) => c.dateDebut && new Date(c.dateDebut) >= now && c.statut !== "ANNULE" && c.statut !== "TERMINE")
-            .sort((a, b) => new Date(a.dateDebut).getTime() - new Date(b.dateDebut).getTime())
-            .slice(0, 4)
-            .map((c) => ({ id: c.id, nom: c.nom, dateDebut: c.dateDebut, adresse: c.adresse }));
-          setProchains(upcoming);
-        }
+        const now = new Date();
+        interface ChantierData { id: string; nom: string; adresse: string; dateDebut: string; statut: string }
+        const list = Array.isArray(data) ? (data as ChantierData[]) : [];
+        const upcoming = list
+          .filter(
+            (c) =>
+              c.dateDebut &&
+              new Date(c.dateDebut) >= now &&
+              c.statut !== "ANNULE" &&
+              c.statut !== "TERMINE"
+          )
+          .sort((a, b) => new Date(a.dateDebut).getTime() - new Date(b.dateDebut).getTime())
+          .slice(0, 4)
+          .map((c) => ({ id: c.id, nom: c.nom, dateDebut: c.dateDebut, adresse: c.adresse }));
+        setProchains(upcoming);
       }
 
       setStats({ chantiersEnCours, caMois, devisEnAttente, membresActifs });
@@ -117,13 +122,13 @@ export default function DashboardPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-white">Dashboard</h1>
-          <p className="text-slate-400 mt-1">Bienvenue sur votre tableau de bord</p>
+          <h1 className="text-2xl font-semibold text-foreground">Dashboard</h1>
+          <p className="text-muted-foreground mt-1">Bienvenue sur votre tableau de bord</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="p-6 rounded-xl border border-slate-800 bg-slate-900 animate-pulse">
-              <div className="h-20 rounded bg-slate-800" />
+            <div key={i} className="p-5 rounded-2xl bg-white border border-border shadow-sm animate-pulse">
+              <div className="h-20 rounded-xl bg-[#f5f5f0]" />
             </div>
           ))}
         </div>
@@ -135,12 +140,12 @@ export default function DashboardPage() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Dashboard</h1>
-          <p className="text-slate-400 mt-1">Bienvenue sur votre tableau de bord</p>
+          <h1 className="text-2xl font-semibold text-foreground">Dashboard</h1>
+          <p className="text-muted-foreground mt-1">Bienvenue sur votre tableau de bord</p>
         </div>
         <button
           onClick={fetchAll}
-          className="px-4 py-2 rounded-lg border border-slate-700 bg-slate-800/50 text-sm text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
+          className="btp-btn-secondary px-4 py-2 text-sm"
         >
           Actualiser
         </button>
@@ -152,32 +157,33 @@ export default function DashboardPage() {
           icon={HardHat}
           label="Chantiers en cours"
           value={String(stats?.chantiersEnCours ?? 0)}
-          iconBg="bg-amber-500/10"
-          iconColor="text-amber-400"
+          iconBg="bg-[#f0f0eb]"
+          iconColor="text-[var(--primary)]"
           onClick={() => router.push("/admin/chantiers")}
         />
         <StatCard
           icon={DollarSign}
           label="Dépenses du mois"
           value={formatMoney(stats?.caMois ?? 0)}
-          iconBg="bg-emerald-500/10"
-          iconColor="text-emerald-400"
+          iconBg="bg-white/15"
+          iconColor="text-white"
+          accent
           onClick={() => router.push("/admin/bilan")}
         />
         <StatCard
           icon={FileText}
           label="Devis en attente"
           value={String(stats?.devisEnAttente ?? 0)}
-          iconBg="bg-blue-500/10"
-          iconColor="text-blue-400"
+          iconBg="bg-[#f0f0eb]"
+          iconColor="text-[var(--primary)]"
           onClick={() => router.push("/admin/crm")}
         />
         <StatCard
           icon={UsersRound}
           label="Membres actifs"
           value={String(stats?.membresActifs ?? 0)}
-          iconBg="bg-purple-500/10"
-          iconColor="text-purple-400"
+          iconBg="bg-[#f0f0eb]"
+          iconColor="text-[var(--primary)]"
           onClick={() => router.push("/admin/equipe")}
         />
       </div>
@@ -186,8 +192,8 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Activity */}
         <div className="lg:col-span-2">
-          <div className="rounded-xl border border-slate-800 bg-slate-900 p-6">
-            <h3 className="text-lg font-semibold text-white mb-6">Activité récente</h3>
+          <div className="btp-card p-5">
+            <h3 className="text-lg font-semibold text-foreground mb-6">Activité récente</h3>
             {activities.length > 0 ? (
               <div className="space-y-2">
                 {activities.map((act, i) => {
@@ -196,53 +202,53 @@ export default function DashboardPage() {
                   return (
                     <div key={i}
                       onClick={() => router.push(act.href)}
-                      className="flex items-center gap-4 p-3 rounded-lg hover:bg-slate-800/50 transition-colors cursor-pointer">
-                      <div className={`p-2 rounded-lg ${cfg.bg}`}>
+                      className="flex items-center gap-4 p-3 rounded-xl hover:bg-[#fafaf8] transition-colors cursor-pointer">
+                      <div className={`p-2 rounded-md ${cfg.bg}`}>
                         <Icon className={`h-4 w-4 ${cfg.color}`} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-white truncate">{act.title}</p>
-                        <p className="text-xs text-slate-500 truncate">{act.description}</p>
+                        <p className="text-sm font-medium text-foreground truncate">{act.title}</p>
+                        <p className="text-xs text-muted-foreground truncate">{act.description}</p>
                       </div>
-                      <span className="text-xs text-slate-600 whitespace-nowrap">{timeAgo(act.createdAt)}</span>
+                      <span className="text-xs text-muted-foreground/80 whitespace-nowrap">{timeAgo(act.createdAt)}</span>
                     </div>
                   );
                 })}
               </div>
             ) : (
-              <p className="text-sm text-slate-500 text-center py-8">Aucune activité récente</p>
+              <p className="text-sm text-muted-foreground text-center py-8">Aucune activité récente</p>
             )}
           </div>
         </div>
 
         {/* Side */}
         <div className="space-y-6">
-          <div className="rounded-xl border border-slate-800 bg-slate-900 p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Prochains chantiers</h3>
+          <div className="btp-card p-5">
+            <h3 className="text-lg font-semibold text-foreground mb-4">Prochains chantiers</h3>
             {prochains.length > 0 ? (
               <div className="space-y-3">
                 {prochains.map((c) => (
                   <div key={c.id}
                     onClick={() => router.push(`/admin/chantiers/${c.id}`)}
-                    className="flex items-center justify-between py-2 border-b border-slate-800/50 last:border-0 cursor-pointer hover:bg-slate-800/30 rounded-lg px-2 transition-colors">
+                    className="flex items-center justify-between py-2 border-b border-[#f0f0eb] last:border-0 cursor-pointer hover:bg-[#fafaf8] rounded-xl px-2 transition-colors">
                     <div>
-                      <p className="text-sm font-medium text-slate-200">{c.nom}</p>
-                      <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
+                      <p className="text-sm font-medium text-foreground">{c.nom}</p>
+                      <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
                         <CalendarDays className="h-3 w-3" />
                         {new Date(c.dateDebut).toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}
                       </p>
                     </div>
-                    <ExternalLink className="h-3.5 w-3.5 text-slate-600" />
+                    <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-slate-500 text-center py-4">Aucun chantier à venir</p>
+              <p className="text-sm text-muted-foreground text-center py-4">Aucun chantier à venir</p>
             )}
           </div>
 
-          <div className="rounded-xl border border-slate-800 bg-slate-900 p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Accès rapide</h3>
+          <div className="btp-card p-5">
+            <h3 className="text-lg font-semibold text-foreground mb-4">Accès rapide</h3>
             <div className="space-y-2">
               {[
                 { label: "Nouveau chantier", href: "/admin/chantiers/nouveau", icon: HardHat, color: "text-amber-400" },
@@ -250,7 +256,8 @@ export default function DashboardPage() {
                 { label: "Estimation IA", href: "/admin/estimation", icon: TrendingUp, color: "text-purple-400" },
               ].map((item) => (
                 <button key={item.href} onClick={() => router.push(item.href)}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-slate-800/50 hover:bg-slate-800 text-sm text-slate-300 hover:text-white transition-colors text-left">
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[#f5f5f0] hover:bg-[#f0f0eb] text-sm text-foreground transition-colors text-left border border-border"
+                >
                   <item.icon className={`h-4 w-4 ${item.color}`} />
                   {item.label}
                 </button>
@@ -270,6 +277,7 @@ function StatCard({
   iconBg,
   iconColor,
   onClick,
+  accent = false,
 }: {
   icon: typeof HardHat;
   label: string;
@@ -277,20 +285,38 @@ function StatCard({
   iconBg: string;
   iconColor: string;
   onClick: () => void;
+  accent?: boolean;
 }) {
   return (
     <div
       onClick={onClick}
-      className="p-6 rounded-xl border border-slate-800 bg-slate-900 hover:border-slate-700 hover:bg-slate-900/80 transition-all cursor-pointer group"
+      className={accent
+        ? "p-5 rounded-2xl bg-[#4a7c59] border border-[#4a7c59] shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+        : "p-5 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+      }
     >
-      <div className="flex items-center justify-between mb-4">
-        <div className={`p-2.5 rounded-lg ${iconBg}`}>
-          <Icon className={`h-5 w-5 ${iconColor}`} />
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className={`inline-flex p-2.5 rounded-xl ${iconBg}`}>
+            <Icon className={`h-5 w-5 ${iconColor}`} />
+          </div>
+          <div className="mt-3">
+            <div
+              className={accent ? "text-[12px] text-white/80" : "text-[12px] text-[#888880]"}
+            >
+              {label}
+            </div>
+            <div
+              className={accent ? "mt-1 text-[24px] font-bold text-white" : "mt-1 text-[24px] font-bold text-[#1a1a1a]"}
+            >
+              {value}
+            </div>
+          </div>
         </div>
-        <TrendingUp className="h-4 w-4 text-emerald-500 opacity-60 group-hover:opacity-100 transition-opacity" />
+
+        {/* Mini graph placeholder (style screenshot) */}
+        <div className={accent ? "mt-1 h-10 w-16 rounded-xl bg-white/15" : "mt-1 h-10 w-16 rounded-xl bg-[#f5f5f0]"} />
       </div>
-      <h3 className="text-sm font-medium text-slate-400 mb-1">{label}</h3>
-      <p className="text-2xl font-bold text-white">{value}</p>
     </div>
   );
 }

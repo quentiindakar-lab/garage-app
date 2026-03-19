@@ -25,11 +25,11 @@ interface Chantier {
 }
 
 const STATUT_STYLE: Record<string, { bg: string; text: string; dot: string }> = {
-  EN_COURS: { bg: "bg-emerald-500/10", text: "text-emerald-400", dot: "bg-emerald-500" },
-  TERMINE: { bg: "bg-blue-500/10", text: "text-blue-400", dot: "bg-blue-500" },
-  PROSPECT: { bg: "bg-amber-500/10", text: "text-amber-400", dot: "bg-amber-500" },
-  DEVIS_ENVOYE: { bg: "bg-purple-500/10", text: "text-purple-400", dot: "bg-purple-500" },
-  ANNULE: { bg: "bg-red-500/10", text: "text-red-400", dot: "bg-red-500" },
+  EN_COURS: { bg: "bg-[#dcf0e4]", text: "text-[var(--primary)]", dot: "bg-[var(--primary)]" },
+  DEVIS_ENVOYE: { bg: "bg-[#dce8f0]", text: "text-[var(--primary)]", dot: "bg-[var(--primary)]" },
+  PROSPECT: { bg: "bg-[#f0eadc]", text: "text-[#886a30]", dot: "bg-[#886a30]" },
+  TERMINE: { bg: "bg-[#e8e8e2]", text: "text-[#666660]", dot: "bg-[#666660]" },
+  ANNULE: { bg: "bg-[#f0dcdc]", text: "text-[#c04040]", dot: "bg-[#c04040]" },
 };
 
 const STATUT_LABEL: Record<string, string> = {
@@ -50,7 +50,10 @@ export default function ChantiersPage() {
   const fetchChantiers = useCallback(async () => {
     try {
       const res = await fetch("/api/chantiers");
-      if (res.ok) setChantiers(await res.json());
+      if (res.ok) {
+        const data = await res.json();
+        setChantiers(Array.isArray(data) ? data : []);
+      }
     } catch {
       setChantiers([
         { id: "1", nom: "Rénovation cuisine", adresse: "12 rue Victor Hugo, Pau", statut: "EN_COURS", surface: 25, dateDebut: "2026-03-10", dateFin: "2026-03-24", affectations: [{ membre: { nom: "Dupont", prenom: "Marc", role: "CHEF_CHANTIER" } }] },
@@ -66,11 +69,16 @@ export default function ChantiersPage() {
 
   useEffect(() => { fetchChantiers(); }, [fetchChantiers]);
 
-  const filtered = chantiers.filter((c) => {
-    const matchSearch = !search || c.nom.toLowerCase().includes(search.toLowerCase()) || c.adresse.toLowerCase().includes(search.toLowerCase());
-    const matchStatut = !filterStatut || c.statut === filterStatut;
-    return matchSearch && matchStatut;
-  });
+  const filtered = Array.isArray(chantiers)
+    ? chantiers.filter((c) => {
+        const matchSearch =
+          !search ||
+          c.nom.toLowerCase().includes(search.toLowerCase()) ||
+          c.adresse.toLowerCase().includes(search.toLowerCase());
+        const matchStatut = !filterStatut || c.statut === filterStatut;
+        return matchSearch && matchStatut;
+      })
+    : [];
 
   if (loading) {
     return (
@@ -84,12 +92,12 @@ export default function ChantiersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white">Chantiers</h1>
-          <p className="text-slate-400 mt-1">{chantiers.length} chantier{chantiers.length > 1 ? "s" : ""} au total</p>
+          <h1 className="text-2xl font-semibold text-foreground">Chantiers</h1>
+          <p className="text-muted-foreground mt-1">{chantiers.length} chantier{chantiers.length > 1 ? "s" : ""} au total</p>
         </div>
         <button
           onClick={() => router.push("/admin/chantiers/nouveau")}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold text-sm transition-colors"
+          className="btp-btn-primary flex items-center gap-2 px-4 py-2.5 font-semibold text-sm"
         >
           <Plus className="h-4 w-4" />
           Nouveau chantier
@@ -99,19 +107,19 @@ export default function ChantiersPage() {
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[200px] max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
             type="text"
             placeholder="Rechercher un chantier..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-700 bg-slate-800/50 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+            className="btp-input pl-10 pr-4 py-2.5 text-sm"
           />
         </div>
         <div className="flex gap-1.5">
           <button
             onClick={() => setFilterStatut(null)}
-            className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${!filterStatut ? "bg-amber-500/20 text-amber-400" : "bg-slate-800 text-slate-400 hover:text-white"}`}
+            className={`px-3 py-2 rounded-[10px] text-xs font-medium transition-colors border border-border ${!filterStatut ? "bg-[var(--primary)] text-white" : "bg-[#f0f0eb] text-foreground hover:brightness-95"}`}
           >
             Tous
           </button>
@@ -119,7 +127,7 @@ export default function ChantiersPage() {
             <button
               key={key}
               onClick={() => setFilterStatut(key)}
-              className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${filterStatut === key ? "bg-amber-500/20 text-amber-400" : "bg-slate-800 text-slate-400 hover:text-white"}`}
+              className={`px-3 py-2 rounded-[10px] text-xs font-medium transition-colors border border-border ${filterStatut === key ? "bg-[var(--primary)] text-white" : "bg-[#f0f0eb] text-foreground hover:brightness-95"}`}
             >
               {label}
             </button>
@@ -136,32 +144,32 @@ export default function ChantiersPage() {
             <div
               key={c.id}
               onClick={() => router.push(`/admin/chantiers/${c.id}`)}
-              className="rounded-xl border border-slate-800 bg-slate-900 p-5 hover:border-slate-700 hover:bg-slate-900/80 transition-all cursor-pointer group"
+              className="btp-card p-6 cursor-pointer hover:shadow-md transition-shadow"
             >
               <div className="flex items-start justify-between mb-3">
-                <h3 className="text-base font-semibold text-white group-hover:text-amber-400 transition-colors">
+                <h3 className="text-base font-semibold text-foreground">
                   {c.nom}
                 </h3>
-                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${style.bg} ${style.text}`}>
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[10px] text-xs font-medium ${style.bg} ${style.text}`}>
                   <span className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
                   {STATUT_LABEL[c.statut]}
                 </span>
               </div>
 
-              <div className="space-y-2 text-sm text-slate-400">
+              <div className="space-y-2 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
-                  <MapPin className="h-3.5 w-3.5 text-slate-600" />
+                  <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
                   <span className="truncate">{c.adresse}</span>
                 </div>
                 {c.surface && (
                   <div className="flex items-center gap-2">
-                    <HardHat className="h-3.5 w-3.5 text-slate-600" />
+                    <HardHat className="h-3.5 w-3.5 text-muted-foreground" />
                     <span>{c.surface} m²</span>
                   </div>
                 )}
                 {c.dateDebut && (
                   <div className="flex items-center gap-2">
-                    <CalendarDays className="h-3.5 w-3.5 text-slate-600" />
+                    <CalendarDays className="h-3.5 w-3.5 text-muted-foreground" />
                     <span>
                       {new Date(c.dateDebut).toLocaleDateString("fr-FR")}
                       {c.dateFin && ` → ${new Date(c.dateFin).toLocaleDateString("fr-FR")}`}
@@ -170,7 +178,7 @@ export default function ChantiersPage() {
                 )}
                 {chef && (
                   <div className="flex items-center gap-2">
-                    <User className="h-3.5 w-3.5 text-slate-600" />
+                    <User className="h-3.5 w-3.5 text-muted-foreground" />
                     <span>{chef.prenom} {chef.nom}</span>
                   </div>
                 )}
@@ -182,8 +190,8 @@ export default function ChantiersPage() {
 
       {filtered.length === 0 && (
         <div className="text-center py-12">
-          <HardHat className="h-12 w-12 text-slate-700 mx-auto mb-3" />
-          <p className="text-slate-500">Aucun chantier trouvé</p>
+          <HardHat className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+          <p className="text-muted-foreground">Aucun chantier trouvé</p>
         </div>
       )}
     </div>

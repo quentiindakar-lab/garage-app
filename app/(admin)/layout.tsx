@@ -1,8 +1,7 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTheme } from "@/components/theme-provider";
 import { BTP_CONFIG } from "@/config/btp.config";
 import { cn } from "@/lib/utils";
@@ -15,7 +14,6 @@ import {
   BarChart3,
   UsersRound,
   Settings,
-  ChevronDown,
   ChevronsRight,
   Moon,
   Sun,
@@ -41,36 +39,14 @@ const BOTTOM_NAV = [
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.replace("/login");
-    }
-  }, [status, router]);
-
-  if (status === "loading") {
-    return (
-      <div className="flex h-screen items-center justify-center bg-slate-950">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-700 border-t-amber-500" />
-          <p className="text-sm text-slate-400">Chargement...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (status === "unauthenticated") return null;
-
-  const user = session?.user as { name?: string | null; role?: string } | undefined;
-
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-950 text-slate-100">
+    <div className="flex h-screen overflow-hidden bg-background text-foreground">
       {mobileOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/60 lg:hidden"
@@ -81,31 +57,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Sidebar */}
       <nav
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex flex-col border-r border-slate-800 bg-slate-900 p-2 shadow-xl transition-all duration-300 ease-in-out lg:static",
-          sidebarOpen ? "w-64" : "w-[68px]",
+          "fixed inset-y-0 left-0 z-50 flex flex-col border-r border-border bg-white py-3 transition-all duration-300 ease-in-out lg:static overflow-hidden",
+          "w-16",
           mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
         {/* Logo */}
-        <div className="mb-6 border-b border-slate-800 pb-4">
-          <div className="flex items-center justify-between rounded-lg p-2.5 transition-colors hover:bg-slate-800/50">
-            <div className="flex items-center gap-3">
-              <div className="grid size-10 shrink-0 place-content-center rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg shadow-amber-500/20">
-                <HardHat className="h-5 w-5 text-white" />
-              </div>
-              {sidebarOpen && (
-                <div>
-                  <span className="block text-sm font-bold text-white">{BTP_CONFIG.nom}</span>
-                  <span className="block text-xs text-slate-400">Gestion BTP</span>
-                </div>
-              )}
+        <div className="mb-4 border-b border-border pb-4 px-2">
+          <div className="flex items-center justify-center">
+            <div style={{ width: 40, height: 40, background: '#4a7c59', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ color: 'white', fontWeight: 700, fontSize: 18 }}>B</span>
             </div>
-            {sidebarOpen && <ChevronDown className="h-4 w-4 text-slate-500" />}
           </div>
         </div>
 
         {/* Nav items */}
-        <div className="space-y-1 flex-1">
+        <div className="space-y-2 flex-1">
           {NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
             return (
@@ -116,69 +83,70 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   setMobileOpen(false);
                 }}
                 className={cn(
-                  "relative flex h-11 w-full items-center rounded-lg transition-all duration-200",
-                  isActive
-                    ? "bg-amber-500/10 text-amber-400 shadow-sm border-l-2 border-amber-500"
-                    : "text-slate-400 hover:bg-slate-800/70 hover:text-slate-200"
+                  "relative w-full flex flex-col items-center justify-center gap-1 py-2 transition-colors",
+                  "hover:bg-[#f0f0eb]",
+                  isActive ? "border-l-2 border-[#4a7c59]" : "border-l-2 border-transparent"
                 )}
               >
-                <div className="grid h-full w-12 place-content-center">
-                  <item.icon className={cn("h-[18px] w-[18px]", isActive && "text-amber-400")} />
+                <div className="grid h-10 w-10 place-content-center rounded-xl">
+                  <item.icon className={cn("h-5 w-5", isActive ? "text-[#4a7c59]" : "text-muted-foreground")} />
                 </div>
-                {sidebarOpen && (
-                  <span className="text-sm font-medium">{item.label}</span>
-                )}
+                <span
+                  className={cn(
+                    "text-[10px] leading-none",
+                    isActive ? "text-[#4a7c59]" : "text-muted-foreground"
+                  )}
+                >
+                  {item.label}
+                </span>
               </button>
             );
           })}
         </div>
 
         {/* Bottom */}
-        {sidebarOpen && (
-          <div className="border-t border-slate-800 pt-4 space-y-1">
-            <div className="px-3 py-2 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
-              Compte
-            </div>
-            {BOTTOM_NAV.map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <button
-                  key={item.href}
-                  onClick={() => router.push(item.href)}
+        <div className="border-t border-border pt-4 space-y-2 px-0">
+          {BOTTOM_NAV.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <button
+                key={item.href}
+                onClick={() => router.push(item.href)}
+                className={cn(
+                  "relative w-full flex flex-col items-center justify-center gap-1 py-2 transition-colors hover:bg-[#f0f0eb]",
+                  isActive ? "border-l-2 border-[#4a7c59]" : "border-l-2 border-transparent"
+                )}
+              >
+                <div className="grid h-10 w-10 place-content-center rounded-xl">
+                  <item.icon className={cn("h-5 w-5", isActive ? "text-[#4a7c59]" : "text-muted-foreground")} />
+                </div>
+                <span
                   className={cn(
-                    "relative flex h-11 w-full items-center rounded-lg transition-all duration-200",
-                    isActive
-                      ? "bg-amber-500/10 text-amber-400 border-l-2 border-amber-500"
-                      : "text-slate-400 hover:bg-slate-800/70 hover:text-slate-200"
+                    "text-[10px] leading-none",
+                    isActive ? "text-[#4a7c59]" : "text-muted-foreground"
                   )}
                 >
-                  <div className="grid h-full w-12 place-content-center">
-                    <item.icon className="h-[18px] w-[18px]" />
-                  </div>
-                  <span className="text-sm font-medium">{item.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        )}
+                  {item.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
 
         {/* Toggle */}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="mt-2 border-t border-slate-800 transition-colors hover:bg-slate-800/70 hidden lg:block"
+          className="mt-2 border-t border-border transition-colors hover:bg-[#f0f0eb] hidden lg:block rounded-xl"
         >
-          <div className="flex items-center p-3">
-            <div className="grid size-10 place-content-center">
+          <div className="flex items-center justify-center px-3 py-3">
+            <div className="grid size-9 place-content-center">
               <ChevronsRight
                 className={cn(
-                  "h-4 w-4 transition-transform duration-300 text-slate-500",
+                  "h-4 w-4 transition-transform duration-300 text-muted-foreground",
                   sidebarOpen && "rotate-180"
                 )}
               />
             </div>
-            {sidebarOpen && (
-              <span className="text-sm font-medium text-slate-500">Réduire</span>
-            )}
           </div>
         </button>
       </nav>
@@ -186,15 +154,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Main */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Header */}
-        <header className="flex items-center justify-between border-b border-slate-800 bg-slate-900/80 backdrop-blur-sm px-4 lg:px-6 h-16 shrink-0">
+        <header className="flex items-center justify-between bg-transparent px-6 h-16 shrink-0">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setMobileOpen(true)}
-              className="p-2 rounded-lg text-slate-400 hover:bg-slate-800 lg:hidden"
+              className="p-2 rounded-xl text-muted-foreground hover:bg-[#f0f0eb] hover:text-foreground lg:hidden"
             >
               <Menu className="h-5 w-5" />
             </button>
-            <h2 className="text-lg font-semibold text-white hidden sm:block">
+            <h2 className="text-lg font-semibold text-foreground hidden sm:block">
               {NAV_ITEMS.find(
                 (i) => pathname === i.href || pathname.startsWith(i.href + "/")
               )?.label ?? "Administration"}
@@ -202,25 +170,31 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
 
           <div className="flex items-center gap-3">
-            {user?.name && (
-              <span className="hidden sm:inline text-sm font-medium text-slate-300">
-                {user.name}
-              </span>
-            )}
-            <button className="relative p-2 rounded-lg border border-slate-700 bg-slate-800/50 text-slate-400 hover:text-white transition-colors">
+            <span className="hidden md:inline text-sm text-muted-foreground">
+              {new Date().toLocaleDateString("fr-FR", { weekday: "short", day: "2-digit", month: "short" })}
+            </span>
+            <button className="relative grid h-10 w-10 place-content-center rounded-xl bg-white border border-border text-muted-foreground hover:bg-[#f0f0eb] hover:text-foreground transition-colors">
               <Bell className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 h-3 w-3 bg-amber-500 rounded-full" />
+              <span className="absolute -top-1 -right-1 h-3 w-3 bg-[var(--primary)] rounded-full" />
+            </button>
+            <button
+              onClick={() => router.push("/admin/parametres")}
+              className="grid h-10 w-10 place-content-center rounded-xl bg-white border border-border text-muted-foreground hover:bg-[#f0f0eb] hover:text-foreground transition-colors"
+              title="Paramètres"
+            >
+              <Settings className="h-5 w-5" />
             </button>
             <button
               onClick={toggleTheme}
-              className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-700 bg-slate-800/50 text-slate-400 hover:text-white transition-colors"
+              className="flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-border text-muted-foreground hover:bg-[#f0f0eb] hover:text-foreground transition-colors"
+              title="Thème"
             >
               {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
             <button
-              onClick={() => signOut({ callbackUrl: "/login" })}
-              className="p-2 rounded-lg border border-slate-700 bg-slate-800/50 text-slate-400 hover:text-red-400 transition-colors"
-              title="Déconnexion"
+              onClick={() => router.push("/")}
+              className="grid h-10 w-10 place-content-center rounded-xl bg-white border border-border text-muted-foreground hover:bg-[#f0f0eb] hover:text-[var(--destructive)] transition-colors"
+              title="Retour à l'accueil"
             >
               <LogOut className="h-5 w-5" />
             </button>
@@ -228,7 +202,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </header>
 
         {/* Content */}
-        <main className="flex-1 overflow-y-auto bg-slate-950 p-4 lg:p-6">
+        <main className="flex-1 overflow-y-auto bg-background p-4 lg:p-6">
           {children}
         </main>
       </div>

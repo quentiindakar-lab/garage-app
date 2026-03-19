@@ -50,11 +50,11 @@ interface Chantier {
 }
 
 const STATUT_OPTIONS = [
-  { value: "PROSPECT", label: "En attente", color: "bg-amber-500/10 text-amber-400" },
-  { value: "DEVIS_ENVOYE", label: "Devis envoyé", color: "bg-purple-500/10 text-purple-400" },
-  { value: "EN_COURS", label: "En cours", color: "bg-emerald-500/10 text-emerald-400" },
-  { value: "TERMINE", label: "Terminé", color: "bg-blue-500/10 text-blue-400" },
-  { value: "ANNULE", label: "Annulé", color: "bg-red-500/10 text-red-400" },
+  { value: "PROSPECT", label: "En attente", color: "bg-amber-50 text-amber-600" },
+  { value: "DEVIS_ENVOYE", label: "Devis envoyé", color: "bg-purple-50 text-purple-600" },
+  { value: "EN_COURS", label: "En cours", color: "bg-green-50 text-green-600" },
+  { value: "TERMINE", label: "Terminé", color: "bg-blue-50 text-blue-600" },
+  { value: "ANNULE", label: "Annulé", color: "bg-red-50 text-red-600" },
 ];
 
 export default function ChantierDetailPage() {
@@ -168,7 +168,7 @@ export default function ChantierDetailPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 text-amber-500 animate-spin" />
+        <Loader2 className="h-8 w-8 text-[#4a7c59] animate-spin" />
       </div>
     );
   }
@@ -176,9 +176,9 @@ export default function ChantierDetailPage() {
   if (!chantier) {
     return (
       <div className="text-center py-16">
-        <HardHat className="h-12 w-12 text-slate-700 mx-auto mb-3" />
-        <p className="text-slate-500">Chantier introuvable</p>
-        <button onClick={() => router.push("/admin/chantiers")} className="mt-4 text-amber-400 text-sm hover:underline">
+        <HardHat className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+        <p className="text-gray-500">Chantier introuvable</p>
+        <button onClick={() => router.push("/admin/chantiers")} className="mt-4 text-[#4a7c59] text-sm hover:underline">
           Retour aux chantiers
         </button>
       </div>
@@ -199,40 +199,40 @@ export default function ChantierDetailPage() {
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-3">
           <button onClick={() => router.push("/admin/chantiers")}
-            className="p-2 rounded-lg border border-slate-700 bg-slate-800/50 text-slate-400 hover:text-white transition-colors">
+            className="p-2 rounded-lg border border-gray-200 bg-white text-gray-500 hover:text-gray-900 transition-colors shadow-sm">
             <ArrowLeft className="h-4 w-4" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-white">{chantier.nom}</h1>
-            <p className="text-sm text-slate-400 flex items-center gap-1.5 mt-0.5">
+            <h1 className="text-2xl font-bold text-gray-900">{chantier.nom}</h1>
+            <p className="text-sm text-gray-500 flex items-center gap-1.5 mt-0.5">
               <MapPin className="h-3.5 w-3.5" /> {chantier.adresse}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={() => router.push(`/admin/estimation?chantier=${id}`)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-amber-500/30 text-amber-400 hover:bg-amber-500/10 text-sm font-medium transition-colors">
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#f59e0b] hover:bg-[#e8960a] text-black text-sm font-semibold transition-colors">
             <Sparkles className="h-4 w-4" /> Estimation IA
           </button>
           {editing ? (
             <>
               <button onClick={() => setEditing(false)}
-                className="px-4 py-2 rounded-lg border border-slate-700 text-sm text-slate-400 hover:text-white transition-colors">
+                className="px-4 py-2 rounded-lg border border-gray-200 text-sm text-gray-500 hover:text-gray-900 transition-colors">
                 Annuler
               </button>
               <button onClick={saveEdit} disabled={saving}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold text-sm transition-colors">
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#4a7c59] hover:bg-[#3d6a4a] text-white font-semibold text-sm transition-colors">
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Enregistrer
               </button>
             </>
           ) : (
             <>
               <button onClick={startEdit}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-700 bg-slate-800/50 text-sm text-slate-300 hover:text-white transition-colors">
+                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 bg-white text-sm text-gray-600 hover:text-gray-900 transition-colors shadow-sm">
                 <Edit2 className="h-4 w-4" /> Modifier
               </button>
               <button onClick={deleteChantier}
-                className="p-2 rounded-lg border border-slate-700 bg-slate-800/50 text-slate-400 hover:text-red-400 transition-colors">
+                className="p-2 rounded-lg border border-gray-200 bg-white text-gray-400 hover:text-red-500 transition-colors shadow-sm">
                 <Trash2 className="h-4 w-4" />
               </button>
             </>
@@ -244,9 +244,9 @@ export default function ChantierDetailPage() {
         {/* Main info */}
         <div className="lg:col-span-2 space-y-6">
           {/* Details card */}
-          <div className="rounded-xl border border-slate-800 bg-slate-900 p-6 space-y-4">
-            <h2 className="text-base font-semibold text-white flex items-center gap-2">
-              <FileText className="h-4 w-4 text-amber-400" /> Informations
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-4 shadow-sm">
+            <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2">
+              <FileText className="h-4 w-4 text-[#4a7c59]" /> Informations
             </h2>
             {editing ? (
               <div className="space-y-4">
@@ -256,9 +256,9 @@ export default function ChantierDetailPage() {
                 </div>
                 <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1">Type</label>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">Type</label>
                     <select value={editForm.type || ""} onChange={(e) => setEditForm({ ...editForm, type: e.target.value })}
-                      className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50">
+                      className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30">
                       <option value="">—</option>
                       {BTP_CONFIG.metiers.map((m) => <option key={m} value={m}>{m}</option>)}
                     </select>
@@ -271,25 +271,25 @@ export default function ChantierDetailPage() {
                   <EditField label="Date fin" type="date" value={editForm.dateFin?.slice(0, 10) || ""} onChange={(v) => setEditForm({ ...editForm, dateFin: v })} />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Statut</label>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Statut</label>
                   <div className="flex flex-wrap gap-1.5">
                     {STATUT_OPTIONS.map((s) => (
                       <button key={s.value} type="button" onClick={() => setEditForm({ ...editForm, statut: s.value })}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${editForm.statut === s.value ? "bg-amber-500 text-slate-900" : "bg-slate-800 text-slate-400 hover:text-white"}`}>
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${editForm.statut === s.value ? "bg-[#4a7c59] text-white" : "bg-gray-100 text-gray-600 border border-gray-200 hover:text-gray-900"}`}>
                         {s.label}
                       </button>
                     ))}
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Description</label>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Description</label>
                   <textarea rows={3} value={editForm.description || ""} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                    className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white resize-none focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+                    className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 resize-none focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Notes</label>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Notes</label>
                   <textarea rows={2} value={editForm.notes || ""} onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
-                    className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white resize-none focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+                    className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 resize-none focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30" />
                 </div>
               </div>
             ) : (
@@ -300,9 +300,9 @@ export default function ChantierDetailPage() {
                 <InfoRow icon={CalendarDays} label="Fin" value={chantier.dateFin ? new Date(chantier.dateFin).toLocaleDateString("fr-FR") : "—"} />
                 <InfoRow icon={CheckCircle2} label="Matériaux" value={chantier.materiaux || "—"} />
                 <div className="flex items-start gap-3">
-                  <Clock className="h-4 w-4 text-slate-600 mt-0.5 shrink-0" />
+                  <Clock className="h-4 w-4 text-[#4a7c59] mt-0.5 shrink-0" />
                   <div>
-                    <p className="text-slate-500 text-xs">Statut</p>
+                    <p className="text-gray-500 text-xs">Statut</p>
                     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${statutInfo.color}`}>
                       {statutInfo.label}
                     </span>
@@ -311,24 +311,24 @@ export default function ChantierDetailPage() {
               </div>
             )}
             {!editing && chantier.description && (
-              <div className="pt-4 border-t border-slate-800">
-                <p className="text-sm text-slate-400">{chantier.description}</p>
+              <div className="pt-4 border-t border-gray-100">
+                <p className="text-sm text-gray-600">{chantier.description}</p>
               </div>
             )}
             {!editing && chantier.notes && (
               <div className="pt-2">
-                <p className="text-xs text-slate-500 italic">Note : {chantier.notes}</p>
+                <p className="text-xs text-gray-400 italic">Note : {chantier.notes}</p>
               </div>
             )}
           </div>
 
           {/* Photos */}
-          <div className="rounded-xl border border-slate-800 bg-slate-900 p-6 space-y-4">
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-4 shadow-sm">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold text-white flex items-center gap-2">
-                <Camera className="h-4 w-4 text-amber-400" /> Photos
+              <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2">
+                <Camera className="h-4 w-4 text-[#4a7c59]" /> Photos
               </h2>
-              <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800/50 text-xs text-slate-400 hover:text-white transition-colors cursor-pointer">
+              <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-gray-50 text-xs text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors cursor-pointer">
                 <Upload className="h-3.5 w-3.5" /> Ajouter
                 <input type="file" accept="image/*" multiple className="hidden" />
               </label>
@@ -336,15 +336,15 @@ export default function ChantierDetailPage() {
             {chantier.photos && chantier.photos.length > 0 ? (
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                 {chantier.photos.map((p) => (
-                  <div key={p.id} className="aspect-square rounded-lg overflow-hidden border border-slate-700">
+                  <div key={p.id} className="aspect-square rounded-lg overflow-hidden border border-gray-200">
                     <img src={p.url} alt="" className="w-full h-full object-cover" />
                   </div>
                 ))}
               </div>
             ) : (
               <div className="text-center py-8">
-                <Camera className="h-8 w-8 text-slate-700 mx-auto mb-2" />
-                <p className="text-xs text-slate-600">Aucune photo pour ce chantier</p>
+                <Camera className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                <p className="text-xs text-gray-400">Aucune photo pour ce chantier</p>
               </div>
             )}
           </div>
@@ -353,32 +353,32 @@ export default function ChantierDetailPage() {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Chef */}
-          <div className="rounded-xl border border-slate-800 bg-slate-900 p-5 space-y-3">
-            <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-              <User className="h-4 w-4 text-amber-400" /> Chef de chantier
+          <div className="rounded-2xl border border-gray-200 bg-white p-5 space-y-3 shadow-sm">
+            <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+              <User className="h-4 w-4 text-[#4a7c59]" /> Chef de chantier
             </h3>
             {chantier.chef ? (
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center text-sm font-bold text-amber-400">
+                <div className="w-10 h-10 rounded-full bg-[#4a7c59]/10 flex items-center justify-center text-sm font-bold text-[#4a7c59]">
                   {(chantier.chef.prenom?.[0] || "")}{chantier.chef.nom[0]}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-white">{chantier.chef.prenom} {chantier.chef.nom}</p>
-                  <p className="text-xs text-slate-500">Chef de chantier</p>
+                  <p className="text-sm font-medium text-gray-900">{chantier.chef.prenom} {chantier.chef.nom}</p>
+                  <p className="text-xs text-gray-500">Chef de chantier</p>
                 </div>
               </div>
             ) : (
-              <p className="text-sm text-slate-500">Non assigné</p>
+              <p className="text-sm text-gray-500">Non assigné</p>
             )}
           </div>
 
           {/* Membres */}
-          <div className="rounded-xl border border-slate-800 bg-slate-900 p-5 space-y-3">
+          <div className="rounded-2xl border border-gray-200 bg-white p-5 space-y-3 shadow-sm">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-                <Users className="h-4 w-4 text-amber-400" /> Équipe ({chantier.affectations?.length || 0})
+              <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                <Users className="h-4 w-4 text-[#4a7c59]" /> Équipe ({chantier.affectations?.length || 0})
               </h3>
-              <button className="text-xs text-amber-400 hover:text-amber-300">
+              <button className="text-xs text-[#4a7c59] hover:text-[#3d6a4a]">
                 <Plus className="h-3.5 w-3.5" />
               </button>
             </div>
@@ -389,73 +389,73 @@ export default function ChantierDetailPage() {
                   return (
                     <div key={a.id} className="flex items-center gap-3 py-1">
                       <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
-                        style={{ background: `hsl(${hue}, 55%, 40%)` }}>
+                        style={{ background: `hsl(${hue}, 55%, 45%)` }}>
                         {(a.membre.prenom?.[0] || "")}{a.membre.nom[0]}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-white truncate">{a.membre.prenom} {a.membre.nom}</p>
-                        <p className="text-[11px] text-slate-500">{a.membre.role}</p>
+                        <p className="text-sm text-gray-900 truncate">{a.membre.prenom} {a.membre.nom}</p>
+                        <p className="text-[11px] text-gray-500">{a.membre.role}</p>
                       </div>
                     </div>
                   );
                 })}
               </div>
             ) : (
-              <p className="text-sm text-slate-500">Aucun membre affecté</p>
+              <p className="text-sm text-gray-500">Aucun membre affecté</p>
             )}
           </div>
 
           {/* Client associé */}
-          <div className="rounded-xl border border-slate-800 bg-slate-900 p-5 space-y-3">
-            <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-              <UserCheck className="h-4 w-4 text-amber-400" /> Client
+          <div className="rounded-2xl border border-gray-200 bg-white p-5 space-y-3 shadow-sm">
+            <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+              <UserCheck className="h-4 w-4 text-[#4a7c59]" /> Client
             </h3>
             {chantier.client ? (
               <div
                 onClick={() => router.push(`/admin/clients/${chantier.client!.id}`)}
-                className="flex items-center justify-between rounded-lg border border-slate-700 bg-slate-800/50 p-3 cursor-pointer hover:border-amber-500/30 transition-colors"
+                className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-3 cursor-pointer hover:border-[#4a7c59]/30 transition-colors"
               >
                 <div>
-                  <p className="text-sm font-medium text-white">{chantier.client.nom} {chantier.client.prenom || ""}</p>
-                  {chantier.client.email && <p className="text-xs text-slate-400">{chantier.client.email}</p>}
+                  <p className="text-sm font-medium text-gray-900">{chantier.client.nom} {chantier.client.prenom || ""}</p>
+                  {chantier.client.email && <p className="text-xs text-gray-500">{chantier.client.email}</p>}
                 </div>
-                <ExternalLink className="h-3.5 w-3.5 text-slate-500" />
+                <ExternalLink className="h-3.5 w-3.5 text-gray-400" />
               </div>
             ) : (
-              <p className="text-sm text-slate-500">Aucun client associé</p>
+              <p className="text-sm text-gray-500">Aucun client associé</p>
             )}
           </div>
 
           {/* Dépenses */}
-          <div className="rounded-xl border border-slate-800 bg-slate-900 p-5 space-y-3">
+          <div className="rounded-2xl border border-gray-200 bg-white p-5 space-y-3 shadow-sm">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-                <BarChart3 className="h-4 w-4 text-amber-400" /> Dépenses
+              <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                <BarChart3 className="h-4 w-4 text-[#4a7c59]" /> Dépenses
               </h3>
               <button onClick={() => router.push(`/admin/bilan?chantierId=${id}`)}
-                className="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1">
+                className="text-xs text-[#4a7c59] hover:text-[#3d6a4a] flex items-center gap-1">
                 Voir tout <ExternalLink className="h-3 w-3" />
               </button>
             </div>
-            <div className="rounded-lg border border-slate-700 bg-slate-800/50 p-3">
-              <p className="text-xs text-slate-400">Total dépenses</p>
-              <p className="text-lg font-bold text-white">{formatMoney(totalDepenses)}</p>
-              <p className="text-xs text-slate-500 mt-1">{depenses.length} dépense{depenses.length > 1 ? "s" : ""}</p>
+            <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+              <p className="text-xs text-gray-500">Total dépenses</p>
+              <p className="text-lg font-bold text-gray-900">{formatMoney(totalDepenses)}</p>
+              <p className="text-xs text-gray-400 mt-1">{depenses.length} dépense{depenses.length > 1 ? "s" : ""}</p>
             </div>
           </div>
 
           {/* Estimations */}
           {chantier.estimations && chantier.estimations.length > 0 && (
-            <div className="rounded-xl border border-slate-800 bg-slate-900 p-5 space-y-3">
-              <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-amber-400" /> Estimations ({chantier.estimations.length})
+            <div className="rounded-2xl border border-gray-200 bg-white p-5 space-y-3 shadow-sm">
+              <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-[#4a7c59]" /> Estimations ({chantier.estimations.length})
               </h3>
               {chantier.estimations.map((est) => {
                 const couts = est.resultatsJson?.couts;
                 return (
-                  <div key={est.id} className="rounded-lg border border-slate-700 bg-slate-800/50 p-3">
-                    <p className="text-xs text-slate-400">{new Date(est.createdAt).toLocaleDateString("fr-FR")}</p>
-                    {couts?.total_ttc && <p className="text-sm font-semibold text-amber-400">{formatMoney(couts.total_ttc)}</p>}
+                  <div key={est.id} className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+                    <p className="text-xs text-gray-500">{new Date(est.createdAt).toLocaleDateString("fr-FR")}</p>
+                    {couts?.total_ttc && <p className="text-sm font-semibold text-[#4a7c59]">{formatMoney(couts.total_ttc)}</p>}
                   </div>
                 );
               })}
@@ -463,19 +463,19 @@ export default function ChantierDetailPage() {
           )}
 
           {/* Quick actions */}
-          <div className="rounded-xl border border-slate-800 bg-slate-900 p-5 space-y-2">
-            <h3 className="text-sm font-semibold text-white mb-2">Actions rapides</h3>
+          <div className="rounded-2xl border border-gray-200 bg-white p-5 space-y-2 shadow-sm">
+            <h3 className="text-sm font-semibold text-gray-900 mb-2">Actions rapides</h3>
             <button onClick={() => router.push(`/admin/estimation?chantier=${id}`)}
-              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-slate-800 text-sm text-slate-300 hover:text-white hover:bg-slate-700 transition-colors text-left">
-              <Sparkles className="h-4 w-4 text-amber-400" /> Lancer estimation IA
+              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 text-sm text-gray-700 border border-gray-200 transition-colors text-left">
+              <Sparkles className="h-4 w-4 text-[#f59e0b]" /> Lancer estimation IA
             </button>
             <button onClick={() => router.push(`/admin/planning?chantier=${id}`)}
-              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-slate-800 text-sm text-slate-300 hover:text-white hover:bg-slate-700 transition-colors text-left">
-              <CalendarDays className="h-4 w-4 text-blue-400" /> Voir dans le planning
+              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 text-sm text-gray-700 border border-gray-200 transition-colors text-left">
+              <CalendarDays className="h-4 w-4 text-[#4a7c59]" /> Voir dans le planning
             </button>
             <button onClick={() => router.push(`/admin/bilan?chantierId=${id}`)}
-              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-slate-800 text-sm text-slate-300 hover:text-white hover:bg-slate-700 transition-colors text-left">
-              <FileText className="h-4 w-4 text-emerald-400" /> Dépenses du chantier
+              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 text-sm text-gray-700 border border-gray-200 transition-colors text-left">
+              <FileText className="h-4 w-4 text-[#4a7c59]" /> Dépenses du chantier
             </button>
           </div>
         </div>
@@ -487,10 +487,10 @@ export default function ChantierDetailPage() {
 function InfoRow({ icon: Icon, label, value }: { icon: typeof HardHat; label: string; value: string }) {
   return (
     <div className="flex items-start gap-3">
-      <Icon className="h-4 w-4 text-slate-600 mt-0.5 shrink-0" />
+      <Icon className="h-4 w-4 text-[#4a7c59] mt-0.5 shrink-0" />
       <div>
-        <p className="text-slate-500 text-xs">{label}</p>
-        <p className="text-white font-medium">{value}</p>
+        <p className="text-gray-500 text-xs">{label}</p>
+        <p className="text-gray-900 font-medium">{value}</p>
       </div>
     </div>
   );
@@ -499,9 +499,9 @@ function InfoRow({ icon: Icon, label, value }: { icon: typeof HardHat; label: st
 function EditField({ label, value, onChange, type = "text" }: { label: string; value: string; onChange: (v: string) => void; type?: string }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-slate-300 mb-1">{label}</label>
+      <label className="block text-sm font-medium text-gray-600 mb-1">{label}</label>
       <input type={type} value={value} onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30" />
     </div>
   );
 }

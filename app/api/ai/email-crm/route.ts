@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+import { anthropic } from "@/lib/ai/anthropic";
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,16 +8,16 @@ export async function POST(req: NextRequest) {
 
     if (action === "analyze") {
       const { emails } = body;
-      const completion = await openai.chat.completions.create({
-        model: "gpt-4o",
+      const response = await anthropic.messages.create({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 2000,
+        system: "Analyse ces emails envoyés par une entreprise BTP. Identifie le ton, le style, la structure et les formulations récurrentes. Réponds en JSON avec : {ton: string, style: string, formulations_cles: string[], structure_type: string}",
         messages: [
-          { role: "system", content: "Analyse ces emails envoyés par une entreprise BTP. Identifie le ton, le style, la structure et les formulations récurrentes. Réponds en JSON avec : {ton: string, style: string, formulations_cles: string[], structure_type: string}" },
           { role: "user", content: `Voici ${emails.length} emails :\n\n${emails.map((e: string, i: number) => `--- Email ${i + 1} ---\n${e}`).join("\n\n")}` },
         ],
-        temperature: 0.3,
-        response_format: { type: "json_object" },
       });
-      return NextResponse.json(JSON.parse(completion.choices[0]?.message?.content || "{}"));
+      const text = response.content[0].type === "text" ? response.content[0].text : "{}";
+      return NextResponse.json(JSON.parse(text));
     }
 
     if (action === "train") {
@@ -35,15 +33,16 @@ export async function POST(req: NextRequest) {
         remerciement: "email de remerciement",
       };
 
-      const completion = await openai.chat.completions.create({
-        model: "gpt-4o",
+      const response = await anthropic.messages.create({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 2000,
+        system: "Tu es l'assistant d'une entreprise BTP. Tu rédiges des emails professionnels mais chaleureux. Tu utilises un ton adapté au secteur du bâtiment.",
         messages: [
-          { role: "system", content: "Tu es l'assistant d'une entreprise BTP. Tu rédiges des emails professionnels mais chaleureux. Tu utilises un ton adapté au secteur du bâtiment." },
           { role: "user", content: `Rédige un ${typeLabels[type] || type}.\nDestinataire : ${destinataire}\nObjet : ${objet}\nContexte : ${contexte}\n\nÉcris uniquement le corps de l'email, sans objet ni headers.` },
         ],
-        temperature: 0.7,
       });
-      return NextResponse.json({ email: completion.choices[0]?.message?.content || "", message: completion.choices[0]?.message?.content || "" });
+      const text = response.content[0].type === "text" ? response.content[0].text : "";
+      return NextResponse.json({ email: text, message: text });
     }
 
     if (action === "send") {

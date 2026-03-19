@@ -86,16 +86,18 @@ export default function ClientsPage() {
     }
   };
 
-  const filtered = clients.filter((c) => {
-    const q = search.toLowerCase();
-    return (
-      c.nom.toLowerCase().includes(q) ||
-      (c.prenom?.toLowerCase().includes(q)) ||
-      (c.email?.toLowerCase().includes(q)) ||
-      (c.telephone?.includes(q)) ||
-      (c.entreprise?.toLowerCase().includes(q))
-    );
-  });
+  const filtered = Array.isArray(clients)
+    ? clients.filter((c) => {
+        const q = search.toLowerCase();
+        return (
+          c.nom.toLowerCase().includes(q) ||
+          c.prenom?.toLowerCase().includes(q) ||
+          c.email?.toLowerCase().includes(q) ||
+          c.telephone?.includes(q) ||
+          c.entreprise?.toLowerCase().includes(q)
+        );
+      })
+    : [];
 
   if (loading) {
     return (
@@ -110,11 +112,11 @@ export default function ClientsPage() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white">Clients</h1>
-          <p className="text-sm text-slate-400">{clients.length} client{clients.length > 1 ? "s" : ""} au total</p>
+          <p className="text-sm text-muted-foreground">{clients.length} client{clients.length > 1 ? "s" : ""} au total</p>
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-amber-500 to-orange-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-amber-500/25 transition-all hover:shadow-amber-500/40"
+          className="btp-btn-primary px-4 py-2.5 text-sm font-semibold shadow-lg shadow-black/20"
         >
           <Plus className="h-4 w-4" />
           Nouveau client
@@ -122,13 +124,13 @@ export default function ClientsPage() {
       </div>
 
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <input
           type="text"
           placeholder="Rechercher un client..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded-lg border border-slate-700 bg-slate-800/50 py-2.5 pl-10 pr-4 text-sm text-slate-200 placeholder-slate-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+          className="btp-input rounded-md py-2.5 pl-10 pr-4 text-sm"
         />
       </div>
 
@@ -142,7 +144,7 @@ export default function ClientsPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
               onClick={() => router.push(`/admin/clients/${client.id}`)}
-              className="cursor-pointer rounded-xl border border-slate-800 bg-slate-900/50 p-5 transition-all hover:border-amber-500/30 hover:bg-slate-800/50 hover:shadow-lg hover:shadow-amber-500/5"
+              className="cursor-pointer btp-card p-5 transition-colors hover:border-white/10 hover:bg-card/90"
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
@@ -158,32 +160,32 @@ export default function ClientsPage() {
                       {client.nom} {client.prenom || ""}
                     </h3>
                     {client.entreprise && (
-                      <p className="text-xs text-slate-400">{client.entreprise}</p>
+                      <p className="text-xs text-muted-foreground">{client.entreprise}</p>
                     )}
                   </div>
                 </div>
-                <span className="rounded-full bg-slate-800 px-2.5 py-0.5 text-xs font-medium text-slate-300">
+                <span className="rounded-full bg-[var(--muted)] border border-border/60 px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
                   {client.typeClient === "ENTREPRISE" ? "Entreprise" : "Particulier"}
                 </span>
               </div>
 
               <div className="mt-4 space-y-2">
                 {client.email && (
-                  <div className="flex items-center gap-2 text-sm text-slate-400">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Mail className="h-3.5 w-3.5" />
                     <span className="truncate">{client.email}</span>
                   </div>
                 )}
                 {client.telephone && (
-                  <div className="flex items-center gap-2 text-sm text-slate-400">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Phone className="h-3.5 w-3.5" />
                     <span>{client.telephone}</span>
                   </div>
                 )}
               </div>
 
-              <div className="mt-4 flex items-center justify-between border-t border-slate-800 pt-3">
-                <div className="flex items-center gap-1.5 text-sm text-slate-400">
+              <div className="mt-4 flex items-center justify-between border-t border-border/70 pt-3">
+                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                   <HardHat className="h-3.5 w-3.5" />
                   <span>{client.nbChantiers} chantier{client.nbChantiers > 1 ? "s" : ""}</span>
                 </div>
@@ -198,9 +200,9 @@ export default function ClientsPage() {
 
       {filtered.length === 0 && !loading && (
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <User className="h-12 w-12 text-slate-600 mb-4" />
-          <p className="text-slate-400">Aucun client trouvé</p>
-          <p className="text-sm text-slate-500 mt-1">
+          <User className="h-12 w-12 text-muted-foreground mb-4" />
+          <p className="text-muted-foreground">Aucun client trouvé</p>
+          <p className="text-sm text-muted-foreground/80 mt-1">
             {search ? "Modifiez votre recherche" : "Créez votre premier client"}
           </p>
         </div>
@@ -221,11 +223,11 @@ export default function ClientsPage() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-lg rounded-xl border border-slate-700 bg-slate-900 p-6 shadow-2xl"
+              className="w-full max-w-lg rounded-xl border border-border bg-card p-6 shadow-2xl"
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-bold text-white">Nouveau client</h2>
-                <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-white">
+                <button onClick={() => setShowModal(false)} className="text-muted-foreground hover:text-white">
                   <X className="h-5 w-5" />
                 </button>
               </div>
@@ -243,11 +245,11 @@ export default function ClientsPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <ModalField label="Entreprise" value={form.entreprise} onChange={(v) => setForm({ ...form, entreprise: v })} />
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-slate-300">Type</label>
+                    <label className="mb-1.5 block text-[13px] font-medium text-muted-foreground">Type</label>
                     <select
                       value={form.typeClient}
                       onChange={(e) => setForm({ ...form, typeClient: e.target.value })}
-                      className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-200 focus:border-amber-500 focus:outline-none"
+                      className="btp-input rounded-md px-3 py-2 text-sm"
                     >
                       <option value="PARTICULIER">Particulier</option>
                       <option value="ENTREPRISE">Entreprise</option>
@@ -255,12 +257,12 @@ export default function ClientsPage() {
                   </div>
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-slate-300">Notes</label>
+                  <label className="mb-1.5 block text-[13px] font-medium text-muted-foreground">Notes</label>
                   <textarea
                     value={form.notes}
                     onChange={(e) => setForm({ ...form, notes: e.target.value })}
                     rows={2}
-                    className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-amber-500 focus:outline-none"
+                    className="btp-input rounded-md px-3 py-2 text-sm placeholder:text-muted-foreground resize-none"
                   />
                 </div>
               </div>
@@ -268,14 +270,14 @@ export default function ClientsPage() {
               <div className="mt-6 flex justify-end gap-3">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:bg-slate-800"
+                  className="btp-btn-ghost px-4 py-2 text-sm border border-border"
                 >
                   Annuler
                 </button>
                 <button
                   onClick={handleCreate}
                   disabled={!form.nom.trim() || saving}
-                  className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-amber-500 to-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-lg disabled:opacity-50"
+                  className="btp-btn-primary flex items-center gap-2 px-4 py-2 text-sm font-semibold shadow-lg disabled:opacity-50"
                 >
                   {saving && <Loader2 className="h-4 w-4 animate-spin" />}
                   Créer le client
@@ -302,12 +304,12 @@ function ModalField({
 }) {
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-medium text-slate-300">{label}</label>
+      <label className="mb-1.5 block text-[13px] font-medium text-muted-foreground">{label}</label>
       <input
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-amber-500 focus:outline-none"
+        className="btp-input rounded-md px-3 py-2 text-sm"
       />
     </div>
   );

@@ -4,51 +4,60 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 38 92% 50%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 38 92% 50%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 38 92% 50%;
-    --radius: 0.75rem;
+    /* Palette globale (thème clair beige / vert sauge) */
+    --background: #f5f5f0;
+    --foreground: #1a1a1a;
+    --card: #ffffff;
+    --card-foreground: #1a1a1a;
+    --popover: #ffffff;
+    --popover-foreground: #1a1a1a;
 
-    --btp-primary: #F59E0B;
-    --btp-secondary: #0F172A;
+    --primary: #4a7c59;
+    --primary-foreground: #ffffff;
+    --secondary: #f0f0eb;
+    --secondary-foreground: #1a1a1a;
+
+    --muted: #f5f5f0;
+    --muted-foreground: #888880;
+
+    --accent: #6b9e7a;
+    --accent-foreground: #ffffff;
+
+    --destructive: #c04040;
+    --destructive-foreground: #ffffff;
+
+    --border: #e8e8e2;
+    --input: #e8e8e2;
+    --ring: #4a7c59;
+
+    /* arrondis généraux (10px), cards en 16px via classes */
+    --radius: 0.625rem;
+
+    --btp-primary: #4a7c59;
+    --btp-secondary: #ffffff;
   }
 
   .dark {
-    --background: 222 47% 6%;
-    --foreground: 210 40% 98%;
-    --card: 223 47% 8%;
-    --card-foreground: 210 40% 98%;
-    --popover: 223 47% 8%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 38 92% 50%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 217.2 32.6% 14%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 14%;
-    --muted-foreground: 215 20.2% 55%;
-    --accent: 38 92% 50%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 38 92% 50%;
+    /* même palette (on garde l'app cohérente en clair) */
+    --background: #f5f5f0;
+    --foreground: #1a1a1a;
+    --card: #ffffff;
+    --card-foreground: #1a1a1a;
+    --popover: #ffffff;
+    --popover-foreground: #1a1a1a;
+    --primary: #4a7c59;
+    --primary-foreground: #ffffff;
+    --secondary: #f0f0eb;
+    --secondary-foreground: #1a1a1a;
+    --muted: #f5f5f0;
+    --muted-foreground: #888880;
+    --accent: #6b9e7a;
+    --accent-foreground: #ffffff;
+    --destructive: #c04040;
+    --destructive-foreground: #ffffff;
+    --border: #e8e8e2;
+    --input: #e8e8e2;
+    --ring: #4a7c59;
   }
 }
 
@@ -57,7 +66,66 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-[#f5f5f0] text-foreground antialiased;
+  }
+}
+
+@layer components {
+  /* Inputs / forms */
+  .btp-input {
+    @apply w-full rounded-[10px] bg-[var(--muted)] border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-0 focus:border-[var(--ring)];
+  }
+
+  /* Cards */
+  .btp-card {
+    @apply rounded-2xl border border-border bg-card text-card-foreground shadow-sm;
+  }
+
+  /* Boutons */
+  .btp-btn {
+    @apply inline-flex items-center justify-center rounded-[10px] transition-colors disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .btp-btn-primary {
+    @apply btp-btn bg-[var(--primary)] text-[var(--primary-foreground)] hover:brightness-95;
+  }
+  .btp-btn-ghost {
+    @apply btp-btn bg-transparent text-muted-foreground hover:bg-[var(--secondary)] hover:text-foreground;
+  }
+  .btp-btn-secondary {
+    @apply btp-btn bg-[var(--secondary)] text-foreground hover:brightness-95;
+  }
+
+  /* Table */
+  .btp-table-head {
+    @apply text-muted-foreground uppercase text-[11px] tracking-wider;
+  }
+  .btp-table-row {
+    @apply border-b border-[#f0f0eb] hover:bg-[#fafaf8];
+  }
+
+  /* Badges statut */
+  .btp-badge {
+    @apply inline-flex items-center rounded-[10px] px-2 py-0.5 text-xs font-medium;
+  }
+  .btp-badge-en-cours {
+    background: #dcf0e4;
+    color: #4a7c59;
+  }
+  .btp-badge-devis-envoye {
+    background: #dce8f0;
+    color: #4a7c59;
+  }
+  .btp-badge-en-attente {
+    background: #f0eadc;
+    color: #886a30;
+  }
+  .btp-badge-termine {
+    background: #e8e8e2;
+    color: #666660;
+  }
+  .btp-badge-annule {
+    background: #f0dcdc;
+    color: #c04040;
   }
 }
 
@@ -76,10 +144,10 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--muted-foreground) / 0.3);
+  background: color-mix(in oklab, var(--muted-foreground) 30%, transparent);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--muted-foreground) / 0.5);
+  background: color-mix(in oklab, var(--muted-foreground) 50%, transparent);
 }

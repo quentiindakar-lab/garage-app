@@ -273,7 +273,7 @@ model Settings {
   email         String?
   tva           Float   @default(20)
   margeDefaut   Float   @default(15)
-  openaiKey     String?
+  anthropicKey  String?
   resendKey     String?
   smtpHost      String?
   smtpPort      Int?

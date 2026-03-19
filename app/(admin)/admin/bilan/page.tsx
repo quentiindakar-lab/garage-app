@@ -92,11 +92,16 @@ export default function BilanPage() {
     return Object.entries(map).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value);
   }, [depenses]);
 
-  const filtered = depenses.filter((d) => {
-    const matchSearch = !search || d.fournisseur.toLowerCase().includes(search.toLowerCase()) || d.categorie.toLowerCase().includes(search.toLowerCase());
-    const matchCat = !filterCat || d.categorie === filterCat;
-    return matchSearch && matchCat;
-  });
+  const filtered = Array.isArray(depenses)
+    ? depenses.filter((d) => {
+        const matchSearch =
+          !search ||
+          d.fournisseur.toLowerCase().includes(search.toLowerCase()) ||
+          d.categorie.toLowerCase().includes(search.toLowerCase());
+        const matchCat = !filterCat || d.categorie === filterCat;
+        return matchSearch && matchCat;
+      })
+    : [];
 
   const handleScan = async (file: File) => {
     setScanning(true);
@@ -139,22 +144,22 @@ export default function BilanPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white">Bilan financier</h1>
-          <p className="text-slate-400 mt-1">
+          <h1 className="text-2xl font-semibold text-foreground">Bilan financier</h1>
+          <p className="text-muted-foreground mt-1">
             {filterChantierId
-              ? <span>Filtré par chantier — <button onClick={() => router.push("/admin/bilan")} className="text-amber-400 hover:underline">Voir tout</button></span>
+              ? <span>Filtré par chantier — <button onClick={() => router.push("/admin/bilan")} className="text-[var(--primary)] hover:underline">Voir tout</button></span>
               : "Suivi des dépenses et rapports"}
           </p>
         </div>
         <div className="flex gap-2">
-          <button onClick={exportCSV} className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-slate-700 bg-slate-800/50 text-sm text-slate-300 hover:text-white transition-colors">
+          <button onClick={exportCSV} className="btp-btn-secondary flex items-center gap-2 px-4 py-2.5 text-sm">
             <Download className="h-4 w-4" /> Export CSV
           </button>
-          <label className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold text-sm transition-colors cursor-pointer">
+          <label className="btp-btn-primary flex items-center gap-2 px-4 py-2.5 font-semibold text-sm cursor-pointer">
             {scanning ? <><Loader2 className="h-4 w-4 animate-spin" /> Scan...</> : <><Camera className="h-4 w-4" /> Scanner un ticket</>}
             <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => e.target.files?.[0] && handleScan(e.target.files[0])} />
           </label>
-          <button onClick={() => { setScanResult(null); setShowAdd(true); }} className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-amber-500/30 text-amber-400 hover:bg-amber-500/10 font-medium text-sm transition-colors">
+          <button onClick={() => { setScanResult(null); setShowAdd(true); }} className="btp-btn-secondary flex items-center gap-2 px-4 py-2.5 font-medium text-sm">
             <Plus className="h-4 w-4" /> Saisie manuelle
           </button>
         </div>
@@ -162,24 +167,24 @@ export default function BilanPage() {
 
       {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">
-          <p className="text-sm text-slate-400 mb-1">Total du mois</p>
-          <p className="text-2xl font-bold text-white">{formatMoney(totalMois)}</p>
+        <div className="btp-card p-5">
+          <p className="text-xs text-muted-foreground mb-1">Total du mois</p>
+          <p className="text-2xl font-bold text-foreground">{formatMoney(totalMois)}</p>
         </div>
-        <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">
-          <p className="text-sm text-slate-400 mb-1">Nombre de dépenses</p>
-          <p className="text-2xl font-bold text-white">{depenses.length}</p>
+        <div className="btp-card p-5">
+          <p className="text-xs text-muted-foreground mb-1">Nombre de dépenses</p>
+          <p className="text-2xl font-bold text-foreground">{depenses.length}</p>
         </div>
-        <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">
-          <p className="text-sm text-slate-400 mb-1">Dépense moyenne</p>
-          <p className="text-2xl font-bold text-white">{formatMoney(depenses.length > 0 ? totalMois / depenses.length : 0)}</p>
+        <div className="btp-card p-5">
+          <p className="text-xs text-muted-foreground mb-1">Dépense moyenne</p>
+          <p className="text-2xl font-bold text-foreground">{formatMoney(depenses.length > 0 ? totalMois / depenses.length : 0)}</p>
         </div>
       </div>
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">
-          <h3 className="text-sm font-semibold text-white mb-4">Répartition par catégorie</h3>
+        <div className="btp-card p-6">
+          <h3 className="text-sm font-semibold text-foreground mb-4">Répartition par catégorie</h3>
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -187,21 +192,21 @@ export default function BilanPage() {
                   label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}>
                   {catData.map((d) => <Cell key={d.name} fill={CAT_COLORS[d.name] || "#6B7280"} />)}
                 </Pie>
-                <RTooltip formatter={(v) => [formatMoney(Number(v)), ""]} contentStyle={{ borderRadius: 8, background: "#1e293b", border: "1px solid #334155", color: "#fff" }} />
+                <RTooltip formatter={(v) => [formatMoney(Number(v)), ""]} contentStyle={{ borderRadius: 12, background: "#ffffff", border: "1px solid #e8e8e2", color: "#1a1a1a" }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
         </div>
-        <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">
-          <h3 className="text-sm font-semibold text-white mb-4">Répartition par chantier</h3>
+        <div className="btp-card p-6">
+          <h3 className="text-sm font-semibold text-foreground mb-4">Répartition par chantier</h3>
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={barData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                <XAxis type="number" stroke="#64748b" tick={{ fontSize: 12 }} tickFormatter={(v) => `${v}€`} />
-                <YAxis type="category" dataKey="name" stroke="#64748b" tick={{ fontSize: 11 }} width={120} />
-                <RTooltip formatter={(v) => [formatMoney(Number(v)), "Dépenses"]} contentStyle={{ borderRadius: 8, background: "#1e293b", border: "1px solid #334155", color: "#fff" }} />
-                <Bar dataKey="value" fill="#F59E0B" radius={[0, 4, 4, 0]} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e8e8e2" />
+                <XAxis type="number" stroke="#888880" tick={{ fontSize: 12 }} tickFormatter={(v) => `${v}€`} />
+                <YAxis type="category" dataKey="name" stroke="#888880" tick={{ fontSize: 11 }} width={120} />
+                <RTooltip formatter={(v) => [formatMoney(Number(v)), "Dépenses"]} contentStyle={{ borderRadius: 12, background: "#ffffff", border: "1px solid #e8e8e2", color: "#1a1a1a" }} />
+                <Bar dataKey="value" fill="#4a7c59" radius={[0, 6, 6, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -209,17 +214,17 @@ export default function BilanPage() {
       </div>
 
       {/* Filters + Table */}
-      <div className="rounded-xl border border-slate-800 bg-slate-900 p-5 space-y-4">
+      <div className="btp-card p-6 space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-3">
-          <h3 className="text-base font-semibold text-white">Toutes les dépenses</h3>
+          <h3 className="text-base font-semibold text-foreground">Toutes les dépenses</h3>
           <div className="flex items-center gap-2">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Rechercher..."
-                className="pl-9 pr-3 py-2 rounded-lg border border-slate-700 bg-slate-800 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 w-48" />
+                className="btp-input pl-9 pr-3 py-2 text-sm w-48" />
             </div>
             <select value={filterCat || ""} onChange={(e) => setFilterCat(e.target.value || null)}
-              className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-300 focus:outline-none">
+              className="btp-input px-3 py-2 text-sm w-auto">
               <option value="">Toutes catégories</option>
               {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
@@ -228,19 +233,19 @@ export default function BilanPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-800 text-left">
-                <th className="pb-3 font-medium text-slate-400">Date</th>
-                <th className="pb-3 font-medium text-slate-400">Fournisseur</th>
-                <th className="pb-3 font-medium text-slate-400">Catégorie</th>
-                <th className="pb-3 font-medium text-slate-400">Chantier</th>
-                <th className="pb-3 font-medium text-slate-400 text-right">Montant</th>
+              <tr className="border-b border-[#f0f0eb] text-left">
+                <th className="pb-3 font-medium text-muted-foreground uppercase text-[11px] tracking-wider">Date</th>
+                <th className="pb-3 font-medium text-muted-foreground uppercase text-[11px] tracking-wider">Fournisseur</th>
+                <th className="pb-3 font-medium text-muted-foreground uppercase text-[11px] tracking-wider">Catégorie</th>
+                <th className="pb-3 font-medium text-muted-foreground uppercase text-[11px] tracking-wider">Chantier</th>
+                <th className="pb-3 font-medium text-muted-foreground uppercase text-[11px] tracking-wider text-right">Montant</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/50">
+            <tbody className="divide-y divide-[#f0f0eb]">
               {filtered.map((d) => (
-                <tr key={d.id} className="hover:bg-slate-800/30 transition-colors">
-                  <td className="py-3 text-slate-300">{new Date(d.date).toLocaleDateString("fr-FR")}</td>
-                  <td className="py-3 text-white font-medium">{d.fournisseur}</td>
+                <tr key={d.id} className="hover:bg-[#fafaf8] transition-colors">
+                  <td className="py-3 text-muted-foreground">{new Date(d.date).toLocaleDateString("fr-FR")}</td>
+                  <td className="py-3 text-foreground font-medium">{d.fournisseur}</td>
                   <td className="py-3">
                     <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: (CAT_COLORS[d.categorie] || "#6B7280") + "20", color: CAT_COLORS[d.categorie] || "#6B7280" }}>
                       {d.categorie}
@@ -248,15 +253,17 @@ export default function BilanPage() {
                   </td>
                   <td className="py-3">
                     {d.chantierId && d.chantierNom ? (
-                      <button onClick={() => router.push(`/admin/chantiers/${d.chantierId}`)}
-                        className="text-amber-400 hover:text-amber-300 flex items-center gap-1 text-sm transition-colors">
+                      <button
+                        onClick={() => router.push(`/admin/chantiers/${d.chantierId}`)}
+                        className="text-[var(--primary)] hover:opacity-80 flex items-center gap-1 text-sm transition-colors"
+                      >
                         {d.chantierNom} <ExternalLink className="h-3 w-3" />
                       </button>
                     ) : (
-                      <span className="text-slate-400">{d.chantierNom || "—"}</span>
+                      <span className="text-muted-foreground">{d.chantierNom || "—"}</span>
                     )}
                   </td>
-                  <td className="py-3 text-white font-semibold text-right">{formatMoney(d.montant)}</td>
+                  <td className="py-3 text-foreground font-semibold text-right">{formatMoney(d.montant)}</td>
                 </tr>
               ))}
             </tbody>
@@ -298,12 +305,12 @@ function AddDepenseModal({ onClose, onAdd, scanResult }: { onClose: () => void; 
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60">
-      <div className="w-full max-w-md mx-4 rounded-xl border border-slate-700 bg-slate-900 p-6">
+      <div className="w-full max-w-md mx-4 rounded-2xl border border-border bg-white p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-            {scanResult ? <><Sparkles className="h-4 w-4 text-amber-400" /> Dépense scannée</> : "Nouvelle dépense"}
+          <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+            {scanResult ? <><Sparkles className="h-4 w-4 text-[var(--primary)]" /> Dépense scannée</> : "Nouvelle dépense"}
           </h3>
-          <button onClick={onClose} className="text-slate-500 hover:text-white"><X className="h-5 w-5" /></button>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground"><X className="h-5 w-5" /></button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
@@ -312,11 +319,11 @@ function AddDepenseModal({ onClose, onAdd, scanResult }: { onClose: () => void; 
           </div>
           <MField label="Fournisseur" value={form.fournisseur} onChange={(v) => setForm({ ...form, fournisseur: v })} />
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1.5">Catégorie</label>
+            <label className="block text-[13px] font-medium text-muted-foreground mb-1.5">Catégorie</label>
             <div className="flex flex-wrap gap-1.5">
               {CATEGORIES.map((c) => (
                 <button key={c} type="button" onClick={() => setForm({ ...form, categorie: c })}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${form.categorie === c ? "text-slate-900" : "bg-slate-800 text-slate-400 hover:text-white"}`}
+                  className={`px-2.5 py-1 rounded-[10px] text-xs font-medium transition-colors border border-border ${form.categorie === c ? "text-foreground bg-[#f0f0eb]" : "bg-[#f5f5f0] text-muted-foreground hover:text-foreground hover:bg-[#f0f0eb]"}`}
                   style={form.categorie === c ? { backgroundColor: CAT_COLORS[c] } : {}}>
                   {c}
                 </button>
@@ -325,7 +332,7 @@ function AddDepenseModal({ onClose, onAdd, scanResult }: { onClose: () => void; 
           </div>
           <MField label="Chantier (optionnel)" value={form.chantierNom} onChange={(v) => setForm({ ...form, chantierNom: v })} placeholder="Nom du chantier" />
           <button type="submit" disabled={saving || !form.montant}
-            className="w-full flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-700 text-slate-900 disabled:text-slate-500 font-semibold py-2.5 rounded-lg transition-colors">
+            className="btp-btn-primary w-full flex items-center justify-center gap-2 font-semibold py-2.5 transition-colors">
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />} Enregistrer
           </button>
         </form>
@@ -337,9 +344,9 @@ function AddDepenseModal({ onClose, onAdd, scanResult }: { onClose: () => void; 
 function MField({ label, value, onChange, placeholder, type = "text", required = false }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string; required?: boolean }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-slate-300 mb-1">{label}</label>
+      <label className="block text-[13px] font-medium text-muted-foreground mb-1">{label}</label>
       <input type={type} required={required} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+        className="btp-input px-3 py-2 text-sm" />
     </div>
   );
 }

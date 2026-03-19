@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { supabase, toCamel, toSnake } from "@/lib/supabase";
 
 export async function GET(req: NextRequest) {
   try {
@@ -9,63 +9,94 @@ export async function GET(req: NextRequest) {
       const now = new Date();
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-      const [enCours, total, depensesMois, devisEnAttente, prospectsDevis] = await Promise.all([
-        prisma.chantier.count({ where: { statut: "EN_COURS" } }),
-        prisma.chantier.count(),
-        prisma.depense.aggregate({
-          _sum: { montant: true },
-          where: { date: { gte: startOfMonth } },
-        }),
-        prisma.chantier.count({ where: { statut: "DEVIS_ENVOYE" } }),
-        prisma.prospect.count({ where: { colonne: "ENVOI_DEVIS" } }),
-      ]);
+      const [enCoursRes, totalRes, depensesMoisRes, devisRes, prospectsDevisRes] =
+        await Promise.all([
+          supabase
+            .from("chantiers")
+            .select("*", { count: "exact", head: true })
+            .eq("statut", "EN_COURS"),
+          supabase.from("chantiers").select("*", { count: "exact", head: true }),
+          supabase
+            .from("depenses")
+            .select("montant")
+            .gte("date", startOfMonth.toISOString()),
+          supabase
+            .from("chantiers")
+            .select("*", { count: "exact", head: true })
+            .eq("statut", "DEVIS_ENVOYE"),
+          supabase
+            .from("prospects")
+            .select("*", { count: "exact", head: true })
+            .eq("colonne", "ENVOI_DEVIS"),
+        ]);
+
+      const caMois = (depensesMoisRes.data || []).reduce(
+        (sum: number, d: any) => sum + d.montant,
+        0
+      );
+
       return NextResponse.json({
-        enCours,
-        devisEnAttente: devisEnAttente + prospectsDevis,
-        caMois: depensesMois._sum.montant || 0,
-        total,
+        enCours: enCoursRes.count || 0,
+        devisEnAttente: (devisRes.count || 0) + (prospectsDevisRes.count || 0),
+        caMois,
+        total: totalRes.count || 0,
       });
     }
 
-    const chantiers = await prisma.chantier.findMany({
-      include: {
-        affectations: {
-          include: { membre: { select: { nom: true, prenom: true, role: true } } },
-        },
-        chef: { select: { nom: true, prenom: true } },
-        client: { select: { id: true, nom: true, prenom: true, email: true, telephone: true } },
-        estimations: { select: { id: true, resultatsJson: true, createdAt: true } },
-        _count: { select: { photos: true } },
-      },
-      orderBy: { createdAt: "desc" },
+    const { data: chantiers, error } = await supabase
+      .from("chantiers")
+      .select(`
+        *,
+        affectations:chantier_membres(
+          *,
+          membre:membres_equipe(nom, prenom, role)
+        ),
+        chef:membres_equipe!chef_id(nom, prenom),
+        client:clients(id, nom, prenom, email, telephone),
+        estimations(id, resultats_json, created_at),
+        photos:photos_chantier(id)
+      `)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    const result = (chantiers || []).map((c: any) => {
+      const { photos, ...rest } = c;
+      return {
+        ...toCamel(rest),
+        _count: { photos: (photos || []).length },
+      };
     });
 
-    return NextResponse.json(chantiers);
+    return NextResponse.json(result);
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+    return NextResponse.json([]);
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const chantier = await prisma.chantier.create({
-      data: {
+    const { data: chantier, error } = await supabase
+      .from("chantiers")
+      .insert({
         nom: body.nom,
         adresse: body.adresse,
         type: body.type || null,
         surface: body.surface ? parseFloat(body.surface) : null,
         materiaux: body.materiaux || null,
         description: body.description || null,
-        dateDebut: body.dateDebut ? new Date(body.dateDebut) : null,
-        dateFin: body.dateFin ? new Date(body.dateFin) : null,
+        date_debut: body.dateDebut ? new Date(body.dateDebut).toISOString() : null,
+        date_fin: body.dateFin ? new Date(body.dateFin).toISOString() : null,
         statut: body.statut || "PROSPECT",
-        chefId: body.chefId || null,
-        clientId: body.clientId || null,
-      },
-    });
-    return NextResponse.json(chantier, { status: 201 });
+        chef_id: body.chefId || null,
+        client_id: body.clientId || null,
+      })
+      .select()
+      .single();
+    if (error) throw error;
+    return NextResponse.json(toCamel(chantier), { status: 201 });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Erreur création chantier" }, { status: 500 });
@@ -76,10 +107,20 @@ export async function PATCH(req: NextRequest) {
   try {
     const body = await req.json();
     const { id, ...data } = body;
-    if (data.dateDebut) data.dateDebut = new Date(data.dateDebut);
-    if (data.dateFin) data.dateFin = new Date(data.dateFin);
-    const chantier = await prisma.chantier.update({ where: { id }, data });
-    return NextResponse.json(chantier);
+    if (data.dateDebut) data.dateDebut = new Date(data.dateDebut).toISOString();
+    if (data.dateFin) data.dateFin = new Date(data.dateFin).toISOString();
+
+    const dbData = toSnake(data);
+    dbData.updated_at = new Date().toISOString();
+
+    const { data: chantier, error } = await supabase
+      .from("chantiers")
+      .update(dbData)
+      .eq("id", id)
+      .select()
+      .single();
+    if (error) throw error;
+    return NextResponse.json(toCamel(chantier));
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Erreur mise à jour" }, { status: 500 });
@@ -90,7 +131,8 @@ export async function DELETE(req: NextRequest) {
   try {
     const id = req.nextUrl.searchParams.get("id");
     if (!id) return NextResponse.json({ error: "ID requis" }, { status: 400 });
-    await prisma.chantier.delete({ where: { id } });
+    const { error } = await supabase.from("chantiers").delete().eq("id", id);
+    if (error) throw error;
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error(error);

@@ -1,0 +1,4 @@
+Après chaque modification de fichier, ne jamais arrêter le serveur automatiquement.
+Ne jamais supprimer le dossier .next.
+Toujours laisser Next.js recompiler à chaud.
+

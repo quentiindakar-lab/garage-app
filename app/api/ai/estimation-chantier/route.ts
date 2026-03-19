@@ -1,15 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
-import { prisma } from "@/lib/prisma";
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+import { anthropic } from "@/lib/ai/anthropic";
+import { supabase, toCamel } from "@/lib/supabase";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { nom, adresse, surface, metiers, materiaux, localisation, delaiSouhaite, margePercent, description, chantierId } = body;
+    const {
+      nom,
+      adresse,
+      surface,
+      metiers,
+      materiaux,
+      localisation,
+      delaiSouhaite,
+      margePercent,
+      description,
+      chantierId,
+    } = body;
 
-    const prompt = `Tu es un expert en chiffrage BTP. À partir des informations fournies, génère une estimation complète et détaillée.
+    const prompt = `À partir des informations fournies, génère une estimation complète et détaillée.
 
 Informations du chantier :
 - Nom : ${nom || "Non spécifié"}
@@ -40,36 +49,47 @@ Réponds UNIQUEMENT en JSON valide avec cette structure exacte :
   "risques": ["string"]
 }`;
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        { role: "system", content: "Tu es un expert en chiffrage et estimation de chantiers BTP en France. Tu réponds uniquement en JSON valide." },
-        { role: "user", content: prompt },
-      ],
-      temperature: 0.3,
-      response_format: { type: "json_object" },
+    const response = await anthropic.messages.create({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 2000,
+      system:
+        "Tu es un expert en chiffrage et estimation de chantiers BTP en France. Tu réponds uniquement en JSON valide.",
+      messages: [{ role: "user", content: prompt }],
     });
 
-    const content = completion.choices[0]?.message?.content;
-    if (!content) throw new Error("Pas de réponse de l'IA");
+    const rawText =
+      response.content[0].type === "text" ? response.content[0].text : "";
+    if (!rawText) throw new Error("Pas de réponse de l'IA");
 
-    const result = JSON.parse(content);
+    const cleanText = rawText
+      .replace(/```json\n?/g, "")
+      .replace(/```\n?/g, "")
+      .trim();
 
-    const estimation = await prisma.estimation.create({
-      data: {
+    const result = JSON.parse(cleanText);
+
+    const { data: estimation, error } = await supabase
+      .from("estimations")
+      .insert({
         nom: nom || "Estimation sans nom",
         adresse: adresse || null,
         surface: surface ? parseFloat(surface) : null,
-        typesTravaux: metiers || [],
+        types_travaux: metiers || [],
         marge: margePercent ? parseFloat(margePercent) : 15,
-        resultatsJson: result,
-        chantierId: chantierId || null,
-      },
-    });
+        resultats_json: result,
+        chantier_id: chantierId || null,
+      })
+      .select()
+      .single();
 
-    return NextResponse.json({ ...result, estimationId: estimation.id });
+    if (error) throw error;
+
+    return NextResponse.json({ ...result, estimationId: estimation?.id });
   } catch (error) {
     console.error("Erreur estimation IA:", error);
-    return NextResponse.json({ error: "Erreur lors de l'estimation" }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : String(error) },
+      { status: 500 }
+    );
   }
 }

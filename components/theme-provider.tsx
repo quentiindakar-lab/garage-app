@@ -21,14 +21,17 @@ export function useTheme() {
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>("dark");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const stored = localStorage.getItem("btp-theme") as Theme;
     if (stored) setTheme(stored);
     else setTheme("dark");
   }, []);
 
   useEffect(() => {
+    if (!mounted) return;
     const root = document.documentElement;
     root.style.setProperty("--btp-primary", BTP_CONFIG.couleurPrimaire);
     root.style.setProperty("--btp-secondary", BTP_CONFIG.couleurSecondaire);
@@ -39,9 +42,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       root.classList.remove("dark");
     }
     localStorage.setItem("btp-theme", theme);
-  }, [theme]);
+  }, [theme, mounted]);
 
   const toggleTheme = () => setTheme((prev) => (prev === "light" ? "dark" : "light"));
+
+  if (!mounted) return null;
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>

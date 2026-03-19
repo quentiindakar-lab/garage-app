@@ -85,10 +85,16 @@ export default function EstimationPage() {
   useEffect(() => {
     if (clientSearch.length < 1) { setClientResults([]); return; }
     const t = setTimeout(() => {
-      fetch("/api/clients").then((r) => r.json()).then((data: ClientOption[]) => {
-        const q = clientSearch.toLowerCase();
-        setClientResults(data.filter((c) => c.nom.toLowerCase().includes(q) || c.prenom?.toLowerCase().includes(q)).slice(0, 5));
-      }).catch(() => {});
+      fetch("/api/clients")
+        .then((r) => r.json())
+        .then((data: ClientOption[]) => {
+          const q = clientSearch.toLowerCase();
+          const filtered = Array.isArray(data)
+            ? data.filter((c) => c.nom.toLowerCase().includes(q) || c.prenom?.toLowerCase().includes(q))
+            : [];
+          setClientResults(filtered.slice(0, 5));
+        })
+        .catch(() => {});
     }, 300);
     return () => clearTimeout(t);
   }, [clientSearch]);
@@ -188,15 +194,15 @@ export default function EstimationPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white">Estimation IA</h1>
-        <p className="text-slate-400 mt-1">Obtenez une estimation détaillée générée par l&apos;intelligence artificielle</p>
+        <h1 className="text-3xl font-bold text-gray-900">Estimation IA</h1>
+        <p className="text-gray-500 mt-1">Obtenez une estimation détaillée générée par l&apos;intelligence artificielle</p>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Left - Form */}
-        <div className="rounded-xl border border-slate-800 bg-slate-900 p-6 space-y-5">
-          <h2 className="text-base font-semibold text-white flex items-center gap-2">
-            <Wrench className="h-4 w-4 text-amber-400" /> Données du chantier
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-5 shadow-sm">
+          <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2">
+            <Wrench className="h-4 w-4 text-[#4a7c59]" /> Données du chantier
           </h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
@@ -210,16 +216,16 @@ export default function EstimationPage() {
             </div>
             <Field label="Matériaux disponibles" value={form.materiaux} onChange={(v) => setForm({ ...form, materiaux: v })} placeholder="Carrelage, placo..." />
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">Description</label>
-              <textarea rows={2} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 resize-none" placeholder="Travaux à réaliser..." />
+              <label className="block text-sm font-medium text-gray-600 mb-1.5">Description</label>
+              <textarea rows={2} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30 resize-none" placeholder="Travaux à réaliser..." />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Type de travaux</label>
+              <label className="block text-sm font-medium text-gray-600 mb-2">Type de travaux</label>
               <div className="flex flex-wrap gap-1.5">
                 {BTP_CONFIG.metiers.map((m) => (
                   <button key={m} type="button" onClick={() => toggleMetier(m)}
-                    className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${form.metiers.includes(m) ? "bg-amber-500 text-slate-900" : "bg-slate-800 text-slate-400 hover:text-white"}`}>
+                    className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${form.metiers.includes(m) ? "bg-[#4a7c59] text-white" : "bg-gray-100 text-gray-600 border border-gray-200 hover:text-gray-900"}`}>
                     {m}
                   </button>
                 ))}
@@ -227,34 +233,34 @@ export default function EstimationPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">
-                Marge souhaitée : <span className="text-amber-400 font-bold">{form.marge}%</span>
+              <label className="block text-sm font-medium text-gray-600 mb-1.5">
+                Marge souhaitée : <span className="text-[#4a7c59] font-bold">{form.marge}%</span>
               </label>
-              <input type="range" min="10" max="50" value={form.marge} onChange={(e) => setForm({ ...form, marge: e.target.value })} className="w-full accent-amber-500" />
-              <div className="flex justify-between text-[10px] text-slate-600"><span>10%</span><span>50%</span></div>
+              <input type="range" min="10" max="50" value={form.marge} onChange={(e) => setForm({ ...form, marge: e.target.value })} className="w-full accent-[#4a7c59]" />
+              <div className="flex justify-between text-[10px] text-gray-400"><span>10%</span><span>50%</span></div>
             </div>
 
             {/* Photos */}
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Photos</label>
+              <label className="block text-sm font-medium text-gray-600 mb-2">Photos</label>
               <div className="flex flex-wrap gap-2">
                 {photos.map((p, i) => (
-                  <div key={i} className="relative group w-16 h-16 rounded-lg overflow-hidden border border-slate-700">
+                  <div key={i} className="relative group w-16 h-16 rounded-lg overflow-hidden border border-gray-200">
                     <img src={URL.createObjectURL(p)} alt="" className="w-full h-full object-cover" />
                     <button type="button" onClick={() => setPhotos((ps) => ps.filter((_, j) => j !== i))} className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                       <X className="h-2.5 w-2.5" />
                     </button>
                   </div>
                 ))}
-                <label className="w-16 h-16 rounded-lg border-2 border-dashed border-slate-700 flex items-center justify-center cursor-pointer hover:border-amber-500/50 transition-colors">
-                  <Plus className="h-4 w-4 text-slate-500" />
+                <label className="w-16 h-16 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-[#4a7c59]/50 transition-colors">
+                  <Plus className="h-4 w-4 text-gray-400" />
                   <input type="file" accept="image/*" multiple onChange={(e) => e.target.files && setPhotos((p) => [...p, ...Array.from(e.target.files!)])} className="hidden" />
                 </label>
               </div>
             </div>
 
             <button type="submit" disabled={loading}
-              className="w-full flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-700 text-slate-900 disabled:text-slate-500 font-semibold py-3 rounded-lg transition-colors">
+              className="w-full flex items-center justify-center gap-2 bg-[#f59e0b] hover:bg-[#e8960a] disabled:bg-gray-200 text-black disabled:text-gray-400 font-semibold py-3 rounded-lg transition-colors">
               {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Estimation en cours...</> : <><Sparkles className="h-4 w-4" /> Générer l&apos;estimation</>}
             </button>
           </form>
@@ -263,24 +269,24 @@ export default function EstimationPage() {
         {/* Right - Results */}
         <div className="space-y-4">
           {error && (
-            <div className="rounded-xl border border-red-800/50 bg-red-900/20 p-4 flex items-center gap-3">
-              <AlertTriangle className="h-5 w-5 text-red-400 shrink-0" />
-              <p className="text-sm text-red-300">{error}</p>
+            <div className="rounded-2xl border border-red-200 bg-red-50 p-4 flex items-center gap-3">
+              <AlertTriangle className="h-5 w-5 text-red-500 shrink-0" />
+              <p className="text-sm text-red-600">{error}</p>
             </div>
           )}
 
           {!result && !loading && !error && (
-            <div className="rounded-xl border border-slate-800 bg-slate-900 p-16 flex flex-col items-center text-center">
-              <Sparkles className="h-12 w-12 text-slate-700 mb-4" />
-              <h3 className="text-lg font-semibold text-slate-500">Résultats de l&apos;estimation</h3>
-              <p className="text-sm text-slate-600 mt-2">Remplissez le formulaire et cliquez sur &quot;Générer&quot;</p>
+            <div className="rounded-2xl border border-gray-200 bg-white p-16 flex flex-col items-center text-center shadow-sm">
+              <Sparkles className="h-12 w-12 text-gray-300 mb-4" />
+              <h3 className="text-lg font-semibold text-gray-400">Résultats de l&apos;estimation</h3>
+              <p className="text-sm text-gray-400 mt-2">Remplissez le formulaire et cliquez sur &quot;Générer&quot;</p>
             </div>
           )}
 
           {loading && (
-            <div className="rounded-xl border border-slate-800 bg-slate-900 p-16 flex flex-col items-center">
-              <Loader2 className="h-10 w-10 text-amber-500 animate-spin mb-4" />
-              <p className="text-sm text-slate-400">L&apos;IA analyse votre chantier...</p>
+            <div className="rounded-2xl border border-gray-200 bg-white p-16 flex flex-col items-center shadow-sm">
+              <Loader2 className="h-10 w-10 text-[#4a7c59] animate-spin mb-4" />
+              <p className="text-sm text-gray-500">L&apos;IA analyse votre chantier...</p>
             </div>
           )}
 
@@ -295,8 +301,8 @@ export default function EstimationPage() {
               </div>
 
               {/* Pie chart */}
-              <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">
-                <h3 className="text-sm font-semibold text-white mb-3">Répartition des coûts</h3>
+              <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                <h3 className="text-sm font-semibold text-gray-900 mb-3">Répartition des coûts</h3>
                 <div className="h-56">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
@@ -304,35 +310,35 @@ export default function EstimationPage() {
                         label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}>
                         {pieData.map((_, i) => <Cell key={i} fill={PIE_COLORS[i]} />)}
                       </Pie>
-                      <Tooltip formatter={(v) => [formatMoney(Number(v)), ""]} contentStyle={{ borderRadius: 8, background: "#1e293b", border: "1px solid #334155", color: "#fff" }} />
-                      <Legend wrapperStyle={{ fontSize: 12, color: "#94a3b8" }} />
+                      <Tooltip formatter={(v) => [formatMoney(Number(v)), ""]} contentStyle={{ borderRadius: 8, background: "#fff", border: "1px solid #e5e7eb", color: "#111827" }} />
+                      <Legend wrapperStyle={{ fontSize: 12, color: "#6b7280" }} />
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
               </div>
 
               {/* Materiaux table */}
-              <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">
-                <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
-                  <Wrench className="h-4 w-4 text-amber-400" /> Matériaux nécessaires
+              <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                  <Wrench className="h-4 w-4 text-[#4a7c59]" /> Matériaux nécessaires
                 </h3>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-slate-800 text-left">
-                        <th className="pb-2 font-medium text-slate-400">Matériau</th>
-                        <th className="pb-2 font-medium text-slate-400">Quantité</th>
-                        <th className="pb-2 font-medium text-slate-400 text-right">P.U.</th>
-                        <th className="pb-2 font-medium text-slate-400 text-right">Total</th>
+                      <tr className="border-b border-gray-200 text-left">
+                        <th className="pb-2 font-medium text-gray-500">Matériau</th>
+                        <th className="pb-2 font-medium text-gray-500">Quantité</th>
+                        <th className="pb-2 font-medium text-gray-500 text-right">P.U.</th>
+                        <th className="pb-2 font-medium text-gray-500 text-right">Total</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-800/50">
+                    <tbody className="divide-y divide-gray-100">
                       {result.materiaux.map((m, i) => (
-                        <tr key={i} className="hover:bg-slate-800/30">
-                          <td className="py-2 text-slate-200">{m.nom}</td>
-                          <td className="py-2 text-slate-400">{m.quantite}</td>
-                          <td className="py-2 text-slate-400 text-right">{formatMoney(m.cout_unitaire)}</td>
-                          <td className="py-2 text-white font-medium text-right">{formatMoney(m.cout_total)}</td>
+                        <tr key={i} className="hover:bg-gray-50">
+                          <td className="py-2 text-gray-700">{m.nom}</td>
+                          <td className="py-2 text-gray-500">{m.quantite}</td>
+                          <td className="py-2 text-gray-500 text-right">{formatMoney(m.cout_unitaire)}</td>
+                          <td className="py-2 text-gray-900 font-medium text-right">{formatMoney(m.cout_total)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -342,28 +348,28 @@ export default function EstimationPage() {
 
               {/* Recommandations + Risques */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">
-                  <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
-                    <Lightbulb className="h-4 w-4 text-amber-400" /> Recommandations
+                <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <Lightbulb className="h-4 w-4 text-[#4a7c59]" /> Recommandations
                   </h3>
                   <div className="space-y-2">
                     {result.recommandations.map((r, i) => (
                       <div key={i} className="flex items-start gap-2">
                         <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 mt-0.5 shrink-0" />
-                        <span className="text-xs text-slate-300">{r}</span>
+                        <span className="text-xs text-gray-600">{r}</span>
                       </div>
                     ))}
                   </div>
                 </div>
-                <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">
-                  <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+                <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
                     <ShieldAlert className="h-4 w-4 text-red-400" /> Risques identifiés
                   </h3>
                   <div className="space-y-2">
                     {result.risques.map((r, i) => (
                       <div key={i} className="flex items-start gap-2">
                         <AlertTriangle className="h-3.5 w-3.5 text-amber-500 mt-0.5 shrink-0" />
-                        <span className="text-xs text-slate-300">{r}</span>
+                        <span className="text-xs text-gray-600">{r}</span>
                       </div>
                     ))}
                   </div>
@@ -372,23 +378,23 @@ export default function EstimationPage() {
 
               {/* Actions */}
               {createdChantierId ? (
-                <div className="rounded-xl border border-emerald-800/50 bg-emerald-900/20 p-4 flex items-center justify-between">
+                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-emerald-400" />
-                    <p className="text-sm text-emerald-300">Chantier créé avec succès !</p>
+                    <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                    <p className="text-sm text-emerald-700">Chantier créé avec succès !</p>
                   </div>
                   <button onClick={() => router.push(`/admin/chantiers/${createdChantierId}`)}
-                    className="flex items-center gap-2 text-sm font-medium text-amber-400 hover:text-amber-300">
+                    className="flex items-center gap-2 text-sm font-medium text-[#4a7c59] hover:text-[#3d6a4a]">
                     Voir le chantier <ExternalLink className="h-3.5 w-3.5" />
                   </button>
                 </div>
               ) : (
                 <div className="flex gap-3">
-                  <button className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-slate-700 bg-slate-800 text-sm text-slate-300 hover:text-white transition-colors">
+                  <button className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-200 bg-white text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors shadow-sm">
                     <FileDown className="h-4 w-4" /> Exporter en PDF
                   </button>
                   <button onClick={openChantierModal}
-                    className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-gradient-to-r from-amber-500 to-orange-600 text-white text-sm font-semibold transition-colors shadow-lg shadow-amber-500/25">
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#4a7c59] text-white text-sm font-semibold transition-colors hover:bg-[#3d6a4a] shadow-sm">
                     <Save className="h-4 w-4" /> Enregistrer comme chantier
                   </button>
                 </div>
@@ -400,13 +406,13 @@ export default function EstimationPage() {
 
       {/* Modal création chantier depuis estimation */}
       {showChantierModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={() => setShowChantierModal(false)}>
-          <div onClick={(e) => e.stopPropagation()} className="w-full max-w-lg rounded-xl border border-slate-700 bg-slate-900 p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowChantierModal(false)}>
+          <div onClick={(e) => e.stopPropagation()} className="w-full max-w-lg rounded-2xl border border-gray-200 bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                <HardHat className="h-5 w-5 text-amber-400" /> Créer le chantier
+              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <HardHat className="h-5 w-5 text-[#4a7c59]" /> Créer le chantier
               </h2>
-              <button onClick={() => setShowChantierModal(false)} className="text-slate-400 hover:text-white"><X className="h-5 w-5" /></button>
+              <button onClick={() => setShowChantierModal(false)} className="text-gray-400 hover:text-gray-700"><X className="h-5 w-5" /></button>
             </div>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -420,37 +426,37 @@ export default function EstimationPage() {
               </div>
 
               {result?.couts?.total_ttc && (
-                <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 flex items-center justify-between">
-                  <span className="text-sm text-slate-300">Budget estimé (TTC)</span>
-                  <span className="text-lg font-bold text-amber-400">{formatMoney(result.couts.total_ttc)}</span>
+                <div className="rounded-lg border border-[#4a7c59]/30 bg-[#4a7c59]/5 p-3 flex items-center justify-between">
+                  <span className="text-sm text-gray-600">Budget estimé (TTC)</span>
+                  <span className="text-lg font-bold text-[#4a7c59]">{formatMoney(result.couts.total_ttc)}</span>
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1.5">Client</label>
+                <label className="block text-sm font-medium text-gray-600 mb-1.5">Client</label>
                 {selectedClient ? (
-                  <div className="flex items-center justify-between rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
-                    <p className="text-sm font-medium text-white">{selectedClient.nom} {selectedClient.prenom || ""}</p>
-                    <button onClick={() => setSelectedClient(null)} className="text-slate-400 hover:text-white"><X className="h-4 w-4" /></button>
+                  <div className="flex items-center justify-between rounded-lg border border-[#4a7c59]/30 bg-[#4a7c59]/5 p-3">
+                    <p className="text-sm font-medium text-gray-900">{selectedClient.nom} {selectedClient.prenom || ""}</p>
+                    <button onClick={() => setSelectedClient(null)} className="text-gray-400 hover:text-gray-700"><X className="h-4 w-4" /></button>
                   </div>
                 ) : (
                   <div ref={clientRef} className="relative">
-                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                     <input
                       type="text"
                       placeholder="Rechercher un client..."
                       value={clientSearch}
                       onChange={(e) => { setClientSearch(e.target.value); setShowClientDropdown(true); }}
                       onFocus={() => setShowClientDropdown(true)}
-                      className="w-full rounded-lg border border-slate-700 bg-slate-800 py-2.5 pl-10 pr-4 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                      className="w-full rounded-lg border border-gray-200 bg-gray-50 py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30"
                     />
                     {showClientDropdown && clientResults.length > 0 && (
-                      <div className="absolute z-10 mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 shadow-xl">
+                      <div className="absolute z-10 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg">
                         {clientResults.map((c) => (
                           <button key={c.id} type="button"
                             onClick={() => { setSelectedClient(c); setShowClientDropdown(false); setClientSearch(""); }}
-                            className="w-full px-4 py-2.5 text-left text-sm text-slate-300 hover:bg-slate-700 first:rounded-t-lg last:rounded-b-lg">
-                            <span className="font-medium text-white">{c.nom} {c.prenom || ""}</span>
+                            className="w-full px-4 py-2.5 text-left text-sm text-gray-600 hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg">
+                            <span className="font-medium text-gray-900">{c.nom} {c.prenom || ""}</span>
                           </button>
                         ))}
                       </div>
@@ -460,9 +466,9 @@ export default function EstimationPage() {
               </div>
             </div>
             <div className="mt-6 flex justify-end gap-3">
-              <button onClick={() => setShowChantierModal(false)} className="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:bg-slate-800">Annuler</button>
+              <button onClick={() => setShowChantierModal(false)} className="rounded-lg border border-gray-200 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">Annuler</button>
               <button onClick={handleCreateChantier} disabled={!chantierForm.nom.trim() || !chantierForm.adresse.trim() || creatingChantier}
-                className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-amber-500 to-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-lg disabled:opacity-50">
+                className="flex items-center gap-2 rounded-lg bg-[#4a7c59] px-4 py-2 text-sm font-semibold text-white hover:bg-[#3d6a4a] shadow-sm disabled:opacity-50">
                 {creatingChantier && <Loader2 className="h-4 w-4 animate-spin" />} Créer le chantier
               </button>
             </div>
@@ -476,28 +482,28 @@ export default function EstimationPage() {
 function Field({ label, value, onChange, placeholder, type = "text" }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-slate-300 mb-1.5">{label}</label>
+      <label className="block text-sm font-medium text-gray-600 mb-1.5">{label}</label>
       <input type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30" />
     </div>
   );
 }
 
 function KpiCard({ icon: Icon, label, value, color }: { icon: typeof Clock; label: string; value: string; color: string }) {
   const colors: Record<string, { bg: string; text: string }> = {
-    amber: { bg: "bg-amber-500/10", text: "text-amber-400" },
-    blue: { bg: "bg-blue-500/10", text: "text-blue-400" },
-    emerald: { bg: "bg-emerald-500/10", text: "text-emerald-400" },
-    purple: { bg: "bg-purple-500/10", text: "text-purple-400" },
+    amber: { bg: "bg-amber-50", text: "text-amber-600" },
+    blue: { bg: "bg-blue-50", text: "text-blue-600" },
+    emerald: { bg: "bg-emerald-50", text: "text-emerald-600" },
+    purple: { bg: "bg-purple-50", text: "text-purple-600" },
   };
   const c = colors[color] || colors.amber;
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
+    <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
       <div className="flex items-center gap-2 mb-2">
         <div className={`p-1.5 rounded-lg ${c.bg}`}><Icon className={`h-3.5 w-3.5 ${c.text}`} /></div>
-        <span className="text-xs font-medium text-slate-500">{label}</span>
+        <span className="text-xs font-medium text-gray-500">{label}</span>
       </div>
-      <p className="text-lg font-bold text-white">{value}</p>
+      <p className="text-lg font-bold text-gray-900">{value}</p>
     </div>
   );
 }

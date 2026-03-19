@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+import { anthropic } from "@/lib/ai/anthropic";
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,12 +10,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Image requise" }, { status: 400 });
     }
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: `Analyse cette photo de ticket de caisse et extrais les informations.
+    const response = await anthropic.messages.create({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 2000,
+      system: `Analyse cette photo de ticket de caisse et extrais les informations.
 Réponds UNIQUEMENT en JSON valide avec cette structure :
 {
   "montant": number,
@@ -25,26 +21,28 @@ Réponds UNIQUEMENT en JSON valide avec cette structure :
   "fournisseur": "string",
   "categorie": "Repas" | "Carburant" | "Matériaux" | "Outillage" | "Transport" | "Autre"
 }`,
-        },
+      messages: [
         {
           role: "user",
           content: [
             { type: "text", text: "Analyse ce ticket de caisse :" },
             {
-              type: "image_url",
-              image_url: { url: `data:image/jpeg;base64,${image}`, detail: "high" },
+              type: "image",
+              source: {
+                type: "base64",
+                media_type: "image/jpeg",
+                data: image,
+              },
             },
           ],
         },
       ],
-      temperature: 0.1,
-      response_format: { type: "json_object" },
     });
 
-    const content = completion.choices[0]?.message?.content;
-    if (!content) throw new Error("Pas de réponse de l'IA");
+    const text = response.content[0].type === "text" ? response.content[0].text : "";
+    if (!text) throw new Error("Pas de réponse de l'IA");
 
-    const result = JSON.parse(content);
+    const result = JSON.parse(text);
     return NextResponse.json(result);
   } catch (error) {
     console.error("Erreur analyse ticket:", error);

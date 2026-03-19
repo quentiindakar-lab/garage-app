@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { supabase, toCamel } from "@/lib/supabase";
 
 export async function GET(req: NextRequest) {
   try {
@@ -10,44 +10,52 @@ export async function GET(req: NextRequest) {
       const now = new Date();
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-      const [total, byCategory] = await Promise.all([
-        prisma.depense.aggregate({
-          _sum: { montant: true },
-          where: { date: { gte: startOfMonth } },
-        }),
-        prisma.depense.groupBy({
-          by: ["categorie"],
-          _sum: { montant: true },
-          where: { date: { gte: startOfMonth } },
-        }),
-      ]);
+      const { data: depensesMois } = await supabase
+        .from("depenses")
+        .select("montant, categorie")
+        .gte("date", startOfMonth.toISOString());
+
+      const totalMois = (depensesMois || []).reduce(
+        (sum: number, d: any) => sum + d.montant,
+        0
+      );
+
+      const categorieMap = new Map<string, number>();
+      for (const d of depensesMois || []) {
+        categorieMap.set(
+          d.categorie,
+          (categorieMap.get(d.categorie) || 0) + d.montant
+        );
+      }
 
       return NextResponse.json({
-        totalMois: total._sum.montant || 0,
-        parCategorie: byCategory.map((c) => ({
-          categorie: c.categorie,
-          montant: c._sum.montant || 0,
-        })),
+        totalMois,
+        parCategorie: Array.from(categorieMap.entries()).map(
+          ([categorie, montant]) => ({ categorie, montant })
+        ),
       });
     }
 
-    const where = chantierId ? { chantierId } : {};
-    const depenses = await prisma.depense.findMany({
-      where,
-      include: { chantier: { select: { nom: true } } },
-      orderBy: { date: "desc" },
-    });
+    let query = supabase
+      .from("depenses")
+      .select("*, chantier:chantiers(nom)")
+      .order("date", { ascending: false });
 
-    const result = depenses.map((d) => ({
+    if (chantierId) query = query.eq("chantier_id", chantierId);
+
+    const { data: depenses, error } = await query;
+    if (error) throw error;
+
+    const result = (depenses || []).map((d: any) => ({
       id: d.id,
       montant: d.montant,
-      date: d.date.toISOString().slice(0, 10),
+      date: new Date(d.date).toISOString().slice(0, 10),
       fournisseur: d.fournisseur || "",
       categorie: d.categorie,
-      chantierId: d.chantierId || null,
+      chantierId: d.chantier_id || null,
       chantierNom: d.chantier?.nom || null,
       notes: d.notes,
-      photoUrl: d.photoUrl,
+      photoUrl: d.photo_url,
     }));
 
     return NextResponse.json(result);
@@ -64,25 +72,28 @@ export async function POST(req: NextRequest) {
     const CATEGORY_MAP: Record<string, string> = {
       Repas: "REPAS",
       Carburant: "CARBURANT",
-      Matériaux: "MATERIAUX",
+      "Matériaux": "MATERIAUX",
       Outillage: "OUTILLAGE",
       Transport: "TRANSPORT",
       Autre: "AUTRE",
     };
 
-    const depense = await prisma.depense.create({
-      data: {
+    const { data: depense, error } = await supabase
+      .from("depenses")
+      .insert({
         montant: parseFloat(body.montant) || 0,
-        date: body.date ? new Date(body.date) : new Date(),
+        date: body.date ? new Date(body.date).toISOString() : new Date().toISOString(),
         fournisseur: body.fournisseur || null,
-        categorie: (CATEGORY_MAP[body.categorie] || body.categorie || "AUTRE") as "REPAS" | "CARBURANT" | "MATERIAUX" | "OUTILLAGE" | "TRANSPORT" | "AUTRE",
+        categorie: CATEGORY_MAP[body.categorie] || body.categorie || "AUTRE",
         notes: body.notes || null,
-        photoUrl: body.photoUrl || null,
-        chantierId: body.chantierId || null,
-      },
-    });
+        photo_url: body.photoUrl || null,
+        chantier_id: body.chantierId || null,
+      })
+      .select()
+      .single();
 
-    return NextResponse.json(depense, { status: 201 });
+    if (error) throw error;
+    return NextResponse.json(toCamel(depense), { status: 201 });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Erreur création dépense" }, { status: 500 });
@@ -93,7 +104,8 @@ export async function DELETE(req: NextRequest) {
   try {
     const id = req.nextUrl.searchParams.get("id");
     if (!id) return NextResponse.json({ error: "ID requis" }, { status: 400 });
-    await prisma.depense.delete({ where: { id } });
+    const { error } = await supabase.from("depenses").delete().eq("id", id);
+    if (error) throw error;
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error(error);
