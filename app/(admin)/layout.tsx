@@ -61,7 +61,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <nav
         className={cn(
           "fixed inset-y-0 left-0 z-50 flex flex-col border-r border-border bg-white py-3 transition-all duration-300 ease-in-out lg:static overflow-hidden",
-          "w-16",
+          "w-20",
           mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
@@ -95,7 +95,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </div>
                 <span
                   className={cn(
-                    "text-[10px] leading-none",
+                    "text-[10px] leading-tight text-center px-1",
                     isActive ? "text-[#4a7c59]" : "text-muted-foreground"
                   )}
                 >
@@ -125,7 +125,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </div>
                 <span
                   className={cn(
-                    "text-[10px] leading-none",
+                    "text-[10px] leading-tight text-center px-1",
                     isActive ? "text-[#4a7c59]" : "text-muted-foreground"
                   )}
                 >
