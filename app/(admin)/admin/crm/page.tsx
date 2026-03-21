@@ -57,16 +57,17 @@ const COLUMN_ICONS: Record<string, typeof CheckCircle2> = {
   PERDU: XCircle,
 };
 
-const DEMO_PROSPECTS: Prospect[] = [
-  { id: "1", nom: "Pierre Dupont", email: "pierre@email.com", telephone: "06 12 34 56 78", typeChantier: "Carrelage", notes: "", colonne: "TOUS_PROSPECTS", createdAt: "2026-03-10" },
-  { id: "2", nom: "Marie Laurent", email: "marie@email.com", telephone: "06 98 76 54 32", typeChantier: "Plomberie", notes: "", colonne: "TOUS_PROSPECTS", createdAt: "2026-03-08" },
-  { id: "3", nom: "Jean Martin", email: "jean@email.com", telephone: "06 55 44 33 22", typeChantier: "Peinture", notes: "", colonne: "ENVOI_DEVIS", createdAt: "2026-03-05" },
-  { id: "4", nom: "Sophie Bernard", email: "sophie@email.com", telephone: "06 11 22 33 44", typeChantier: "Électricité", notes: "", colonne: "RELANCE_1", createdAt: "2026-03-01" },
+const SEED_PROSPECTS = [
+  { nom: "Pierre Dupont", email: "pierre@email.com", telephone: "06 12 34 56 78", typeChantier: "Carrelage", colonne: "TOUS_PROSPECTS" },
+  { nom: "Marie Laurent", email: "marie@email.com", telephone: "06 98 76 54 32", typeChantier: "Plomberie", colonne: "TOUS_PROSPECTS" },
+  { nom: "Jean Martin", email: "jean@email.com", telephone: "06 55 44 33 22", typeChantier: "Peinture", colonne: "ENVOI_DEVIS" },
+  { nom: "Sophie Bernard", email: "sophie@email.com", telephone: "06 11 22 33 44", typeChantier: "Électricité", colonne: "RELANCE_1" },
 ];
 
 export default function CrmPage() {
   const router = useRouter();
-  const [prospects, setProspects] = useState<Prospect[]>(DEMO_PROSPECTS);
+  const [prospects, setProspects] = useState<Prospect[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [showAdd, setShowAdd] = useState(false);
   const [popup, setPopup] = useState<{ prospect: Prospect; action: string; message: string } | null>(null);
@@ -78,11 +79,26 @@ export default function CrmPage() {
   const fetchProspects = useCallback(async () => {
     try {
       const res = await fetch("/api/prospects");
-      if (res.ok) {
-        const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) setProspects(data);
+      if (!res.ok) return;
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        setProspects(data);
+      } else {
+        const seeded: Prospect[] = [];
+        for (const demo of SEED_PROSPECTS) {
+          try {
+            const r = await fetch("/api/prospects", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(demo),
+            });
+            if (r.ok) seeded.push(await r.json());
+          } catch {}
+        }
+        setProspects(seeded);
       }
     } catch {}
+    setLoading(false);
   }, []);
 
   useEffect(() => { fetchProspects(); }, [fetchProspects]);
@@ -108,6 +124,7 @@ export default function CrmPage() {
 
     if (prospect.colonne === targetColumn) return;
 
+    const previousColumn = prospect.colonne;
     setProspects((ps) => ps.map((p) => p.id === prospect.id ? { ...p, colonne: targetColumn } : p));
 
     if (targetColumn === "ENVOI_DEVIS") {
@@ -131,12 +148,18 @@ export default function CrmPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: prospect.id, colonne: targetColumn }),
       });
-      if (res.ok && targetColumn === "GAGNE") {
+      if (!res.ok) {
+        setProspects((ps) => ps.map((p) => p.id === prospect.id ? { ...p, colonne: previousColumn } : p));
+        return;
+      }
+      if (targetColumn === "GAGNE") {
         const updated = await res.json();
         setProspects((ps) => ps.map((p) => p.id === prospect.id ? { ...p, ...updated } : p));
         setGagnePopup({ prospect: updated, clientId: updated.clientId });
       }
-    } catch {}
+    } catch {
+      setProspects((ps) => ps.map((p) => p.id === prospect.id ? { ...p, colonne: previousColumn } : p));
+    }
   };
 
   const sendEmail = async () => {
@@ -166,7 +189,7 @@ export default function CrmPage() {
         <div>
           <h1 className="text-3xl font-bold text-gray-900">CRM / Pipeline</h1>
           <p className="text-gray-500 mt-1">
-            {prospectsSafe.length} prospect{prospectsSafe.length > 1 ? "s" : ""}
+            {loading ? "Chargement…" : `${prospectsSafe.length} prospect${prospectsSafe.length > 1 ? "s" : ""}`}
           </p>
         </div>
         <div className="flex gap-2">
@@ -175,7 +198,7 @@ export default function CrmPage() {
             <Mail className="h-4 w-4" /> Emails IA
           </button>
           <button onClick={() => setShowAdd(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#f59e0b] hover:bg-[#e8960a] text-black font-semibold text-sm transition-colors">
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#4a7c59] hover:bg-[#3d6a4a] text-white font-semibold text-sm transition-colors">
             <Plus className="h-4 w-4" /> Nouveau prospect
           </button>
         </div>

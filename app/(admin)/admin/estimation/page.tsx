@@ -260,7 +260,7 @@ export default function EstimationPage() {
             </div>
 
             <button type="submit" disabled={loading}
-              className="w-full flex items-center justify-center gap-2 bg-[#f59e0b] hover:bg-[#e8960a] disabled:bg-gray-200 text-black disabled:text-gray-400 font-semibold py-3 rounded-lg transition-colors">
+              className="w-full flex items-center justify-center gap-2 bg-[#4a7c59] hover:bg-[#3d6a4a] disabled:bg-gray-200 text-white disabled:text-gray-400 font-semibold py-3 rounded-lg transition-colors">
               {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Estimation en cours...</> : <><Sparkles className="h-4 w-4" /> Générer l&apos;estimation</>}
             </button>
           </form>

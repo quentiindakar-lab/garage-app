@@ -148,11 +148,11 @@ export default function ClientsPage() {
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="grid h-10 w-10 shrink-0 place-content-center rounded-lg bg-amber-500/10">
+                  <div className="grid h-10 w-10 shrink-0 place-content-center rounded-lg bg-[#4a7c59]/10">
                     {client.typeClient === "ENTREPRISE" ? (
-                      <Building2 className="h-5 w-5 text-amber-400" />
+                      <Building2 className="h-5 w-5 text-[#4a7c59]" />
                     ) : (
-                      <User className="h-5 w-5 text-amber-400" />
+                      <User className="h-5 w-5 text-[#4a7c59]" />
                     )}
                   </div>
                   <div>
@@ -189,7 +189,7 @@ export default function ClientsPage() {
                   <HardHat className="h-3.5 w-3.5" />
                   <span>{client.nbChantiers} chantier{client.nbChantiers > 1 ? "s" : ""}</span>
                 </div>
-                <span className="text-sm font-semibold text-amber-400">
+                <span className="text-sm font-semibold text-[#4a7c59]">
                   {formatMoney(client.caTotal)}
                 </span>
               </div>

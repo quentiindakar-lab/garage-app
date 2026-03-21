@@ -211,7 +211,7 @@ export default function ChantierDetailPage() {
         </div>
         <div className="flex items-center gap-2">
           <button onClick={() => router.push(`/admin/estimation?chantier=${id}`)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#f59e0b] hover:bg-[#e8960a] text-black text-sm font-semibold transition-colors">
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#4a7c59] hover:bg-[#3d6a4a] text-white text-sm font-semibold transition-colors">
             <Sparkles className="h-4 w-4" /> Estimation IA
           </button>
           {editing ? (

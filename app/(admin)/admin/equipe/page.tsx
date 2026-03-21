@@ -113,7 +113,7 @@ export default function EquipePage() {
           <p className="text-gray-500 mt-1">{actifs} membre{actifs > 1 ? "s" : ""} actif{actifs > 1 ? "s" : ""} sur {membres.length}</p>
         </div>
         <button onClick={() => setShowAdd(true)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#f59e0b] hover:bg-[#e8960a] text-black font-semibold text-sm transition-colors">
+          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#4a7c59] hover:bg-[#3d6a4a] text-white font-semibold text-sm transition-colors">
           <Plus className="h-4 w-4" /> Ajouter un membre
         </button>
       </div>

@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
         telephone: body.telephone || null,
         type_chantier: body.typeChantier || null,
         notes: body.notes || null,
-        colonne: "TOUS_PROSPECTS",
+        colonne: body.colonne || "TOUS_PROSPECTS",
       })
       .select()
       .single();
