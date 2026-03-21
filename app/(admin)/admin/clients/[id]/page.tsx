@@ -170,7 +170,7 @@ export default function ClientDetailPage() {
                 <div
                   key={ch.id}
                   onClick={() => router.push(`/admin/chantiers/${ch.id}`)}
-                  className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-4 cursor-pointer hover:bg-gray-50 hover:-translate-y-[3px] hover:scale-[1.01] hover:shadow-lg transition-[transform,box-shadow,background-color] duration-200 ease-in-out"
                 >
                   <div>
                     <p className="font-medium text-gray-900">{ch.nom}</p>

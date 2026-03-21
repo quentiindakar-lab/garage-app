@@ -211,7 +211,7 @@ export default function ChantierDetailPage() {
         </div>
         <div className="flex items-center gap-2">
           <button onClick={() => router.push(`/admin/estimation?chantier=${id}`)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#4a7c59] hover:bg-[#3d6a4a] text-white text-sm font-semibold transition-colors">
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#4a7c59] hover:bg-[#3d6a4a] hover:-translate-y-[2px] hover:shadow-md text-white text-sm font-semibold transition-[transform,box-shadow,background-color] duration-200 ease-in-out">
             <Sparkles className="h-4 w-4" /> Estimation IA
           </button>
           {editing ? (
@@ -221,7 +221,7 @@ export default function ChantierDetailPage() {
                 Annuler
               </button>
               <button onClick={saveEdit} disabled={saving}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#4a7c59] hover:bg-[#3d6a4a] text-white font-semibold text-sm transition-colors">
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#4a7c59] hover:bg-[#3d6a4a] hover:-translate-y-[2px] hover:shadow-md text-white font-semibold text-sm transition-[transform,box-shadow,background-color] duration-200 ease-in-out">
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Enregistrer
               </button>
             </>

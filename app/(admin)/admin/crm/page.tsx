@@ -198,7 +198,7 @@ export default function CrmPage() {
             <Mail className="h-4 w-4" /> Emails IA
           </button>
           <button onClick={() => setShowAdd(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#4a7c59] hover:bg-[#3d6a4a] text-white font-semibold text-sm transition-colors">
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#4a7c59] hover:bg-[#3d6a4a] hover:-translate-y-[2px] hover:shadow-md text-white font-semibold text-sm transition-[transform,box-shadow,background-color] duration-200 ease-in-out">
             <Plus className="h-4 w-4" /> Nouveau prospect
           </button>
         </div>
@@ -334,7 +334,7 @@ function ProspectCardUI({ prospect, isDragging }: { prospect: Prospect; isDraggi
   const hue = prospect.nom.split("").reduce((a, c) => a + c.charCodeAt(0), 0) % 360;
 
   return (
-    <div className={`rounded-lg border border-gray-200 bg-white p-3 shadow-sm ${isDragging ? "shadow-xl opacity-90 rotate-2 scale-105" : "hover:border-gray-300"} transition-all cursor-grab active:cursor-grabbing`}>
+    <div className={`rounded-lg border border-gray-200 bg-white p-3 shadow-sm ${isDragging ? "shadow-xl opacity-90 rotate-2 scale-105" : "hover:border-gray-300 hover:-translate-y-[3px] hover:scale-[1.01] hover:shadow-lg"} transition-[transform,box-shadow] duration-200 ease-in-out cursor-grab active:cursor-grabbing`}>
       <div className="flex items-start gap-3">
         <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0" style={{ background: `hsl(${hue}, 55%, 45%)` }}>
           {initials}

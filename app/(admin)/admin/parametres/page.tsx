@@ -88,7 +88,7 @@ export default function ParametresPage() {
 
       <div className="flex items-center gap-3">
         <button onClick={handleSave} disabled={saving}
-          className="flex-1 flex items-center justify-center gap-2 bg-[#4a7c59] hover:bg-[#3d6a4a] disabled:bg-gray-200 text-white disabled:text-gray-400 font-semibold py-3 rounded-lg transition-colors">
+          className="flex-1 flex items-center justify-center gap-2 bg-[#4a7c59] hover:bg-[#3d6a4a] hover:-translate-y-[2px] hover:shadow-md disabled:bg-gray-200 disabled:hover:translate-y-0 disabled:hover:shadow-none text-white disabled:text-gray-400 font-semibold py-3 rounded-lg transition-[transform,box-shadow,background-color] duration-200 ease-in-out">
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : saved ? <CheckCircle2 className="h-4 w-4" /> : <Save className="h-4 w-4" />}
           {saving ? "Enregistrement..." : saved ? "Enregistré !" : "Enregistrer les paramètres"}
         </button>

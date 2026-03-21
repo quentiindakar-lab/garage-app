@@ -116,7 +116,7 @@ export default function ClientsPage() {
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="btp-btn-primary px-4 py-2.5 text-sm font-semibold shadow-lg shadow-black/20"
+          className="btp-btn-primary px-4 py-2.5 text-sm font-semibold shadow-lg shadow-black/20 hover:-translate-y-[2px] hover:shadow-xl transition-[transform,box-shadow] duration-200 ease-in-out"
         >
           <Plus className="h-4 w-4" />
           Nouveau client
@@ -144,7 +144,7 @@ export default function ClientsPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
               onClick={() => router.push(`/admin/clients/${client.id}`)}
-              className="cursor-pointer btp-card p-5 transition-colors hover:border-white/10 hover:bg-card/90"
+              className="cursor-pointer btp-card p-5 hover:border-white/10 hover:bg-card/90 hover:-translate-y-[3px] hover:scale-[1.01] hover:shadow-lg transition-[transform,box-shadow,background-color,border-color] duration-200 ease-in-out"
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">

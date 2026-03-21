@@ -97,7 +97,7 @@ export default function ChantiersPage() {
         </div>
         <button
           onClick={() => router.push("/admin/chantiers/nouveau")}
-          className="btp-btn-primary flex items-center gap-2 px-4 py-2.5 font-semibold text-sm"
+          className="btp-btn-primary flex items-center gap-2 px-4 py-2.5 font-semibold text-sm hover:-translate-y-[2px] hover:shadow-md transition-[transform,box-shadow] duration-200 ease-in-out"
         >
           <Plus className="h-4 w-4" />
           Nouveau chantier
@@ -144,7 +144,7 @@ export default function ChantiersPage() {
             <div
               key={c.id}
               onClick={() => router.push(`/admin/chantiers/${c.id}`)}
-              className="btp-card p-6 cursor-pointer hover:shadow-md transition-shadow"
+              className="btp-card p-6 cursor-pointer hover:shadow-lg hover:-translate-y-[3px] hover:scale-[1.01] transition-[transform,box-shadow] duration-200 ease-in-out"
             >
               <div className="flex items-start justify-between mb-3">
                 <h3 className="text-base font-semibold text-foreground">

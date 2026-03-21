@@ -291,8 +291,8 @@ function StatCard({
     <div
       onClick={onClick}
       className={accent
-        ? "p-5 rounded-2xl bg-[#4a7c59] border border-[#4a7c59] shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-        : "p-5 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+        ? "p-5 rounded-2xl bg-[#4a7c59] border border-[#4a7c59] shadow-sm hover:shadow-lg hover:-translate-y-[3px] hover:scale-[1.01] transition-[transform,box-shadow] duration-200 ease-in-out cursor-pointer"
+        : "p-5 rounded-2xl bg-white border border-border shadow-sm hover:shadow-lg hover:-translate-y-[3px] hover:scale-[1.01] transition-[transform,box-shadow] duration-200 ease-in-out cursor-pointer"
       }
     >
       <div className="flex items-start justify-between gap-3">
