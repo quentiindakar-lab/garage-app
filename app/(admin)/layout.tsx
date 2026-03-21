@@ -78,8 +78,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   setMobileOpen(false);
                 }}
                 className={cn(
-                  "relative w-full flex flex-col items-center justify-center gap-1 py-2 transition-colors",
-                  "hover:bg-[#f0f0eb]",
+                  "relative w-full flex flex-col items-center justify-center gap-1 py-2 transition-[transform,background-color] duration-200 ease-in-out",
+                  "hover:bg-[#e8e8e2] hover:-translate-y-[1px]",
                   isActive ? "border-l-2 border-[#4a7c59]" : "border-l-2 border-transparent"
                 )}
               >
@@ -108,7 +108,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 key={item.href}
                 onClick={() => router.push(item.href)}
                 className={cn(
-                  "relative w-full flex flex-col items-center justify-center gap-1 py-2 transition-colors hover:bg-[#f0f0eb]",
+                  "relative w-full flex flex-col items-center justify-center gap-1 py-2 transition-[transform,background-color] duration-200 ease-in-out hover:bg-[#e8e8e2] hover:-translate-y-[1px]",
                   isActive ? "border-l-2 border-[#4a7c59]" : "border-l-2 border-transparent"
                 )}
               >
