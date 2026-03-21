@@ -187,7 +187,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* Content */}
         <main className="flex-1 overflow-y-auto bg-background p-4 lg:p-6">
-          {children}
+          <div key={pathname} className="animate-fadeIn">
+            {children}
+          </div>
         </main>
       </div>
     </div>
