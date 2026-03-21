@@ -205,6 +205,37 @@ export default function CrmPage() {
       </div>
 
       {/* Kanban */}
+      {loading ? (
+        <div className="flex-1 overflow-x-auto pb-4">
+          <div className="flex gap-4" style={{ minWidth: COLUMNS.length * 280 }}>
+            {COLUMNS.map((col) => (
+              <div key={col.id} className="w-72 shrink-0 rounded-2xl border border-gray-200 bg-gray-100 p-3 animate-pulse">
+                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-300">
+                  <div className="h-4 w-28 rounded bg-gray-200" />
+                  <div className="ml-auto h-5 w-6 rounded-full bg-gray-200" />
+                </div>
+                <div className="space-y-2">
+                  {[...Array(col.id === "TOUS_PROSPECTS" ? 3 : col.id === "ENVOI_DEVIS" ? 2 : 1)].map((_, j) => (
+                    <div key={j} className="rounded-lg border border-gray-200 bg-white p-3">
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-full bg-gray-200 shrink-0" />
+                        <div className="flex-1 space-y-2">
+                          <div className="h-3 w-24 rounded bg-gray-200" />
+                          <div className="h-2.5 w-16 rounded bg-gray-200" />
+                        </div>
+                      </div>
+                      <div className="mt-2 space-y-1">
+                        <div className="h-2.5 w-32 rounded bg-gray-200" />
+                        <div className="h-2.5 w-24 rounded bg-gray-200" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
       <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="flex-1 overflow-x-auto pb-4">
           <div className="flex gap-4" style={{ minWidth: COLUMNS.length * 280 }}>
@@ -229,6 +260,7 @@ export default function CrmPage() {
           {activeProspect && <ProspectCardUI prospect={activeProspect} isDragging />}
         </DragOverlay>
       </DndContext>
+      )}
 
       {/* Add prospect modal */}
       {showAdd && <AddProspectModal onClose={() => setShowAdd(false)} onAdd={(p) => { setProspects((ps) => [p, ...ps]); setShowAdd(false); }} />}

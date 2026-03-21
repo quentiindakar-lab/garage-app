@@ -120,7 +120,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div>
           <h1 className="text-2xl font-semibold text-foreground">Dashboard</h1>
           <p className="text-muted-foreground mt-1">Bienvenue sur votre tableau de bord</p>
@@ -128,9 +128,46 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="p-5 rounded-2xl bg-white border border-border shadow-sm animate-pulse">
-              <div className="h-20 rounded-xl bg-[#f5f5f0]" />
+              <div className="h-8 w-8 rounded-xl bg-[#f5f5f0] mb-3" />
+              <div className="h-3 w-20 rounded bg-[#f5f5f0] mb-2" />
+              <div className="h-7 w-16 rounded bg-[#f5f5f0]" />
             </div>
           ))}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 btp-card p-5 animate-pulse">
+            <div className="h-5 w-36 rounded bg-[#f5f5f0] mb-6" />
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="flex items-center gap-4 p-3">
+                <div className="h-8 w-8 rounded-md bg-[#f5f5f0]" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-3 w-3/4 rounded bg-[#f5f5f0]" />
+                  <div className="h-2.5 w-1/2 rounded bg-[#f5f5f0]" />
+                </div>
+                <div className="h-2.5 w-10 rounded bg-[#f5f5f0]" />
+              </div>
+            ))}
+          </div>
+          <div className="space-y-6">
+            <div className="btp-card p-5 animate-pulse">
+              <div className="h-5 w-40 rounded bg-[#f5f5f0] mb-4" />
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="flex items-center justify-between py-3">
+                  <div className="space-y-2">
+                    <div className="h-3 w-28 rounded bg-[#f5f5f0]" />
+                    <div className="h-2.5 w-16 rounded bg-[#f5f5f0]" />
+                  </div>
+                  <div className="h-3 w-3 rounded bg-[#f5f5f0]" />
+                </div>
+              ))}
+            </div>
+            <div className="btp-card p-5 animate-pulse">
+              <div className="h-5 w-28 rounded bg-[#f5f5f0] mb-4" />
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="h-10 rounded-xl bg-[#f5f5f0] mb-2" />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     );

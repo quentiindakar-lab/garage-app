@@ -101,8 +101,33 @@ export default function ClientsPage() {
 
   if (loading) {
     return (
-      <div className="flex h-full items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Clients</h1>
+          <p className="text-sm text-muted-foreground">Chargement…</p>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="btp-card p-5 animate-pulse">
+              <div className="flex items-start gap-3">
+                <div className="h-10 w-10 rounded-lg bg-gray-200 shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 w-28 rounded bg-gray-200" />
+                  <div className="h-3 w-20 rounded bg-gray-200" />
+                </div>
+                <div className="h-5 w-16 rounded-full bg-gray-200" />
+              </div>
+              <div className="mt-4 space-y-2">
+                <div className="h-3 w-3/4 rounded bg-gray-200" />
+                <div className="h-3 w-1/2 rounded bg-gray-200" />
+              </div>
+              <div className="mt-4 pt-3 border-t border-border/70 flex justify-between">
+                <div className="h-3 w-20 rounded bg-gray-200" />
+                <div className="h-3 w-14 rounded bg-gray-200" />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

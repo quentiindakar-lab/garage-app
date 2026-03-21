@@ -62,6 +62,7 @@ export default function PlanningPage() {
   const [vue, setVue] = useState<Vue>("mois");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [chantiers, setChantiers] = useState<PlanningChantier[]>(DEMO_CHANTIERS);
+  const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<PlanningChantier | null>(null);
   const [filterMembre, setFilterMembre] = useState<string | null>(null);
 
@@ -84,6 +85,7 @@ export default function PlanningPage() {
           }
         }
       } catch {}
+      setLoading(false);
     })();
   }, []);
 
@@ -154,7 +156,26 @@ export default function PlanningPage() {
         </button>
       </div>
 
-      {vue === "mois" ? (
+      {loading ? (
+        <div className="flex-1 rounded-2xl border border-gray-200 bg-white p-4 animate-pulse">
+          <div className="grid grid-cols-7 gap-1 mb-2">
+            {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((d) => (
+              <div key={d} className="h-6 flex items-center justify-center">
+                <div className="h-3 w-8 rounded bg-gray-200" />
+              </div>
+            ))}
+          </div>
+          <div className="grid grid-cols-7 gap-1">
+            {[...Array(35)].map((_, i) => (
+              <div key={i} className="h-20 rounded-lg bg-gray-100 p-1">
+                <div className="h-3 w-4 rounded bg-gray-200 mb-1" />
+                {i % 5 === 0 && <div className="h-4 w-full rounded bg-gray-200/60" />}
+                {i % 7 === 2 && <div className="h-4 w-full rounded bg-gray-200/60 mt-0.5" />}
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : vue === "mois" ? (
         <MonthView currentDate={currentDate} chantiers={filteredChantiers} onSelect={setSelected} />
       ) : (
         <WeekView currentDate={currentDate} chantiers={filteredChantiers} onSelect={setSelected} />

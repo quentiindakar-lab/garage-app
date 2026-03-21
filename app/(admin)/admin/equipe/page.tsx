@@ -57,6 +57,7 @@ const DEMO_MEMBRES: Membre[] = [
 export default function EquipePage() {
   const router = useRouter();
   const [membres, setMembres] = useState<Membre[]>(DEMO_MEMBRES);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [showAdd, setShowAdd] = useState(false);
   const [selected, setSelected] = useState<Membre | null>(null);
@@ -70,6 +71,7 @@ export default function EquipePage() {
           if (Array.isArray(data) && data.length > 0) setMembres(data);
         }
       } catch {}
+      setLoading(false);
     })();
   }, []);
 
@@ -125,7 +127,23 @@ export default function EquipePage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {filtered.map((m) => {
+        {loading ? [...Array(6)].map((_, i) => (
+          <div key={i} className="rounded-2xl border border-gray-200 bg-white p-5 animate-pulse">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-full bg-gray-200 shrink-0" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 w-28 rounded bg-gray-200" />
+                <div className="h-5 w-16 rounded-full bg-gray-200" />
+              </div>
+              <div className="h-5 w-10 rounded-full bg-gray-200" />
+            </div>
+            <div className="mt-4 space-y-2">
+              <div className="h-3 w-3/4 rounded bg-gray-200" />
+              <div className="h-3 w-1/2 rounded bg-gray-200" />
+              <div className="h-3 w-2/3 rounded bg-gray-200" />
+            </div>
+          </div>
+        )) : filtered.map((m) => {
           const hue = (m.nom + m.prenom).split("").reduce((a, c) => a + c.charCodeAt(0), 0) % 360;
           const initials = `${m.prenom[0]}${m.nom[0]}`.toUpperCase();
           const roleStyle = ROLE_STYLE[m.role] || ROLE_STYLE.Ouvrier;
