@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
+export const revalidate = 30;
+
 interface ActivityItem {
   type: string;
   title: string;

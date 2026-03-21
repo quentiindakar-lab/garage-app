@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, toCamel, toSnake } from "@/lib/supabase";
 
+const CACHE_HEADERS = { "Cache-Control": "private, max-age=30, stale-while-revalidate=59" };
+
 export async function GET(req: NextRequest) {
   try {
     const id = req.nextUrl.searchParams.get("id");
@@ -34,7 +36,7 @@ export async function GET(req: NextRequest) {
         0
       );
 
-      return NextResponse.json({ ...(toCamel(client) as Record<string, unknown>), caTotal });
+      return NextResponse.json({ ...(toCamel(client) as Record<string, unknown>), caTotal }, { headers: CACHE_HEADERS });
     }
 
     const { data: clients, error } = await supabase
@@ -58,7 +60,7 @@ export async function GET(req: NextRequest) {
       ),
     }));
 
-    return NextResponse.json(result);
+    return NextResponse.json(result, { headers: CACHE_HEADERS });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });

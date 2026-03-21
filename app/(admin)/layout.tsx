@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
 
 import { cn } from "@/lib/utils";
 import {
@@ -40,6 +41,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  useEffect(() => {
+    router.prefetch("/admin/dashboard");
+    router.prefetch("/admin/chantiers");
+    router.prefetch("/admin/clients");
+    router.prefetch("/admin/crm");
+  }, [router]);
+
   return (
     <div className="flex h-screen overflow-hidden bg-background text-foreground">
       {mobileOpen && (
@@ -71,12 +79,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
             return (
-              <button
+              <Link
                 key={item.href}
-                onClick={() => {
-                  router.push(item.href);
-                  setMobileOpen(false);
-                }}
+                href={item.href}
+                prefetch={true}
+                onClick={() => setMobileOpen(false)}
                 className={cn(
                   "relative w-full flex flex-col items-center justify-center gap-1 py-2 transition-[transform,background-color] duration-200 ease-in-out",
                   "hover:bg-[#e8e8e2] hover:-translate-y-[1px]",
@@ -94,7 +101,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 >
                   {item.label}
                 </span>
-              </button>
+              </Link>
             );
           })}
         </div>
@@ -104,9 +111,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {BOTTOM_NAV.map((item) => {
             const isActive = pathname === item.href;
             return (
-              <button
+              <Link
                 key={item.href}
-                onClick={() => router.push(item.href)}
+                href={item.href}
+                prefetch={true}
                 className={cn(
                   "relative w-full flex flex-col items-center justify-center gap-1 py-2 transition-[transform,background-color] duration-200 ease-in-out hover:bg-[#e8e8e2] hover:-translate-y-[1px]",
                   isActive ? "border-l-2 border-[#4a7c59]" : "border-l-2 border-transparent"
@@ -123,7 +131,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 >
                   {item.label}
                 </span>
-              </button>
+              </Link>
             );
           })}
         </div>

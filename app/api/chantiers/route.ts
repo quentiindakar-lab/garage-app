@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, toCamel, toSnake } from "@/lib/supabase";
 
+const CACHE_HEADERS = { "Cache-Control": "private, max-age=30, stale-while-revalidate=59" };
+
 export async function GET(req: NextRequest) {
   try {
     const stats = req.nextUrl.searchParams.get("stats");
@@ -40,7 +42,7 @@ export async function GET(req: NextRequest) {
         devisEnAttente: (devisRes.count || 0) + (prospectsDevisRes.count || 0),
         caMois,
         total: totalRes.count || 0,
-      });
+      }, { headers: CACHE_HEADERS });
     }
 
     const { data: chantiers, error } = await supabase
@@ -68,7 +70,7 @@ export async function GET(req: NextRequest) {
       };
     });
 
-    return NextResponse.json(result);
+    return NextResponse.json(result, { headers: CACHE_HEADERS });
   } catch (error) {
     console.error(error);
     return NextResponse.json([]);
