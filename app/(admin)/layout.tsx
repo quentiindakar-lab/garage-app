@@ -2,7 +2,6 @@
 
 import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
-import { useTheme } from "@/components/theme-provider";
 
 import { cn } from "@/lib/utils";
 import {
@@ -38,7 +37,6 @@ const BOTTOM_NAV = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { theme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
 
