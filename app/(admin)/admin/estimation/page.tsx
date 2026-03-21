@@ -469,7 +469,7 @@ export default function EstimationPage() {
               <button onClick={() => setShowChantierModal(false)} className="rounded-lg border border-gray-200 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">Annuler</button>
               <button onClick={handleCreateChantier} disabled={!chantierForm.nom.trim() || !chantierForm.adresse.trim() || creatingChantier}
                 className="flex items-center gap-2 rounded-lg bg-[#4a7c59] px-4 py-2 text-sm font-semibold text-white hover:bg-[#3d6a4a] shadow-sm disabled:opacity-50">
-                {creatingChantier && <Loader2 className="h-4 w-4 animate-spin" />} Créer le chantier
+                {creatingChantier ? <><Loader2 className="h-4 w-4 animate-spin" /> Création...</> : "Créer le chantier"}
               </button>
             </div>
           </div>

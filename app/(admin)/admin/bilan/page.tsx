@@ -333,7 +333,7 @@ function AddDepenseModal({ onClose, onAdd, scanResult }: { onClose: () => void; 
           <MField label="Chantier (optionnel)" value={form.chantierNom} onChange={(v) => setForm({ ...form, chantierNom: v })} placeholder="Nom du chantier" />
           <button type="submit" disabled={saving || !form.montant}
             className="btp-btn-primary w-full flex items-center justify-center gap-2 font-semibold py-2.5 transition-colors">
-            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />} Enregistrer
+            {saving ? <><Loader2 className="h-4 w-4 animate-spin" /> Enregistrement...</> : <><CheckCircle2 className="h-4 w-4" /> Enregistrer</>}
           </button>
         </form>
       </div>

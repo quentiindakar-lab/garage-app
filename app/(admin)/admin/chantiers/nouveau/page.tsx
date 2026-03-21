@@ -316,7 +316,7 @@ export default function NouveauChantierPage() {
               <button onClick={() => setShowNewClientModal(false)} className="rounded-lg border border-gray-200 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">Annuler</button>
               <button onClick={handleCreateClient} disabled={!newClient.nom.trim() || savingClient}
                 className="flex items-center gap-2 rounded-lg bg-[#4a7c59] hover:bg-[#3d6a4a] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">
-                {savingClient && <Loader2 className="h-4 w-4 animate-spin" />} Créer
+                {savingClient ? <><Loader2 className="h-4 w-4 animate-spin" /> Création...</> : "Créer"}
               </button>
             </div>
           </div>

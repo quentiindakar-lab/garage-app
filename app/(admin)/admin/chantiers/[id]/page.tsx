@@ -66,6 +66,7 @@ export default function ChantierDetailPage() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [editForm, setEditForm] = useState<Partial<Chantier>>({});
   const [depenses, setDepenses] = useState<any[]>([]);
   const [totalDepenses, setTotalDepenses] = useState(0);
@@ -159,6 +160,7 @@ export default function ChantierDetailPage() {
 
   const deleteChantier = async () => {
     if (!confirm("Supprimer ce chantier ?")) return;
+    setDeleting(true);
     try {
       await fetch(`/api/chantiers?id=${id}`, { method: "DELETE" });
     } catch {}
@@ -222,7 +224,7 @@ export default function ChantierDetailPage() {
               </button>
               <button onClick={saveEdit} disabled={saving}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#4a7c59] hover:bg-[#3d6a4a] hover:-translate-y-[2px] hover:shadow-md text-white font-semibold text-sm transition-[transform,box-shadow,background-color] duration-200 ease-in-out">
-                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Enregistrer
+                {saving ? <><Loader2 className="h-4 w-4 animate-spin" /> Enregistrement...</> : <><Save className="h-4 w-4" /> Enregistrer</>}
               </button>
             </>
           ) : (
@@ -231,9 +233,9 @@ export default function ChantierDetailPage() {
                 className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 bg-white text-sm text-gray-600 hover:text-gray-900 transition-colors shadow-sm">
                 <Edit2 className="h-4 w-4" /> Modifier
               </button>
-              <button onClick={deleteChantier}
-                className="p-2 rounded-lg border border-gray-200 bg-white text-gray-400 hover:text-red-500 transition-colors shadow-sm">
-                <Trash2 className="h-4 w-4" />
+              <button onClick={deleteChantier} disabled={deleting}
+                className="p-2 rounded-lg border border-gray-200 bg-white text-gray-400 hover:text-red-500 disabled:opacity-50 transition-colors shadow-sm">
+                {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
               </button>
             </>
           )}

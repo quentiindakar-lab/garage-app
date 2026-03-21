@@ -245,13 +245,12 @@ export default function EmailsIAPage() {
                     Annuler
                   </button>
                   <button onClick={generateEmail} disabled={generating}
-                    className="py-2.5 px-4 rounded-lg border border-gray-200 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-colors">
-                    <Sparkles className="h-4 w-4" />
+                    className="py-2.5 px-4 rounded-lg border border-gray-200 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-50 disabled:opacity-50 transition-colors">
+                    {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
                   </button>
                   <button onClick={sendEmail} disabled={sending}
                     className="flex-1 flex items-center justify-center gap-2 bg-[#f59e0b] hover:bg-[#e8960a] text-black font-semibold py-2.5 rounded-lg text-sm transition-colors">
-                    {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                    Envoyer
+                    {sending ? <><Loader2 className="h-4 w-4 animate-spin" /> Envoi...</> : <><Send className="h-4 w-4" /> Envoyer</>}
                   </button>
                 </div>
               </>

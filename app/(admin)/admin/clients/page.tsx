@@ -304,8 +304,7 @@ export default function ClientsPage() {
                   disabled={!form.nom.trim() || saving}
                   className="btp-btn-primary flex items-center gap-2 px-4 py-2 text-sm font-semibold shadow-lg disabled:opacity-50"
                 >
-                  {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-                  Créer le client
+                  {saving ? <><Loader2 className="h-4 w-4 animate-spin" /> Création...</> : "Créer le client"}
                 </button>
               </div>
             </motion.div>

@@ -61,6 +61,8 @@ export default function EquipePage() {
   const [search, setSearch] = useState("");
   const [showAdd, setShowAdd] = useState(false);
   const [selected, setSelected] = useState<Membre | null>(null);
+  const [toggling, setToggling] = useState(false);
+  const [deletingMembre, setDeletingMembre] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -88,6 +90,7 @@ export default function EquipePage() {
     : [];
 
   const toggleActif = async (id: string) => {
+    setToggling(true);
     setMembres((ms) => ms.map((m) => m.id === id ? { ...m, actif: !m.actif } : m));
     try {
       await fetch("/api/equipe", {
@@ -96,13 +99,18 @@ export default function EquipePage() {
         body: JSON.stringify({ id, toggleActif: true }),
       });
     } catch {}
+    setToggling(false);
+    setSelected(null);
   };
 
   const deleteMembre = async (id: string) => {
+    setDeletingMembre(true);
     setMembres((ms) => (Array.isArray(ms) ? ms.filter((m) => m.id !== id) : []));
     try {
       await fetch(`/api/equipe?id=${id}`, { method: "DELETE" });
     } catch {}
+    setDeletingMembre(false);
+    setSelected(null);
   };
 
   const actifs = Array.isArray(membres) ? membres.filter((m) => m.actif).length : 0;
@@ -239,13 +247,13 @@ export default function EquipePage() {
               </div>
             )}
             <div className="flex items-center gap-2 pt-2">
-              <button onClick={() => { toggleActif(selected.id); setSelected(null); }}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-colors ${selected.actif ? "border border-red-200 text-red-500 hover:bg-red-50" : "border border-emerald-200 text-emerald-600 hover:bg-emerald-50"}`}>
-                {selected.actif ? <><XCircle className="h-4 w-4" /> Désactiver</> : <><CheckCircle2 className="h-4 w-4" /> Réactiver</>}
+              <button onClick={() => toggleActif(selected.id)} disabled={toggling || deletingMembre}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${selected.actif ? "border border-red-200 text-red-500 hover:bg-red-50" : "border border-emerald-200 text-emerald-600 hover:bg-emerald-50"}`}>
+                {toggling ? <><Loader2 className="h-4 w-4 animate-spin" /> {selected.actif ? "Désactivation..." : "Réactivation..."}</> : selected.actif ? <><XCircle className="h-4 w-4" /> Désactiver</> : <><CheckCircle2 className="h-4 w-4" /> Réactiver</>}
               </button>
-              <button onClick={() => { deleteMembre(selected.id); setSelected(null); }}
-                className="py-2.5 px-4 rounded-lg border border-gray-200 text-gray-400 hover:text-red-500 transition-colors">
-                <Trash2 className="h-4 w-4" />
+              <button onClick={() => deleteMembre(selected.id)} disabled={toggling || deletingMembre}
+                className="py-2.5 px-4 rounded-lg border border-gray-200 text-gray-400 hover:text-red-500 disabled:opacity-50 transition-colors">
+                {deletingMembre ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
               </button>
             </div>
           </div>
@@ -301,7 +309,7 @@ function AddMembreModal({ onClose, onAdd }: { onClose: () => void; onAdd: (m: Me
           <MField label="Spécialité" value={form.specialite} onChange={(v) => setForm({ ...form, specialite: v })} placeholder="Plomberie, carrelage..." />
           <button type="submit" disabled={saving || !form.nom || !form.prenom}
             className="w-full flex items-center justify-center gap-2 bg-[#f59e0b] hover:bg-[#e8960a] disabled:bg-gray-200 text-black disabled:text-gray-400 font-semibold py-2.5 rounded-lg transition-colors">
-            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />} Ajouter
+            {saving ? <><Loader2 className="h-4 w-4 animate-spin" /> Ajout...</> : <><Plus className="h-4 w-4" /> Ajouter</>}
           </button>
         </form>
       </div>

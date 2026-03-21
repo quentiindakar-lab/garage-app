@@ -317,8 +317,7 @@ export default function CrmPage() {
               <button onClick={() => setPopup(null)} className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-500 hover:text-gray-900 transition-colors">Annuler</button>
               <button onClick={sendEmail} disabled={sendingEmail}
                 className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#4a7c59] hover:bg-[#3d6a4a] text-white font-semibold text-sm transition-colors">
-                {sendingEmail ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                Envoyer
+                {sendingEmail ? <><Loader2 className="h-4 w-4 animate-spin" /> Envoi...</> : <><Send className="h-4 w-4" /> Envoyer</>}
               </button>
             </div>
           </div>
@@ -436,7 +435,7 @@ function AddProspectModal({ onClose, onAdd }: { onClose: () => void; onAdd: (p: 
           </div>
           <button type="submit" disabled={saving || !form.nom || !form.email}
             className="w-full flex items-center justify-center gap-2 bg-[#f59e0b] hover:bg-[#e8960a] disabled:bg-gray-200 text-black disabled:text-gray-400 font-semibold py-2.5 rounded-lg transition-colors">
-            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />} Ajouter
+            {saving ? <><Loader2 className="h-4 w-4 animate-spin" /> Ajout...</> : <><Plus className="h-4 w-4" /> Ajouter</>}
           </button>
         </form>
       </div>
