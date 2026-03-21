@@ -15,9 +15,6 @@ import {
   UsersRound,
   Settings,
   ChevronsRight,
-  Moon,
-  Sun,
-  Bell,
   LogOut,
   Menu,
   UserCheck,
@@ -41,7 +38,7 @@ const BOTTOM_NAV = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -173,23 +170,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <span className="hidden md:inline text-sm text-muted-foreground">
               {new Date().toLocaleDateString("fr-FR", { weekday: "short", day: "2-digit", month: "short" })}
             </span>
-            <button className="relative grid h-10 w-10 place-content-center rounded-xl bg-white border border-border text-muted-foreground hover:bg-[#f0f0eb] hover:text-foreground transition-colors">
-              <Bell className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 h-3 w-3 bg-[var(--primary)] rounded-full" />
-            </button>
             <button
               onClick={() => router.push("/admin/parametres")}
               className="grid h-10 w-10 place-content-center rounded-xl bg-white border border-border text-muted-foreground hover:bg-[#f0f0eb] hover:text-foreground transition-colors"
               title="Paramètres"
             >
               <Settings className="h-5 w-5" />
-            </button>
-            <button
-              onClick={toggleTheme}
-              className="flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-border text-muted-foreground hover:bg-[#f0f0eb] hover:text-foreground transition-colors"
-              title="Thème"
-            >
-              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
             <button
               onClick={() => router.push("/")}

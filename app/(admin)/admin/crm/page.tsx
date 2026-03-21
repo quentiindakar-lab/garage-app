@@ -25,7 +25,6 @@ import {
   CheckCircle2,
   XCircle,
   GripVertical,
-  Link,
   HardHat,
   UserCheck,
 } from "lucide-react";
@@ -174,9 +173,6 @@ export default function CrmPage() {
           <button onClick={() => router.push("/admin/crm/emails")}
             className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-sm text-gray-600 hover:text-gray-900 transition-colors shadow-sm">
             <Mail className="h-4 w-4" /> Emails IA
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-sm text-gray-600 hover:text-gray-900 transition-colors shadow-sm">
-            <Link className="h-4 w-4" /> Connecter mon email
           </button>
           <button onClick={() => setShowAdd(true)}
             className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#f59e0b] hover:bg-[#e8960a] text-black font-semibold text-sm transition-colors">
