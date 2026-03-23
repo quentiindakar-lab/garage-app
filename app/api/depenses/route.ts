@@ -38,8 +38,9 @@ export async function GET(req: NextRequest) {
 
     let query = supabase
       .from("depenses")
-      .select("*, chantier:chantiers(nom)")
-      .order("date", { ascending: false });
+      .select("id, montant, date, fournisseur, categorie, chantier_id, notes, photo_url, chantier:chantiers(nom)")
+      .order("date", { ascending: false })
+      .limit(50);
 
     if (chantierId) query = query.eq("chantier_id", chantierId);
 

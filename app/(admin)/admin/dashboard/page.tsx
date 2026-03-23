@@ -55,11 +55,11 @@ export default function DashboardPage() {
   const fetchAll = useCallback(async () => {
     try {
       setLoading(true);
-      const [chantiersRes, equipesRes, activiteRes, chantiersListRes] = await Promise.allSettled([
+      const [chantiersRes, equipesRes, activiteRes, upcomingRes] = await Promise.allSettled([
         fetch("/api/chantiers?stats=true"),
         fetch("/api/equipe?stats=true"),
         fetch("/api/activite"),
-        fetch("/api/chantiers"),
+        fetch("/api/chantiers?upcoming=true&limit=4"),
       ]);
 
       let chantiersEnCours = 0, devisEnAttente = 0, caMois = 0, membresActifs = 0;
@@ -78,23 +78,9 @@ export default function DashboardPage() {
         const data = await activiteRes.value.json();
         setActivities(Array.isArray(data) ? data : []);
       }
-      if (chantiersListRes.status === "fulfilled" && chantiersListRes.value.ok) {
-        const data = await chantiersListRes.value.json();
-        const now = new Date();
-        interface ChantierData { id: string; nom: string; adresse: string; dateDebut: string; statut: string }
-        const list = Array.isArray(data) ? (data as ChantierData[]) : [];
-        const upcoming = list
-          .filter(
-            (c) =>
-              c.dateDebut &&
-              new Date(c.dateDebut) >= now &&
-              c.statut !== "ANNULE" &&
-              c.statut !== "TERMINE"
-          )
-          .sort((a, b) => new Date(a.dateDebut).getTime() - new Date(b.dateDebut).getTime())
-          .slice(0, 4)
-          .map((c) => ({ id: c.id, nom: c.nom, dateDebut: c.dateDebut, adresse: c.adresse }));
-        setProchains(upcoming);
+      if (upcomingRes.status === "fulfilled" && upcomingRes.value.ok) {
+        const data = await upcomingRes.value.json();
+        setProchains(Array.isArray(data) ? data : []);
       }
 
       setStats({ chantiersEnCours, caMois, devisEnAttente, membresActifs });

@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
     if (stats === "true") {
       const { count } = await supabase
         .from("membres_equipe")
-        .select("*", { count: "exact", head: true })
+        .select("id", { count: "exact", head: true })
         .eq("actif", true);
       return NextResponse.json({ actifs: count || 0 });
     }
@@ -16,13 +16,14 @@ export async function GET(req: NextRequest) {
     const { data: membres, error } = await supabase
       .from("membres_equipe")
       .select(`
-        *,
+        id, nom, prenom, role, telephone, email, actif, specialite, created_at,
         affectations:chantier_membres(
-          *,
+          id,
           chantier:chantiers(id, nom, statut)
         )
       `)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .limit(50);
 
     if (error) throw error;
 

@@ -7,6 +7,33 @@ export async function GET(req: NextRequest) {
   try {
     const stats = req.nextUrl.searchParams.get("stats");
 
+    const upcoming = req.nextUrl.searchParams.get("upcoming");
+    const limitParam = req.nextUrl.searchParams.get("limit");
+
+    if (upcoming === "true") {
+      const now = new Date().toISOString();
+      const limit = limitParam ? parseInt(limitParam, 10) : 4;
+
+      const { data, error } = await supabase
+        .from("chantiers")
+        .select("id, nom, adresse, date_debut")
+        .not("statut", "in", '("ANNULE","TERMINE")')
+        .gte("date_debut", now)
+        .order("date_debut", { ascending: true })
+        .limit(limit);
+
+      if (error) throw error;
+
+      const result = (data || []).map((c: any) => ({
+        id: c.id,
+        nom: c.nom,
+        adresse: c.adresse,
+        dateDebut: c.date_debut,
+      }));
+
+      return NextResponse.json(result, { headers: CACHE_HEADERS });
+    }
+
     if (stats === "true") {
       const now = new Date();
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -15,20 +42,20 @@ export async function GET(req: NextRequest) {
         await Promise.all([
           supabase
             .from("chantiers")
-            .select("*", { count: "exact", head: true })
+            .select("id", { count: "exact", head: true })
             .eq("statut", "EN_COURS"),
-          supabase.from("chantiers").select("*", { count: "exact", head: true }),
+          supabase.from("chantiers").select("id", { count: "exact", head: true }),
           supabase
             .from("depenses")
             .select("montant")
             .gte("date", startOfMonth.toISOString()),
           supabase
             .from("chantiers")
-            .select("*", { count: "exact", head: true })
+            .select("id", { count: "exact", head: true })
             .eq("statut", "DEVIS_ENVOYE"),
           supabase
             .from("prospects")
-            .select("*", { count: "exact", head: true })
+            .select("id", { count: "exact", head: true })
             .eq("colonne", "ENVOI_DEVIS"),
         ]);
 
@@ -48,17 +75,19 @@ export async function GET(req: NextRequest) {
     const { data: chantiers, error } = await supabase
       .from("chantiers")
       .select(`
-        *,
+        id, nom, adresse, type, surface, materiaux, description,
+        statut, date_debut, date_fin, notes, chef_id, client_id, created_at,
         affectations:chantier_membres(
-          *,
-          membre:membres_equipe(nom, prenom, role)
+          id,
+          membre:membres_equipe(id, nom, prenom, role)
         ),
-        chef:membres_equipe!chef_id(nom, prenom),
+        chef:membres_equipe!chef_id(id, nom, prenom),
         client:clients(id, nom, prenom, email, telephone),
         estimations(id, resultats_json, created_at),
         photos:photos_chantier(id)
       `)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .limit(50);
 
     if (error) throw error;
 

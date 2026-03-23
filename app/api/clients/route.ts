@@ -11,14 +11,15 @@ export async function GET(req: NextRequest) {
       const { data: client, error } = await supabase
         .from("clients")
         .select(`
-          *,
+          id, nom, prenom, email, telephone, adresse, entreprise,
+          type_client, notes, created_at,
           chantiers(
-            *,
+            id, nom, adresse, statut,
             depenses(montant),
             estimations(id, resultats_json, created_at)
           ),
           prospects(
-            *,
+            id, nom, colonne,
             actions:prospect_actions(id, type, contenu, sent_at)
           )
         `)
@@ -42,11 +43,12 @@ export async function GET(req: NextRequest) {
     const { data: clients, error } = await supabase
       .from("clients")
       .select(`
-        *,
+        id, nom, prenom, email, telephone, entreprise, type_client, created_at,
         chantiers(id, nom, statut, depenses(montant)),
         prospects(id, colonne)
       `)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .limit(50);
 
     if (error) throw error;
 

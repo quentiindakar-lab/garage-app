@@ -5,8 +5,9 @@ export async function GET() {
   try {
     const { data: prospects, error } = await supabase
       .from("prospects")
-      .select("*, actions:prospect_actions(id, type, contenu, sent_at)")
-      .order("created_at", { ascending: false });
+      .select("id, nom, email, telephone, type_chantier, notes, colonne, client_id, created_at, actions:prospect_actions(id, type, contenu, sent_at)")
+      .order("created_at", { ascending: false })
+      .limit(50);
 
     if (error) throw error;
 
@@ -60,7 +61,7 @@ export async function PATCH(req: NextRequest) {
 
     const { data: currentProspect } = await supabase
       .from("prospects")
-      .select("*")
+      .select("id, nom, email, telephone, type_chantier, client_id")
       .eq("id", id)
       .single();
 
@@ -96,7 +97,7 @@ export async function PATCH(req: NextRequest) {
       .from("prospects")
       .update(updateData)
       .eq("id", id)
-      .select("*, client:clients(*)")
+      .select("id, nom, email, telephone, type_chantier, notes, colonne, client_id, created_at, client:clients(id, nom, prenom)")
       .single();
 
     if (error) throw error;
