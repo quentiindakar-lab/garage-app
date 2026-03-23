@@ -27,6 +27,7 @@ import {
   BarChart3,
   UserCheck,
 } from "lucide-react";
+import Image from "next/image";
 import { formatMoney } from "@/lib/utils";
 
 interface Chantier {
@@ -338,8 +339,8 @@ export default function ChantierDetailPage() {
             {chantier.photos && chantier.photos.length > 0 ? (
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                 {chantier.photos.map((p) => (
-                  <div key={p.id} className="aspect-square rounded-lg overflow-hidden border border-gray-200">
-                    <img src={p.url} alt="" className="w-full h-full object-cover" />
+                  <div key={p.id} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200">
+                    <Image src={p.url} alt={p.description || "Photo du chantier"} fill sizes="(max-width: 640px) 33vw, 25vw" className="object-cover" />
                   </div>
                 ))}
               </div>

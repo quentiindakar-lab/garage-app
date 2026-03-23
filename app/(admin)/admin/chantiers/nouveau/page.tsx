@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BTP_CONFIG } from "@/config/btp.config";
+import Image from "next/image";
 import {
   ArrowLeft,
   Plus,
@@ -255,8 +256,8 @@ export default function NouveauChantierPage() {
           <div className="flex flex-wrap gap-3">
             {photos.map((photo, i) => (
               <div key={i} className="relative group">
-                <div className="w-24 h-24 rounded-lg bg-gray-50 border border-gray-200 overflow-hidden">
-                  <img src={URL.createObjectURL(photo)} alt="" className="w-full h-full object-cover" />
+                <div className="relative w-24 h-24 rounded-lg bg-gray-50 border border-gray-200 overflow-hidden">
+                  <Image src={URL.createObjectURL(photo)} alt={`Photo chantier ${i + 1}`} fill sizes="96px" className="object-cover" unoptimized />
                 </div>
                 <button
                   type="button"

@@ -24,6 +24,7 @@ import {
   Save,
   ExternalLink,
 } from "lucide-react";
+import Image from "next/image";
 import dynamic from "next/dynamic";
 
 const EstimationPieChart = dynamic(
@@ -266,7 +267,7 @@ export default function EstimationPage() {
               <div className="flex flex-wrap gap-2">
                 {photos.map((p, i) => (
                   <div key={i} className="relative group w-16 h-16 rounded-lg overflow-hidden border border-gray-200">
-                    <img src={URL.createObjectURL(p)} alt="" className="w-full h-full object-cover" />
+                    <Image src={URL.createObjectURL(p)} alt={`Photo ${i + 1}`} fill sizes="64px" className="object-cover" unoptimized />
                     <button type="button" onClick={() => setPhotos((ps) => ps.filter((_, j) => j !== i))} className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                       <X className="h-2.5 w-2.5" />
                     </button>
