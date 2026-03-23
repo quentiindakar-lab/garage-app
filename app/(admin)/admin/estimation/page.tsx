@@ -24,9 +24,29 @@ import {
   Save,
   ExternalLink,
 } from "lucide-react";
-import {
-  PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend,
-} from "recharts";
+import dynamic from "next/dynamic";
+
+const EstimationPieChart = dynamic(
+  () =>
+    import("recharts").then((mod) => {
+      const { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } = mod;
+      return function EstimationPieChartInner(props: any) {
+        return (
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie data={props.data} cx="50%" cy="50%" innerRadius={45} outerRadius={75} paddingAngle={4} dataKey="value"
+                label={({ name, percent }: any) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}>
+                {props.data.map((_: any, i: number) => <Cell key={i} fill={props.colors[i]} />)}
+              </Pie>
+              <Tooltip formatter={(v: any) => [props.formatMoneyFn(Number(v)), ""]} contentStyle={{ borderRadius: 8, background: "#fff", border: "1px solid #e5e7eb", color: "#111827" }} />
+              <Legend wrapperStyle={{ fontSize: 12, color: "#6b7280" }} />
+            </PieChart>
+          </ResponsiveContainer>
+        );
+      };
+    }),
+  { ssr: false }
+);
 
 interface EstimationResult {
   estimationId?: string;
@@ -304,16 +324,7 @@ export default function EstimationPage() {
               <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
                 <h3 className="text-sm font-semibold text-gray-900 mb-3">Répartition des coûts</h3>
                 <div className="h-56">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie data={pieData} cx="50%" cy="50%" innerRadius={45} outerRadius={75} paddingAngle={4} dataKey="value"
-                        label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}>
-                        {pieData.map((_, i) => <Cell key={i} fill={PIE_COLORS[i]} />)}
-                      </Pie>
-                      <Tooltip formatter={(v) => [formatMoney(Number(v)), ""]} contentStyle={{ borderRadius: 8, background: "#fff", border: "1px solid #e5e7eb", color: "#111827" }} />
-                      <Legend wrapperStyle={{ fontSize: 12, color: "#6b7280" }} />
-                    </PieChart>
-                  </ResponsiveContainer>
+                  <EstimationPieChart data={pieData} colors={PIE_COLORS} formatMoneyFn={formatMoney} />
                 </div>
               </div>
 

@@ -2,7 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import dynamic from "next/dynamic";
+
+const MotionDiv = dynamic(
+  () => import("framer-motion").then((mod) => mod.motion.div),
+  { ssr: false }
+) as any;
+
+const DynAnimatePresence = dynamic(
+  () => import("framer-motion").then((mod) => mod.AnimatePresence),
+  { ssr: false }
+);
 import {
   Search,
   Plus,
@@ -160,9 +170,9 @@ export default function ClientsPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        <AnimatePresence>
+        <DynAnimatePresence>
           {filtered.map((client) => (
-            <motion.div
+            <MotionDiv
               key={client.id}
               layout
               initial={{ opacity: 0, y: 20 }}
@@ -218,9 +228,9 @@ export default function ClientsPage() {
                   {formatMoney(client.caTotal)}
                 </span>
               </div>
-            </motion.div>
+            </MotionDiv>
           ))}
-        </AnimatePresence>
+        </DynAnimatePresence>
       </div>
 
       {filtered.length === 0 && !loading && (
@@ -234,20 +244,20 @@ export default function ClientsPage() {
       )}
 
       {/* Modal création */}
-      <AnimatePresence>
+      <DynAnimatePresence>
         {showModal && (
-          <motion.div
+          <MotionDiv
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
             onClick={() => setShowModal(false)}
           >
-            <motion.div
+            <MotionDiv
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e: any) => e.stopPropagation()}
               className="w-full max-w-lg rounded-xl border border-border bg-card p-6 shadow-2xl"
             >
               <div className="flex items-center justify-between mb-6">
@@ -307,10 +317,10 @@ export default function ClientsPage() {
                   {saving ? <><Loader2 className="h-4 w-4 animate-spin" /> Création...</> : "Créer le client"}
                 </button>
               </div>
-            </motion.div>
-          </motion.div>
+            </MotionDiv>
+          </MotionDiv>
         )}
-      </AnimatePresence>
+      </DynAnimatePresence>
     </div>
   );
 }

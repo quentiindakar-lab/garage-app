@@ -14,10 +14,49 @@ import {
   CheckCircle2,
   ExternalLink,
 } from "lucide-react";
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RTooltip,
-  ResponsiveContainer, PieChart, Pie, Cell,
-} from "recharts";
+import dynamic from "next/dynamic";
+
+const BilanPieChart = dynamic(
+  () =>
+    import("recharts").then((mod) => {
+      const { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } = mod;
+      return function BilanPieChartInner(props: any) {
+        return (
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie data={props.data} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={3} dataKey="value"
+                label={({ name, percent }: any) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}>
+                {props.data.map((d: any) => <Cell key={d.name} fill={props.colors[d.name] || "#6B7280"} />)}
+              </Pie>
+              <Tooltip formatter={(v: any) => [props.formatMoneyFn(Number(v)), ""]} contentStyle={{ borderRadius: 12, background: "#ffffff", border: "1px solid #e8e8e2", color: "#1a1a1a" }} />
+            </PieChart>
+          </ResponsiveContainer>
+        );
+      };
+    }),
+  { ssr: false }
+);
+
+const BilanBarChart = dynamic(
+  () =>
+    import("recharts").then((mod) => {
+      const { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } = mod;
+      return function BilanBarChartInner(props: any) {
+        return (
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={props.data} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" stroke="#e8e8e2" />
+              <XAxis type="number" stroke="#888880" tick={{ fontSize: 12 }} tickFormatter={(v: any) => `${v}€`} />
+              <YAxis type="category" dataKey="name" stroke="#888880" tick={{ fontSize: 11 }} width={120} />
+              <Tooltip formatter={(v: any) => [props.formatMoneyFn(Number(v)), "Dépenses"]} contentStyle={{ borderRadius: 12, background: "#ffffff", border: "1px solid #e8e8e2", color: "#1a1a1a" }} />
+              <Bar dataKey="value" fill="#4a7c59" radius={[0, 6, 6, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        );
+      };
+    }),
+  { ssr: false }
+);
 
 interface Depense {
   id: string;
@@ -186,29 +225,13 @@ export default function BilanPage() {
         <div className="btp-card p-6">
           <h3 className="text-sm font-semibold text-foreground mb-4">Répartition par catégorie</h3>
           <div className="h-56">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={catData} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={3} dataKey="value"
-                  label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}>
-                  {catData.map((d) => <Cell key={d.name} fill={CAT_COLORS[d.name] || "#6B7280"} />)}
-                </Pie>
-                <RTooltip formatter={(v) => [formatMoney(Number(v)), ""]} contentStyle={{ borderRadius: 12, background: "#ffffff", border: "1px solid #e8e8e2", color: "#1a1a1a" }} />
-              </PieChart>
-            </ResponsiveContainer>
+            <BilanPieChart data={catData} colors={CAT_COLORS} formatMoneyFn={formatMoney} />
           </div>
         </div>
         <div className="btp-card p-6">
           <h3 className="text-sm font-semibold text-foreground mb-4">Répartition par chantier</h3>
           <div className="h-56">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={barData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="#e8e8e2" />
-                <XAxis type="number" stroke="#888880" tick={{ fontSize: 12 }} tickFormatter={(v) => `${v}€`} />
-                <YAxis type="category" dataKey="name" stroke="#888880" tick={{ fontSize: 11 }} width={120} />
-                <RTooltip formatter={(v) => [formatMoney(Number(v)), "Dépenses"]} contentStyle={{ borderRadius: 12, background: "#ffffff", border: "1px solid #e8e8e2", color: "#1a1a1a" }} />
-                <Bar dataKey="value" fill="#4a7c59" radius={[0, 6, 6, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            <BilanBarChart data={barData} formatMoneyFn={formatMoney} />
           </div>
         </div>
       </div>

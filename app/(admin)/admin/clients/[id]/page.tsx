@@ -2,7 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
+
+const MotionDiv = dynamic(
+  () => import("framer-motion").then((mod) => mod.motion.div),
+  { ssr: false }
+) as any;
 import Breadcrumb from "@/components/breadcrumb";
 import {
   ArrowLeft,
@@ -92,7 +97,7 @@ export default function ClientDetailPage() {
         Retour aux clients
       </button>
 
-      <motion.div
+      <MotionDiv
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
@@ -149,7 +154,7 @@ export default function ClientDetailPage() {
             </div>
           )}
         </div>
-      </motion.div>
+      </MotionDiv>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -279,7 +284,7 @@ function Section({ title, icon: Icon, count, children }: {
   title: string; icon: any; count?: number; children: React.ReactNode;
 }) {
   return (
-    <motion.div
+    <MotionDiv
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
@@ -292,6 +297,6 @@ function Section({ title, icon: Icon, count, children }: {
         )}
       </div>
       {children}
-    </motion.div>
+    </MotionDiv>
   );
 }
