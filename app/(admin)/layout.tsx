@@ -35,6 +35,12 @@ const BOTTOM_NAV = [
   { label: "Paramètres", href: "/admin/parametres", icon: Settings },
 ];
 
+const LOGO_CONTAINER_STYLE: React.CSSProperties = {
+  width: 40, height: 40, background: '#4a7c59', borderRadius: 10,
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+};
+const LOGO_TEXT_STYLE: React.CSSProperties = { color: 'white', fontWeight: 700, fontSize: 18 };
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -68,8 +74,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Logo */}
         <div className="mb-4 border-b border-border pb-4 px-2">
           <div className="flex items-center justify-center">
-            <div style={{ width: 40, height: 40, background: '#4a7c59', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ color: 'white', fontWeight: 700, fontSize: 18 }}>B</span>
+            <div style={LOGO_CONTAINER_STYLE}>
+              <span style={LOGO_TEXT_STYLE}>B</span>
             </div>
           </div>
         </div>

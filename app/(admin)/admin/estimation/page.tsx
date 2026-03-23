@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, memo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BTP_CONFIG } from "@/config/btp.config";
 import { formatMoney } from "@/lib/utils";
@@ -500,7 +500,7 @@ function Field({ label, value, onChange, placeholder, type = "text" }: { label: 
   );
 }
 
-function KpiCard({ icon: Icon, label, value, color }: { icon: typeof Clock; label: string; value: string; color: string }) {
+const KpiCard = memo(function KpiCard({ icon: Icon, label, value, color }: { icon: typeof Clock; label: string; value: string; color: string }) {
   const colors: Record<string, { bg: string; text: string }> = {
     amber: { bg: "bg-amber-50", text: "text-amber-600" },
     blue: { bg: "bg-blue-50", text: "text-blue-600" },
@@ -517,4 +517,4 @@ function KpiCard({ icon: Icon, label, value, color }: { icon: typeof Clock; labe
       <p className="text-lg font-bold text-gray-900">{value}</p>
     </div>
   );
-}
+});

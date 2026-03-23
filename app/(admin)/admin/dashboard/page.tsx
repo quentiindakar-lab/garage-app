@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, memo } from "react";
 import { useRouter } from "next/navigation";
 import { formatMoney } from "@/lib/utils";
 import {
@@ -36,6 +36,17 @@ interface ProchainChantier {
   nom: string;
   dateDebut: string;
   adresse: string;
+}
+
+function timeAgo(dateStr: string) {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "à l'instant";
+  if (mins < 60) return `${mins} min`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h`;
+  const days = Math.floor(hours / 24);
+  return `${days}j`;
 }
 
 const TYPE_CONFIG: Record<string, { icon: typeof HardHat; color: string; bg: string }> = {
@@ -92,17 +103,6 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
-
-  const timeAgo = (dateStr: string) => {
-    const diff = Date.now() - new Date(dateStr).getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 1) return "à l'instant";
-    if (mins < 60) return `${mins} min`;
-    const hours = Math.floor(mins / 60);
-    if (hours < 24) return `${hours}h`;
-    const days = Math.floor(hours / 24);
-    return `${days}j`;
-  };
 
   if (loading) {
     return (
@@ -293,7 +293,7 @@ export default function DashboardPage() {
   );
 }
 
-function StatCard({
+const StatCard = memo(function StatCard({
   icon: Icon,
   label,
   value,
@@ -342,4 +342,4 @@ function StatCard({
       </div>
     </div>
   );
-}
+});

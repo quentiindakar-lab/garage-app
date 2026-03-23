@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, memo } from "react";
 import { useRouter } from "next/navigation";
 import {
   DndContext,
@@ -57,6 +57,8 @@ const COLUMN_ICONS: Record<string, typeof CheckCircle2> = {
   PERDU: XCircle,
 };
 
+const KANBAN_MIN_WIDTH_STYLE: React.CSSProperties = { minWidth: COLUMNS.length * 280 };
+
 const SEED_PROSPECTS = [
   { nom: "Pierre Dupont", email: "pierre@email.com", telephone: "06 12 34 56 78", typeChantier: "Carrelage", colonne: "TOUS_PROSPECTS" },
   { nom: "Marie Laurent", email: "marie@email.com", telephone: "06 98 76 54 32", typeChantier: "Plomberie", colonne: "TOUS_PROSPECTS" },
@@ -103,11 +105,11 @@ export default function CrmPage() {
 
   useEffect(() => { fetchProspects(); }, [fetchProspects]);
 
-  const handleDragStart = (event: DragStartEvent) => {
+  const handleDragStart = useCallback((event: DragStartEvent) => {
     setActiveId(String(event.active.id));
-  };
+  }, []);
 
-  const handleDragEnd = async (event: DragEndEvent) => {
+  const handleDragEnd = useCallback(async (event: DragEndEvent) => {
     setActiveId(null);
     const { active, over } = event;
     if (!over) return;
@@ -160,7 +162,7 @@ export default function CrmPage() {
     } catch {
       setProspects((ps) => ps.map((p) => p.id === prospect.id ? { ...p, colonne: previousColumn } : p));
     }
-  };
+  }, [prospects]);
 
   const sendEmail = async () => {
     if (!popup) return;
@@ -207,7 +209,7 @@ export default function CrmPage() {
       {/* Kanban */}
       {loading ? (
         <div className="flex-1 overflow-x-auto pb-4">
-          <div className="flex gap-4" style={{ minWidth: COLUMNS.length * 280 }}>
+          <div className="flex gap-4" style={KANBAN_MIN_WIDTH_STYLE}>
             {COLUMNS.map((col) => (
               <div key={col.id} className="w-72 shrink-0 rounded-2xl border border-gray-200 bg-gray-100 p-3 animate-pulse">
                 <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-300">
@@ -238,7 +240,7 @@ export default function CrmPage() {
       ) : (
       <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="flex-1 overflow-x-auto pb-4">
-          <div className="flex gap-4" style={{ minWidth: COLUMNS.length * 280 }}>
+          <div className="flex gap-4" style={KANBAN_MIN_WIDTH_STYLE}>
             {COLUMNS.map((col) => {
               const colProspects = prospectsSafe.filter((p) => p.colonne === col.id);
               return (
@@ -327,7 +329,7 @@ export default function CrmPage() {
   );
 }
 
-function DroppableColumn({ col, count, children }: { col: typeof COLUMNS[0]; count: number; children: React.ReactNode }) {
+const DroppableColumn = memo(function DroppableColumn({ col, count, children }: { col: typeof COLUMNS[0]; count: number; children: React.ReactNode }) {
   const { setNodeRef, isOver } = useDroppable({ id: col.id });
   const Icon = COLUMN_ICONS[col.id];
 
@@ -346,9 +348,9 @@ function DroppableColumn({ col, count, children }: { col: typeof COLUMNS[0]; cou
       {children}
     </div>
   );
-}
+});
 
-function ProspectCard({ prospect }: { prospect: Prospect }) {
+const ProspectCard = memo(function ProspectCard({ prospect }: { prospect: Prospect }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: prospect.id });
   const style = { transform: CSS.Transform.toString(transform), transition };
 
@@ -357,7 +359,7 @@ function ProspectCard({ prospect }: { prospect: Prospect }) {
       <ProspectCardUI prospect={prospect} isDragging={isDragging} />
     </div>
   );
-}
+});
 
 function ProspectCardUI({ prospect, isDragging }: { prospect: Prospect; isDragging?: boolean }) {
   const router = useRouter();
