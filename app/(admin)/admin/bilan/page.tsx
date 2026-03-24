@@ -19,17 +19,34 @@ import dynamic from "next/dynamic";
 const BilanPieChart = dynamic(
   () =>
     import("recharts").then((mod) => {
-      const { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } = mod;
+      const { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } = mod;
       return function BilanPieChartInner(props: any) {
-        console.log("[BilanPieChart] data:", props.data, "colors:", props.colors);
+        const total = (props.data as any[]).reduce((s: number, d: any) => s + d.value, 0);
+        const renderLegend = (legendProps: any) => {
+          const { payload } = legendProps;
+          return (
+            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "4px 16px", paddingTop: 4 }}>
+              {(payload ?? []).map((entry: any, i: number) => {
+                const pct = total > 0 ? ((entry.payload.value / total) * 100).toFixed(0) : "0";
+                return (
+                  <span key={`lg-${i}`} style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 12 }}>
+                    <span style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: entry.color, display: "inline-block", flexShrink: 0 }} />
+                    <span style={{ color: "#1a1a1a" }}>{entry.value}</span>
+                    <span style={{ color: "#888880" }}>{pct}%</span>
+                  </span>
+                );
+              })}
+            </div>
+          );
+        };
         return (
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <Pie data={props.data} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={3} dataKey="value"
-                label={({ name, percent }: any) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}>
+              <Pie data={props.data} cx="50%" cy="42%" innerRadius={36} outerRadius={62} paddingAngle={3} dataKey="value">
                 {props.data.map((d: any, i: number) => <Cell key={`cell-${i}`} fill={props.colors[d.name] || "#6b7280"} />)}
               </Pie>
               <Tooltip formatter={(v: any) => [props.formatMoneyFn(Number(v)), ""]} contentStyle={{ borderRadius: 12, background: "#ffffff", border: "1px solid #e8e8e2", color: "#1a1a1a" }} />
+              <Legend content={renderLegend} verticalAlign="bottom" />
             </PieChart>
           </ResponsiveContainer>
         );
