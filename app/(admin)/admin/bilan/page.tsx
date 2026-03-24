@@ -21,12 +21,13 @@ const BilanPieChart = dynamic(
     import("recharts").then((mod) => {
       const { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } = mod;
       return function BilanPieChartInner(props: any) {
+        console.log("[BilanPieChart] data:", props.data, "colors:", props.colors);
         return (
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie data={props.data} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={3} dataKey="value"
                 label={({ name, percent }: any) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}>
-                {props.data.map((d: any) => <Cell key={d.name} fill={props.colors[d.name] || "#6B7280"} />)}
+                {props.data.map((d: any, i: number) => <Cell key={`cell-${i}`} fill={props.colors[d.name] || "#6b7280"} />)}
               </Pie>
               <Tooltip formatter={(v: any) => [props.formatMoneyFn(Number(v)), ""]} contentStyle={{ borderRadius: 12, background: "#ffffff", border: "1px solid #e8e8e2", color: "#1a1a1a" }} />
             </PieChart>
@@ -78,11 +79,17 @@ interface Depense {
 const CATEGORIES = ["Repas", "Carburant", "Matériaux", "Outillage", "Transport", "Autre"];
 const CATEGORIE_COLORS: Record<string, string> = {
   "Matériaux": "#4a7c59",
+  MATERIAUX: "#4a7c59",
   Carburant: "#f59e0b",
+  CARBURANT: "#f59e0b",
   Repas: "#ef4444",
+  REPAS: "#ef4444",
   Transport: "#3b82f6",
+  TRANSPORT: "#3b82f6",
   Outillage: "#8b5cf6",
+  OUTILLAGE: "#8b5cf6",
   Autre: "#6b7280",
+  AUTRE: "#6b7280",
 };
 
 const DEMO_DEPENSES: Depense[] = [
