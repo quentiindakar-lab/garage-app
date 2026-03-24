@@ -172,6 +172,7 @@ export default function CrmPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          action: "send",
           to: popup.prospect.email,
           subject: popup.action === "devis" ? "Votre devis BTP Pro" : `Relance — ${popup.prospect.typeChantier}`,
           message: popup.message,
