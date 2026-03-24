@@ -335,14 +335,31 @@ function AddDepenseModal({ onClose, onAdd, scanResult }: { onClose: () => void; 
     date: scanResult?.date || new Date().toISOString().slice(0, 10),
     fournisseur: scanResult?.fournisseur || "",
     categorie: scanResult?.categorie || "Autre",
-    chantierNom: "",
+    chantierId: "",
     notes: "",
   });
   const [saving, setSaving] = useState(false);
+  const [chantiers, setChantiers] = useState<{ id: string; nom: string }[]>([]);
+
+  useEffect(() => {
+    fetch("/api/chantiers")
+      .then((r) => r.ok ? r.json() : [])
+      .then((data) => {
+        if (Array.isArray(data)) setChantiers(data.map((c: any) => ({ id: c.id, nom: c.nom })));
+      })
+      .catch(() => {});
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); setSaving(true);
-    const depense: Depense = { ...form, montant: parseFloat(form.montant) || 0, id: Date.now().toString() };
+    const selectedChantier = chantiers.find((c) => c.id === form.chantierId);
+    const depense: Depense = {
+      ...form,
+      montant: parseFloat(form.montant) || 0,
+      id: Date.now().toString(),
+      chantierId: form.chantierId || null,
+      chantierNom: selectedChantier?.nom,
+    };
     try {
       const res = await fetch("/api/depenses", {
         method: "POST",
@@ -382,7 +399,19 @@ function AddDepenseModal({ onClose, onAdd, scanResult }: { onClose: () => void; 
               ))}
             </div>
           </div>
-          <MField label="Chantier (optionnel)" value={form.chantierNom} onChange={(v) => setForm({ ...form, chantierNom: v })} placeholder="Nom du chantier" />
+          <div>
+            <label className="block text-[13px] font-medium text-muted-foreground mb-1">Chantier (optionnel)</label>
+            <select
+              value={form.chantierId}
+              onChange={(e) => setForm({ ...form, chantierId: e.target.value })}
+              className="btp-input px-3 py-2 text-sm w-full"
+            >
+              <option value="">-- Non affecté --</option>
+              {chantiers.map((c) => (
+                <option key={c.id} value={c.id}>{c.nom}</option>
+              ))}
+            </select>
+          </div>
           <button type="submit" disabled={saving || !form.montant}
             className="btp-btn-primary w-full flex items-center justify-center gap-2 font-semibold py-2.5 transition-colors">
             {saving ? <><Loader2 className="h-4 w-4 animate-spin" /> Enregistrement...</> : <><CheckCircle2 className="h-4 w-4" /> Enregistrer</>}
