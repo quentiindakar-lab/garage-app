@@ -47,16 +47,18 @@ export async function POST(req: NextRequest) {
 
     if (action === "send") {
       const { to, subject, message } = body;
-      if (process.env.RESEND_API_KEY) {
-        const { Resend } = await import("resend");
-        const resend = new Resend(process.env.RESEND_API_KEY);
-        await resend.emails.send({
-          from: "BTP Pro <noreply@btppro.fr>",
-          to,
-          subject,
-          text: message,
-        });
+      if (!process.env.RESEND_API_KEY) {
+        return NextResponse.json({ error: "RESEND_API_KEY non configurée" }, { status: 500 });
       }
+      const { Resend } = await import("resend");
+      const resend = new Resend(process.env.RESEND_API_KEY);
+      const result = await resend.emails.send({
+        from: "BTP Pro <onboarding@resend.dev>",
+        to,
+        subject,
+        text: message,
+      });
+      console.log("Resend response:", result);
       return NextResponse.json({ success: true });
     }
 
