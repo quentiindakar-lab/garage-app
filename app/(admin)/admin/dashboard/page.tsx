@@ -66,11 +66,12 @@ export default function DashboardPage() {
   const fetchAll = useCallback(async () => {
     try {
       setLoading(true);
-      const [chantiersRes, equipesRes, activiteRes, upcomingRes] = await Promise.allSettled([
+      const [chantiersRes, equipesRes, activiteRes, upcomingRes, depensesRes] = await Promise.allSettled([
         fetch("/api/chantiers?stats=true"),
         fetch("/api/equipe?stats=true"),
         fetch("/api/activite"),
         fetch("/api/chantiers?upcoming=true&limit=4"),
+        fetch("/api/depenses"),
       ]);
 
       let chantiersEnCours = 0, devisEnAttente = 0, caMois = 0, membresActifs = 0;
@@ -79,7 +80,12 @@ export default function DashboardPage() {
         const data = await chantiersRes.value.json();
         chantiersEnCours = data.enCours ?? 0;
         devisEnAttente = data.devisEnAttente ?? 0;
-        caMois = data.caMois ?? 0;
+      }
+      if (depensesRes.status === "fulfilled" && depensesRes.value.ok) {
+        const data = await depensesRes.value.json();
+        if (Array.isArray(data)) {
+          caMois = data.reduce((sum: number, d: any) => sum + (d.montant || 0), 0);
+        }
       }
       if (equipesRes.status === "fulfilled" && equipesRes.value.ok) {
         const data = await equipesRes.value.json();
