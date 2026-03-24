@@ -40,8 +40,9 @@ const BilanPieChart = dynamic(
 const BilanBarChart = dynamic(
   () =>
     import("recharts").then((mod) => {
-      const { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } = mod;
+      const { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } = mod;
       return function BilanBarChartInner(props: any) {
+        const colorValues = Object.values(props.colors) as string[];
         return (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={props.data} layout="vertical">
@@ -49,7 +50,11 @@ const BilanBarChart = dynamic(
               <XAxis type="number" stroke="#888880" tick={{ fontSize: 12 }} tickFormatter={(v: any) => `${v}€`} />
               <YAxis type="category" dataKey="name" stroke="#888880" tick={{ fontSize: 11 }} width={120} />
               <Tooltip formatter={(v: any) => [props.formatMoneyFn(Number(v)), "Dépenses"]} contentStyle={{ borderRadius: 12, background: "#ffffff", border: "1px solid #e8e8e2", color: "#1a1a1a" }} />
-              <Bar dataKey="value" fill="#4a7c59" radius={[0, 6, 6, 0]} />
+              <Bar dataKey="value" radius={[0, 6, 6, 0]}>
+                {props.data.map((d: any, i: number) => (
+                  <Cell key={d.name} fill={props.colors[d.name] || colorValues[i % colorValues.length]} />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         );
@@ -71,13 +76,13 @@ interface Depense {
 }
 
 const CATEGORIES = ["Repas", "Carburant", "Matériaux", "Outillage", "Transport", "Autre"];
-const CAT_COLORS: Record<string, string> = {
-  Repas: "#F59E0B",
-  Carburant: "#3B82F6",
-  Matériaux: "#10B981",
-  Outillage: "#8B5CF6",
-  Transport: "#EF4444",
-  Autre: "#6B7280",
+const CATEGORIE_COLORS: Record<string, string> = {
+  "Matériaux": "#4a7c59",
+  Carburant: "#f59e0b",
+  Repas: "#ef4444",
+  Transport: "#3b82f6",
+  Outillage: "#8b5cf6",
+  Autre: "#6b7280",
 };
 
 const DEMO_DEPENSES: Depense[] = [
@@ -225,13 +230,13 @@ export default function BilanPage() {
         <div className="btp-card p-6">
           <h3 className="text-sm font-semibold text-foreground mb-4">Répartition par catégorie</h3>
           <div className="h-56">
-            <BilanPieChart data={catData} colors={CAT_COLORS} formatMoneyFn={formatMoney} />
+            <BilanPieChart data={catData} colors={CATEGORIE_COLORS} formatMoneyFn={formatMoney} />
           </div>
         </div>
         <div className="btp-card p-6">
           <h3 className="text-sm font-semibold text-foreground mb-4">Répartition par chantier</h3>
           <div className="h-56">
-            <BilanBarChart data={barData} formatMoneyFn={formatMoney} />
+            <BilanBarChart data={barData} colors={CATEGORIE_COLORS} formatMoneyFn={formatMoney} />
           </div>
         </div>
       </div>
@@ -270,7 +275,7 @@ export default function BilanPage() {
                   <td className="py-3 text-muted-foreground">{new Date(d.date).toLocaleDateString("fr-FR")}</td>
                   <td className="py-3 text-foreground font-medium">{d.fournisseur}</td>
                   <td className="py-3">
-                    <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: (CAT_COLORS[d.categorie] || "#6B7280") + "20", color: CAT_COLORS[d.categorie] || "#6B7280" }}>
+                    <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: CATEGORIE_COLORS[d.categorie] || "#6b7280", color: "#ffffff" }}>
                       {d.categorie}
                     </span>
                   </td>
@@ -347,7 +352,7 @@ function AddDepenseModal({ onClose, onAdd, scanResult }: { onClose: () => void; 
               {CATEGORIES.map((c) => (
                 <button key={c} type="button" onClick={() => setForm({ ...form, categorie: c })}
                   className={`px-2.5 py-1 rounded-[10px] text-xs font-medium transition-colors border border-border ${form.categorie === c ? "text-foreground bg-[#f0f0eb]" : "bg-[#f5f5f0] text-muted-foreground hover:text-foreground hover:bg-[#f0f0eb]"}`}
-                  style={form.categorie === c ? { backgroundColor: CAT_COLORS[c] } : {}}>
+                  style={form.categorie === c ? { backgroundColor: CATEGORIE_COLORS[c] } : {}}>
                   {c}
                 </button>
               ))}
