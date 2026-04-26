@@ -86,7 +86,7 @@ export async function PATCH(req: NextRequest) {
       .from("prospects")
       .update(updateData)
       .eq("id", id)
-      .select("id, nom, email, telephone, type_chantier, notes, colonne, client_id, created_at, client:clients(id, nom, prenom)")
+      .select("id, nom, email, telephone, type_chantier, notes, colonne, client_id, created_at")
       .single();
 
     if (error) throw error;

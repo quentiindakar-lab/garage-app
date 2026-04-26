@@ -148,11 +148,13 @@ export default function CrmPage() {
     }
 
     try {
+      console.log("[PATCH] body:", { id: prospect.id, colonne: targetColumn });
       const res = await fetch("/api/prospects", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: prospect.id, colonne: targetColumn }),
       });
+      console.log("[PATCH] status:", res.status);
       if (!res.ok) {
         setProspects((ps) => ps.map((p) => p.id === prospect.id ? { ...p, colonne: previousColumn } : p));
         return;
