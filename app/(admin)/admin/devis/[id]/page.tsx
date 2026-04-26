@@ -13,6 +13,8 @@ import {
   MapPin,
   Calendar,
   Download,
+  HardHat,
+  X,
 } from "lucide-react";
 import { formatMoney } from "@/lib/utils";
 
@@ -65,6 +67,13 @@ export default function DevisDetailPage() {
   const [devis, setDevis] = useState<DevisDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [signeModal, setSigneModal] = useState<{
+    nomChantier: string;
+    adresse: string;
+    dateDebut: string;
+    dateFin: string;
+    saving: boolean;
+  } | null>(null);
 
   const fetchDevis = useCallback(async () => {
     try {
@@ -136,6 +145,91 @@ export default function DevisDetailPage() {
     } finally {
       setActionLoading(null);
     }
+  };
+
+  const openSigneModal = () => {
+    if (!devis) return;
+    const today = new Date().toISOString().slice(0, 10);
+    setSigneModal({
+      nomChantier: `Chantier - ${devis.clientNom}`,
+      adresse: devis.chantierAdresse || "",
+      dateDebut: today,
+      dateFin: "",
+      saving: false,
+    });
+  };
+
+  const handleSigneAvecChantier = async () => {
+    if (!devis || !signeModal) return;
+    setSigneModal((s) => s ? { ...s, saving: true } : null);
+    try {
+      // 1. Marquer le devis comme signé
+      const patchRes = await fetch(`/api/devis/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ statut: "signe" }),
+      });
+      if (!patchRes.ok) {
+        const err = await patchRes.json();
+        alert(err.error || "Erreur mise à jour statut");
+        return;
+      }
+
+      // 2. Créer le client si un email est disponible
+      let clientId: string | null = null;
+      if (devis.clientEmail) {
+        try {
+          const clientRes = await fetch("/api/clients", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              nom: devis.clientNom,
+              email: devis.clientEmail,
+              telephone: devis.clientTelephone || null,
+              adresse: devis.clientAdresse || null,
+            }),
+          });
+          if (clientRes.ok) {
+            const client = await clientRes.json();
+            clientId = client.id;
+          }
+        } catch {}
+      }
+
+      // 3. Créer le chantier
+      const chantierRes = await fetch("/api/chantiers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nom: signeModal.nomChantier,
+          adresse: signeModal.adresse || null,
+          dateDebut: signeModal.dateDebut || null,
+          dateFin: signeModal.dateFin || null,
+          statut: "EN_COURS",
+          clientId,
+        }),
+      });
+
+      if (chantierRes.ok) {
+        const chantier = await chantierRes.json();
+        setSigneModal(null);
+        router.push(`/admin/chantiers/${chantier.id}`);
+      } else {
+        const err = await chantierRes.json();
+        alert(err.error || "Erreur création chantier");
+        await fetchDevis();
+        setSigneModal(null);
+      }
+    } catch {
+      alert("Erreur réseau");
+    } finally {
+      setSigneModal((s) => s ? { ...s, saving: false } : null);
+    }
+  };
+
+  const handleSigneSansChaniter = async () => {
+    setSigneModal(null);
+    await handleStatut("signe");
   };
 
   const handleStatut = async (statut: string) => {
@@ -420,13 +514,11 @@ export default function DevisDetailPage() {
                       : <><Send className="h-4 w-4" /> Renvoyer par email</>}
                   </button>
                   <button
-                    onClick={() => handleStatut("signe")}
+                    onClick={openSigneModal}
                     disabled={actionLoading !== null}
                     className="w-full flex items-center justify-center gap-2 px-4 py-2.5 font-semibold text-sm rounded-[10px] bg-[#dcf0e4] text-[#4a7c59] hover:brightness-95 transition-all"
                   >
-                    {actionLoading === "signe"
-                      ? <><Loader2 className="h-4 w-4 animate-spin" /> Mise à jour...</>
-                      : <><CheckCircle2 className="h-4 w-4" /> Marquer comme signé</>}
+                    <CheckCircle2 className="h-4 w-4" /> Marquer comme signé
                   </button>
                   <button
                     onClick={() => handleStatut("refuse")}
@@ -443,6 +535,87 @@ export default function DevisDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal — Devis signé : créer un chantier ? */}
+      {signeModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-md rounded-2xl border border-border bg-white p-6 shadow-xl space-y-5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="grid h-10 w-10 place-content-center rounded-full bg-[#dcf0e4]">
+                  <CheckCircle2 className="h-5 w-5 text-[#4a7c59]" />
+                </div>
+                <div>
+                  <h3 className="text-base font-semibold text-foreground">Devis signé !</h3>
+                  <p className="text-xs text-muted-foreground">Voulez-vous créer le chantier maintenant ?</p>
+                </div>
+              </div>
+              <button onClick={() => setSigneModal(null)} className="text-muted-foreground hover:text-foreground transition-colors">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <div>
+                <label className="block text-[13px] font-medium text-muted-foreground mb-1">Nom du chantier</label>
+                <input
+                  value={signeModal.nomChantier}
+                  onChange={(e) => setSigneModal((s) => s ? { ...s, nomChantier: e.target.value } : null)}
+                  className="btp-input px-3 py-2 text-sm w-full"
+                />
+              </div>
+              <div>
+                <label className="block text-[13px] font-medium text-muted-foreground mb-1">Adresse du chantier</label>
+                <input
+                  value={signeModal.adresse}
+                  onChange={(e) => setSigneModal((s) => s ? { ...s, adresse: e.target.value } : null)}
+                  className="btp-input px-3 py-2 text-sm w-full"
+                  placeholder="Adresse complète"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[13px] font-medium text-muted-foreground mb-1">Date de début</label>
+                  <input
+                    type="date"
+                    value={signeModal.dateDebut}
+                    onChange={(e) => setSigneModal((s) => s ? { ...s, dateDebut: e.target.value } : null)}
+                    className="btp-input px-3 py-2 text-sm w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[13px] font-medium text-muted-foreground mb-1">Date de fin (optionnel)</label>
+                  <input
+                    type="date"
+                    value={signeModal.dateFin}
+                    onChange={(e) => setSigneModal((s) => s ? { ...s, dateFin: e.target.value } : null)}
+                    className="btp-input px-3 py-2 text-sm w-full"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-1">
+              <button
+                onClick={handleSigneSansChaniter}
+                disabled={signeModal.saving}
+                className="flex-1 py-2.5 rounded-[10px] border border-border text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Ignorer
+              </button>
+              <button
+                onClick={handleSigneAvecChantier}
+                disabled={signeModal.saving || !signeModal.nomChantier.trim()}
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-[10px] bg-[#4a7c59] hover:bg-[#3d6a4a] disabled:bg-[#a0bfaa] text-white font-semibold text-sm transition-colors"
+              >
+                {signeModal.saving
+                  ? <><Loader2 className="h-4 w-4 animate-spin" /> Création...</>
+                  : <><HardHat className="h-4 w-4" /> Créer le chantier</>}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
