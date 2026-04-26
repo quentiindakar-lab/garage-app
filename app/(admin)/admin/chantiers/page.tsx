@@ -8,7 +8,7 @@ import {
   MapPin,
   CalendarDays,
   HardHat,
-  Loader2,
+
   User,
 } from "lucide-react";
 

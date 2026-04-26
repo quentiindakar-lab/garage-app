@@ -92,7 +92,7 @@ export default function DevisPage() {
         <div className="btp-card p-12 text-center">
           <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
           <p className="text-muted-foreground font-medium">Aucun devis créé</p>
-          <p className="text-sm text-muted-foreground/70 mt-1">Créez votre premier devis en cliquant sur "+ Nouveau devis"</p>
+          <p className="text-sm text-muted-foreground/70 mt-1">{'Créez votre premier devis en cliquant sur "+ Nouveau devis"'}</p>
         </div>
       ) : (
         <div className="btp-card overflow-hidden">

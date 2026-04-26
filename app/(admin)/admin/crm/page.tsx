@@ -59,12 +59,6 @@ const COLUMN_ICONS: Record<string, typeof CheckCircle2> = {
 
 const KANBAN_MIN_WIDTH_STYLE: React.CSSProperties = { minWidth: COLUMNS.length * 280 };
 
-const SEED_PROSPECTS = [
-  { nom: "Pierre Dupont", email: "pierre@email.com", telephone: "06 12 34 56 78", typeChantier: "Carrelage", colonne: "TOUS_PROSPECTS" },
-  { nom: "Marie Laurent", email: "marie@email.com", telephone: "06 98 76 54 32", typeChantier: "Plomberie", colonne: "TOUS_PROSPECTS" },
-  { nom: "Jean Martin", email: "jean@email.com", telephone: "06 55 44 33 22", typeChantier: "Peinture", colonne: "ENVOI_DEVIS" },
-  { nom: "Sophie Bernard", email: "sophie@email.com", telephone: "06 11 22 33 44", typeChantier: "Électricité", colonne: "RELANCE_1" },
-];
 
 export default function CrmPage() {
   const router = useRouter();
