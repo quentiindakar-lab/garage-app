@@ -81,25 +81,19 @@ export default function CrmPage() {
   const fetchProspects = useCallback(async () => {
     try {
       const res = await fetch("/api/prospects");
-      if (!res.ok) return;
-      const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        setProspects(data);
-      } else {
-        const seeded: Prospect[] = [];
-        for (const demo of SEED_PROSPECTS) {
-          try {
-            const r = await fetch("/api/prospects", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(demo),
-            });
-            if (r.ok) seeded.push(await r.json());
-          } catch {}
-        }
-        setProspects(seeded);
+      if (!res.ok) {
+        console.error("Erreur chargement prospects:", res.status);
+        setProspects([]);
+        return;
       }
-    } catch {} finally {
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setProspects(data);
+      }
+    } catch (e) {
+      console.error("Erreur réseau prospects:", e);
+      setProspects([]);
+    } finally {
       setLoading(false);
     }
   }, []);

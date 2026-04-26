@@ -5,24 +5,13 @@ export async function GET() {
   try {
     const { data: prospects, error } = await supabase
       .from("prospects")
-      .select("id, nom, email, telephone, type_chantier, notes, colonne, client_id, created_at, actions:prospect_actions(id, type, contenu, sent_at)")
+      .select("id, nom, email, telephone, type_chantier, notes, colonne, client_id, created_at")
       .order("created_at", { ascending: false })
       .limit(50);
 
     if (error) throw error;
 
-    const result = (prospects || []).map((p: any) => {
-      const camelP = toCamel(p) as any;
-      if (camelP.actions) {
-        camelP.actions = [...camelP.actions]
-          .sort(
-            (a: any, b: any) =>
-              new Date(b.sentAt).getTime() - new Date(a.sentAt).getTime()
-          )
-          .slice(0, 5);
-      }
-      return camelP;
-    });
+    const result = (prospects || []).map((p: any) => toCamel(p));
 
     return NextResponse.json(result);
   } catch (error) {
