@@ -99,8 +99,9 @@ export default function CrmPage() {
         }
         setProspects(seeded);
       }
-    } catch {}
-    setLoading(false);
+    } catch {} finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => { fetchProspects(); }, [fetchProspects]);
@@ -130,18 +131,26 @@ export default function CrmPage() {
     setProspects((ps) => ps.map((p) => p.id === prospect.id ? { ...p, colonne: targetColumn } : p));
 
     if (targetColumn === "ENVOI_DEVIS") {
-      setPopup({
-        prospect,
-        action: "devis",
-        message: `Cher(e) ${prospect.nom},\n\nSuite à votre demande pour des travaux de ${prospect.typeChantier.toLowerCase()}, veuillez trouver ci-joint notre devis détaillé.\n\nNous restons à votre disposition pour toute question.\n\nCordialement,\nBTP Pro`,
-      });
+      if (!prospect.email) {
+        alert("Ce prospect n'a pas d'email renseigné");
+      } else {
+        setPopup({
+          prospect,
+          action: "devis",
+          message: `Cher(e) ${prospect.nom},\n\nSuite à votre demande pour des travaux de ${prospect.typeChantier.toLowerCase()}, veuillez trouver ci-joint notre devis détaillé.\n\nNous restons à votre disposition pour toute question.\n\nCordialement,\nBTP Pro`,
+        });
+      }
     } else if (targetColumn.startsWith("RELANCE_")) {
       const num = targetColumn.split("_")[1];
-      setPopup({
-        prospect,
-        action: `relance_${num}`,
-        message: `Bonjour ${prospect.nom},\n\nNous souhaitons revenir vers vous concernant notre devis pour vos travaux de ${prospect.typeChantier.toLowerCase()}.\n\nCelui-ci est toujours valable et nous pourrions démarrer rapidement.\n\nN'hésitez pas à nous contacter.\n\nCordialement,\nBTP Pro`,
-      });
+      if (!prospect.email) {
+        alert("Ce prospect n'a pas d'email renseigné");
+      } else {
+        setPopup({
+          prospect,
+          action: `relance_${num}`,
+          message: `Bonjour ${prospect.nom},\n\nNous souhaitons revenir vers vous concernant notre devis pour vos travaux de ${prospect.typeChantier.toLowerCase()}.\n\nCelui-ci est toujours valable et nous pourrions démarrer rapidement.\n\nN'hésitez pas à nous contacter.\n\nCordialement,\nBTP Pro`,
+        });
+      }
     }
 
     try {
