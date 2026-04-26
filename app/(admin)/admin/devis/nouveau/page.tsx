@@ -81,6 +81,16 @@ export default function NouveauDevisPage() {
   useEffect(() => {
     fetch("/api/clients").then(r => r.ok ? r.json() : []).then(d => setClients(Array.isArray(d) ? d : [])).catch(() => {});
     fetch("/api/prospects").then(r => r.ok ? r.json() : []).then(d => setProspects(Array.isArray(d) ? d : [])).catch(() => {});
+
+    // Pré-remplissage depuis les query params (ex: depuis CRM)
+    const sp = new URLSearchParams(window.location.search);
+    if (sp.get("source") === "prospect") {
+      setSource("prospect");
+      if (sp.get("prospect_id")) setSelectedProspectId(sp.get("prospect_id")!);
+      if (sp.get("nom")) setClientNom(sp.get("nom")!);
+      if (sp.get("email")) setClientEmail(sp.get("email")!);
+      if (sp.get("telephone")) setClientTelephone(sp.get("telephone")!);
+    }
   }, []);
 
   useEffect(() => {

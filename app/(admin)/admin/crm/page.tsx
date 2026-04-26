@@ -27,6 +27,7 @@ import {
   GripVertical,
   HardHat,
   UserCheck,
+  FileText,
 } from "lucide-react";
 
 interface Prospect {
@@ -394,6 +395,24 @@ function ProspectCardUI({ prospect, isDragging }: { prospect: Prospect; isDraggi
           className="mt-2 flex items-center gap-1.5 text-[11px] text-[#4a7c59] hover:text-[#3d6a4a] transition-colors"
         >
           <UserCheck className="h-3 w-3" /> Voir fiche client
+        </button>
+      )}
+      {prospect.colonne === "ENVOI_DEVIS" && !isDragging && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            const params = new URLSearchParams({
+              source: "prospect",
+              prospect_id: prospect.id,
+              nom: prospect.nom,
+              ...(prospect.email ? { email: prospect.email } : {}),
+              ...(prospect.telephone ? { telephone: prospect.telephone } : {}),
+            });
+            router.push(`/admin/devis/nouveau?${params.toString()}`);
+          }}
+          className="mt-2 w-full flex items-center justify-center gap-1.5 text-[11px] font-medium text-white bg-[#4a7c59] hover:bg-[#3d6a4a] rounded-md py-1.5 transition-colors"
+        >
+          <FileText className="h-3 w-3" /> Créer un devis
         </button>
       )}
     </div>
