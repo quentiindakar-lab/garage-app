@@ -75,10 +75,13 @@ export default function ParametresPage() {
           assuranceZoneCouverture: form.assuranceZoneCouverture || null,
         }),
       });
-      if (res.ok) {
-        setSaved(true);
-        setTimeout(() => setSaved(false), 3000);
+      if (!res.ok) {
+        const err = await res.json();
+        alert("Erreur : " + (err.error || "Sauvegarde échouée"));
+        return;
       }
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
     } catch {} finally { setSaving(false); }
   };
 
