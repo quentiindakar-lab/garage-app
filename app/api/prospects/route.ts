@@ -103,14 +103,18 @@ export async function PATCH(req: NextRequest) {
     if (error) throw error;
 
     if (colonne) {
-      await supabase.from("prospect_actions").insert({
-        prospect_id: id,
-        type: `MOVED_TO_${colonne}`,
-        contenu:
-          colonne === "GAGNE"
-            ? "Prospect gagné — client créé automatiquement"
-            : `Déplacé vers ${colonne}`,
-      });
+      try {
+        await supabase.from("prospect_actions").insert({
+          prospect_id: id,
+          type: `MOVED_TO_${colonne}`,
+          contenu:
+            colonne === "GAGNE"
+              ? "Prospect gagné — client créé automatiquement"
+              : `Déplacé vers ${colonne}`,
+        });
+      } catch (actionError) {
+        console.warn("prospect_actions insert failed (non-blocking):", actionError);
+      }
     }
 
     return NextResponse.json(toCamel(prospect));
