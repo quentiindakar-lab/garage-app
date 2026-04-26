@@ -18,6 +18,7 @@ import {
   LogOut,
   Menu,
   UserCheck,
+  FileText,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -25,6 +26,7 @@ const NAV_ITEMS = [
   { label: "Chantiers", href: "/admin/chantiers", icon: HardHat },
   { label: "Clients", href: "/admin/clients", icon: UserCheck },
   { label: "Estimation IA", href: "/admin/estimation", icon: Sparkles },
+  { label: "Devis", href: "/admin/devis", icon: FileText },
   { label: "CRM / Pipeline", href: "/admin/crm", icon: Users },
   { label: "Planning", href: "/admin/planning", icon: Calendar },
   { label: "Bilan financier", href: "/admin/bilan", icon: BarChart3 },
