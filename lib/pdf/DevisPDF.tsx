@@ -63,13 +63,11 @@ const styles = StyleSheet.create({
   footerText: { fontSize: 7, color: GREY },
 });
 
-const _fmtNum = new Intl.NumberFormat("fr-FR", {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-});
-
-function fmt(n: number) {
-  return _fmtNum.format(n) + "\u00a0€";
+function fmt(n: number): string {
+  const fixed = n.toFixed(2);
+  const [entier, decimales] = fixed.split(".");
+  const entierFormate = entier.replace(/\B(?=(\d{3})+(?!\d))/g, "\u00a0");
+  return entierFormate + "," + decimales + "\u00a0€";
 }
 
 function fmtDate(d: string) {
