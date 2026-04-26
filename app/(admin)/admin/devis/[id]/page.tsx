@@ -373,6 +373,15 @@ export default function DevisDetailPage() {
               {devis.statut === "envoye" && (
                 <>
                   <button
+                    onClick={handleSend}
+                    disabled={actionLoading !== null}
+                    className="btp-btn-primary w-full flex items-center justify-center gap-2 px-4 py-2.5 font-semibold text-sm"
+                  >
+                    {actionLoading === "send"
+                      ? <><Loader2 className="h-4 w-4 animate-spin" /> Envoi...</>
+                      : <><Send className="h-4 w-4" /> Renvoyer par email</>}
+                  </button>
+                  <button
                     onClick={() => handleStatut("signe")}
                     disabled={actionLoading !== null}
                     className="w-full flex items-center justify-center gap-2 px-4 py-2.5 font-semibold text-sm rounded-[10px] bg-[#dcf0e4] text-[#4a7c59] hover:brightness-95 transition-all"
