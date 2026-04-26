@@ -111,7 +111,11 @@ interface EntrepriseData {
   siret?: string;
   telephone?: string;
   email?: string;
-  assuranceDecennale?: string;
+  formeJuridique?: string;
+  numeroTva?: string;
+  assureurNom?: string;
+  assuranceNumeroPolice?: string;
+  assuranceZoneCouverture?: string;
 }
 
 interface Props {
@@ -138,12 +142,19 @@ export function DevisPDF({ devis, entreprise }: Props) {
         <View style={styles.header}>
           <View style={styles.companyBlock}>
             <Text style={styles.companyName}>{entreprise.nomEntreprise || "Votre Entreprise BTP"}</Text>
+            {entreprise.formeJuridique && <Text style={styles.companyInfo}>{entreprise.formeJuridique}</Text>}
             {entreprise.adresse && <Text style={styles.companyInfo}>{entreprise.adresse}</Text>}
             {entreprise.siret && <Text style={styles.companyInfo}>SIRET : {entreprise.siret}</Text>}
+            {entreprise.numeroTva && <Text style={styles.companyInfo}>N° TVA : {entreprise.numeroTva}</Text>}
             {entreprise.telephone && <Text style={styles.companyInfo}>Tél : {entreprise.telephone}</Text>}
             {entreprise.email && <Text style={styles.companyInfo}>{entreprise.email}</Text>}
-            {entreprise.assuranceDecennale && (
-              <Text style={styles.companyInfo}>Assurance décennale : {entreprise.assuranceDecennale}</Text>
+            {entreprise.assureurNom && (
+              <Text style={styles.companyInfo}>
+                {"Assurance décennale : "}
+                {entreprise.assureurNom}
+                {entreprise.assuranceNumeroPolice ? ` - Police n°${entreprise.assuranceNumeroPolice}` : ""}
+                {entreprise.assuranceZoneCouverture ? ` - Zone : ${entreprise.assuranceZoneCouverture}` : ""}
+              </Text>
             )}
           </View>
           <View style={styles.devisBlock}>
