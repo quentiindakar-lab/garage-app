@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import {
   Building2,
+  ShieldCheck,
   Save,
   Loader2,
   CheckCircle2,
@@ -19,6 +20,11 @@ export default function ParametresPage() {
     siret: "",
     tauxTVA: "20",
     margeDefaut: "15",
+    formeJuridique: "",
+    numeroTva: "",
+    assureurNom: "",
+    assuranceNumeroPolice: "",
+    assuranceZoneCouverture: "",
   });
 
   useEffect(() => {
@@ -35,11 +41,18 @@ export default function ParametresPage() {
             siret: data.siret || "",
             tauxTVA: String(data.tva ?? 20),
             margeDefaut: String(data.margeDefaut ?? 15),
+            formeJuridique: data.formeJuridique || "",
+            numeroTva: data.numeroTva || "",
+            assureurNom: data.assureurNom || "",
+            assuranceNumeroPolice: data.assuranceNumeroPolice || "",
+            assuranceZoneCouverture: data.assuranceZoneCouverture || "",
           });
         }
       } catch {}
     })();
   }, []);
+
+  const set = (key: keyof typeof form) => (v: string) => setForm((f) => ({ ...f, [key]: v }));
 
   const handleSave = async () => {
     setSaving(true);
@@ -55,6 +68,11 @@ export default function ParametresPage() {
           email: form.email || null,
           tva: form.tauxTVA,
           margeDefaut: form.margeDefaut,
+          formeJuridique: form.formeJuridique || null,
+          numeroTva: form.numeroTva || null,
+          assureurNom: form.assureurNom || null,
+          assuranceNumeroPolice: form.assuranceNumeroPolice || null,
+          assuranceZoneCouverture: form.assuranceZoneCouverture || null,
         }),
       });
       if (res.ok) {
@@ -74,14 +92,27 @@ export default function ParametresPage() {
       {/* Entreprise */}
       <Section icon={Building2} title="Informations entreprise">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Field label="Nom de l'entreprise" value={form.nom} onChange={(v) => setForm({ ...form, nom: v })} />
-          <Field label="SIRET" value={form.siret} onChange={(v) => setForm({ ...form, siret: v })} />
-          <Field label="Adresse" value={form.adresse} onChange={(v) => setForm({ ...form, adresse: v })} />
-          <Field label="Téléphone" value={form.telephone} onChange={(v) => setForm({ ...form, telephone: v })} />
-          <Field label="Email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} />
+          <Field label="Nom de l'entreprise" value={form.nom} onChange={set("nom")} />
+          <Field label="SIRET" value={form.siret} onChange={set("siret")} />
+          <Field label="Forme juridique" value={form.formeJuridique} onChange={set("formeJuridique")} placeholder="Ex : SARL, SAS, EI, Auto-entrepreneur" />
+          <Field label="N° TVA intracommunautaire" value={form.numeroTva} onChange={set("numeroTva")} placeholder="Ex : FR12345678901" />
+          <Field label="Adresse" value={form.adresse} onChange={set("adresse")} />
+          <Field label="Téléphone" value={form.telephone} onChange={set("telephone")} />
+          <Field label="Email" value={form.email} onChange={set("email")} />
           <div className="grid grid-cols-2 gap-3">
-            <Field label="TVA (%)" type="number" value={form.tauxTVA} onChange={(v) => setForm({ ...form, tauxTVA: v })} />
-            <Field label="Marge défaut (%)" type="number" value={form.margeDefaut} onChange={(v) => setForm({ ...form, margeDefaut: v })} />
+            <Field label="TVA (%)" type="number" value={form.tauxTVA} onChange={set("tauxTVA")} />
+            <Field label="Marge défaut (%)" type="number" value={form.margeDefaut} onChange={set("margeDefaut")} />
+          </div>
+        </div>
+      </Section>
+
+      {/* Assurance décennale */}
+      <Section icon={ShieldCheck} title="Assurance décennale">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Field label="Nom de l'assureur" value={form.assureurNom} onChange={set("assureurNom")} placeholder="Ex : AXA, Allianz, MAAF..." />
+          <Field label="Numéro de police" value={form.assuranceNumeroPolice} onChange={set("assuranceNumeroPolice")} placeholder="Ex : 12-345-678-9" />
+          <div className="sm:col-span-2">
+            <Field label="Zone de couverture géographique" value={form.assuranceZoneCouverture} onChange={set("assuranceZoneCouverture")} placeholder="Ex : France métropolitaine" />
           </div>
         </div>
       </Section>
