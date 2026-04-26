@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
+import { supabase } from "@/lib/supabase";
+
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/jpg"];
+const MAX_SIZE = 10 * 1024 * 1024; // 10 Mo
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,29 +14,39 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Fichier requis" }, { status: 400 });
     }
 
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/heic"];
-    if (!allowedTypes.includes(file.type)) {
+    if (!ALLOWED_TYPES.includes(file.type)) {
       return NextResponse.json(
-        { error: "Format non autorisé. Acceptés: JPEG, PNG, WebP, HEIC" },
+        { error: "Format non autorisé. Acceptés : JPEG, PNG, WebP, HEIC" },
         { status: 400 }
       );
     }
 
-    if (file.size > 10 * 1024 * 1024) {
-      return NextResponse.json({ error: "Max 10 Mo" }, { status: 400 });
+    if (file.size > MAX_SIZE) {
+      return NextResponse.json({ error: "Fichier trop volumineux (max 10 Mo)" }, { status: 400 });
     }
 
-    const ext = path.extname(file.name) || ".jpg";
-    const filename = `${Date.now()}-${crypto.randomUUID().slice(0, 8)}${ext}`;
-    const uploadDir = path.join(process.cwd(), "public", "uploads", folder);
+    const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const fileName = `${folder}/${Date.now()}-${crypto.randomUUID().slice(0, 8)}.${ext}`;
 
-    await mkdir(uploadDir, { recursive: true });
+    const arrayBuffer = await file.arrayBuffer();
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-    await writeFile(path.join(uploadDir, filename), buffer);
+    const { error: uploadError } = await supabase.storage
+      .from("photos")
+      .upload(fileName, arrayBuffer, {
+        contentType: file.type,
+        upsert: false,
+      });
 
-    const url = `/uploads/${folder}/${filename}`;
-    return NextResponse.json({ url }, { status: 201 });
+    if (uploadError) {
+      console.error("[UPLOAD] Supabase Storage error:", uploadError);
+      return NextResponse.json({ error: uploadError.message }, { status: 500 });
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from("photos")
+      .getPublicUrl(fileName);
+
+    return NextResponse.json({ url: publicUrl }, { status: 201 });
   } catch (error) {
     console.error("[UPLOAD]", error);
     return NextResponse.json({ error: "Erreur upload" }, { status: 500 });

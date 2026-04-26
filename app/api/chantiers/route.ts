@@ -84,7 +84,7 @@ export async function GET(req: NextRequest) {
         chef:membres_equipe!chef_id(id, nom, prenom),
         client:clients(id, nom, prenom, email, telephone),
         estimations(id, resultats_json, created_at),
-        photos:photos_chantier(id)
+        photos:photos_chantier(id, url, description, uploaded_at)
       `)
       .order("created_at", { ascending: false })
       .limit(50);

@@ -132,9 +132,33 @@ export default function NouveauChantierPage() {
           clientId: clientId || null,
         }),
       });
-      if (res.ok) {
+      if (!res.ok) {
         router.push("/admin/chantiers");
+        return;
       }
+      const chantier = await res.json();
+
+      // Upload des photos en parallèle si présentes
+      if (photos.length > 0) {
+        await Promise.allSettled(
+          photos.map(async (file) => {
+            const fd = new FormData();
+            fd.append("file", file);
+            fd.append("folder", `chantiers/${chantier.id}`);
+            const uploadRes = await fetch("/api/upload", { method: "POST", body: fd });
+            if (uploadRes.ok) {
+              const { url } = await uploadRes.json();
+              await fetch(`/api/chantiers/${chantier.id}/photos`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ url }),
+              });
+            }
+          })
+        );
+      }
+
+      router.push(`/admin/chantiers/${chantier.id}`);
     } catch {
       router.push("/admin/chantiers");
     } finally {

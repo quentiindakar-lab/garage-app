@@ -71,6 +71,8 @@ export default function ChantierDetailPage() {
   const [editForm, setEditForm] = useState<Partial<Chantier>>({});
   const [depenses, setDepenses] = useState<any[]>([]);
   const [totalDepenses, setTotalDepenses] = useState(0);
+  const [photos, setPhotos] = useState<{ id: string; url: string; description?: string | null; uploadedAt: string }[]>([]);
+  const [uploadingPhotos, setUploadingPhotos] = useState(false);
 
   const fetchChantier = useCallback(async () => {
     try {
@@ -119,7 +121,58 @@ export default function ChantierDetailPage() {
     } catch {}
   }, [id]);
 
-  useEffect(() => { fetchChantier(); fetchDepenses(); }, [fetchChantier, fetchDepenses]);
+  const fetchPhotos = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/chantiers/${id}/photos`);
+      if (res.ok) {
+        const data = await res.json();
+        setPhotos(Array.isArray(data) ? data : []);
+      }
+    } catch {}
+  }, [id]);
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    setUploadingPhotos(true);
+    try {
+      for (const file of Array.from(files)) {
+        const fd = new FormData();
+        fd.append("file", file);
+        fd.append("folder", `chantiers/${id}`);
+        const uploadRes = await fetch("/api/upload", { method: "POST", body: fd });
+        if (!uploadRes.ok) {
+          const err = await uploadRes.json();
+          alert(err.error || "Erreur upload");
+          continue;
+        }
+        const { url } = await uploadRes.json();
+        const saveRes = await fetch(`/api/chantiers/${id}/photos`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url }),
+        });
+        if (saveRes.ok) {
+          const saved = await saveRes.json();
+          setPhotos((prev) => [saved, ...prev]);
+        }
+      }
+    } catch {
+      alert("Erreur lors de l'upload");
+    } finally {
+      setUploadingPhotos(false);
+      e.target.value = "";
+    }
+  };
+
+  const handlePhotoDelete = async (photoId: string) => {
+    try {
+      await fetch(`/api/chantiers/${id}/photos?photoId=${photoId}`, { method: "DELETE" });
+      setPhotos((prev) => prev.filter((p) => p.id !== photoId));
+    } catch {}
+  };
+
+  useEffect(() => { fetchChantier(); fetchDepenses(); fetchPhotos(); }, [fetchChantier, fetchDepenses, fetchPhotos]);
 
   const startEdit = () => {
     if (!chantier) return;
@@ -331,16 +384,23 @@ export default function ChantierDetailPage() {
               <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2">
                 <Camera className="h-4 w-4 text-[#4a7c59]" /> Photos
               </h2>
-              <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-gray-50 text-xs text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors cursor-pointer">
-                <Upload className="h-3.5 w-3.5" /> Ajouter
-                <input type="file" accept="image/*" multiple className="hidden" />
+              <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-gray-50 text-xs transition-colors cursor-pointer ${uploadingPhotos ? "text-gray-400 pointer-events-none" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"}`}>
+                {uploadingPhotos ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
+                {uploadingPhotos ? "Upload..." : "Ajouter"}
+                <input type="file" accept="image/*" multiple className="hidden" onChange={handlePhotoUpload} disabled={uploadingPhotos} />
               </label>
             </div>
-            {chantier.photos && chantier.photos.length > 0 ? (
+            {photos.length > 0 ? (
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                {chantier.photos.map((p) => (
-                  <div key={p.id} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200">
+                {photos.map((p) => (
+                  <div key={p.id} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 group">
                     <Image src={p.url} alt={p.description || "Photo du chantier"} fill sizes="(max-width: 640px) 33vw, 25vw" className="object-cover" />
+                    <button
+                      onClick={() => handlePhotoDelete(p.id)}
+                      className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-medium"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
                   </div>
                 ))}
               </div>
