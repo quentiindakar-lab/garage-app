@@ -45,11 +45,28 @@ export async function PATCH(
       .single();
 
     if (!existing) return NextResponse.json({ error: "Devis non trouvé" }, { status: 404 });
-    if (existing.statut !== "brouillon") {
-      return NextResponse.json({ error: "Seul un devis en brouillon peut être modifié" }, { status: 400 });
-    }
 
     const body = await req.json();
+
+    // Transitions de statut autorisées depuis "envoye"
+    const STATUT_TRANSITIONS: Record<string, string[]> = {
+      envoye: ["signe", "refuse"],
+    };
+    if (existing.statut !== "brouillon") {
+      const allowed = STATUT_TRANSITIONS[existing.statut] || [];
+      if (!body.statut || !allowed.includes(body.statut)) {
+        return NextResponse.json({ error: "Modification non autorisée pour ce statut" }, { status: 400 });
+      }
+      const { data, error } = await supabase
+        .from("devis")
+        .update({ statut: body.statut, updated_at: new Date().toISOString() })
+        .eq("id", params.id)
+        .select("id, numero, statut, client_nom, total_ttc, date_emission, date_validite, updated_at")
+        .single();
+      if (error) throw error;
+      return NextResponse.json(toCamel(data));
+    }
+
     const lignes = Array.isArray(body.lignes) ? body.lignes : undefined;
     const totals = lignes ? calcTotals(lignes) : null;
 
