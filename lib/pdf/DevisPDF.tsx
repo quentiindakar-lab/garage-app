@@ -63,8 +63,13 @@ const styles = StyleSheet.create({
   footerText: { fontSize: 7, color: GREY },
 });
 
+const _fmtNum = new Intl.NumberFormat("fr-FR", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
 function fmt(n: number) {
-  return n.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
+  return _fmtNum.format(n) + "\u00a0€";
 }
 
 function fmtDate(d: string) {
