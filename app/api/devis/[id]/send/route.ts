@@ -5,9 +5,11 @@ import React from "react";
 import { DevisPDF } from "@/lib/pdf/DevisPDF";
 
 export async function POST(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const isDownload = req.nextUrl.searchParams.get("download") === "true";
+
   try {
     const { data: rawDevis, error: devisErr } = await supabase
       .from("devis")
@@ -21,14 +23,6 @@ export async function POST(
 
     const devis = toCamel(rawDevis) as any;
 
-    if (!devis.clientEmail) {
-      return NextResponse.json({ error: "Aucun email client sur ce devis" }, { status: 400 });
-    }
-
-    if (!process.env.RESEND_API_KEY) {
-      return NextResponse.json({ error: "RESEND_API_KEY non configurée" }, { status: 500 });
-    }
-
     const { data: rawParams } = await supabase
       .from("settings")
       .select("*")
@@ -40,6 +34,26 @@ export async function POST(
     const pdfBuffer = await renderToBuffer(
       React.createElement(DevisPDF, { devis, entreprise }) as React.ReactElement<any>
     );
+
+    // Mode téléchargement direct — pas d'email, pas de changement de statut
+    if (isDownload) {
+      return new NextResponse(Buffer.from(pdfBuffer), {
+        status: 200,
+        headers: {
+          "Content-Type": "application/pdf",
+          "Content-Disposition": `attachment; filename="${devis.numero}.pdf"`,
+          "Content-Length": String(pdfBuffer.byteLength),
+        },
+      });
+    }
+
+    if (!devis.clientEmail) {
+      return NextResponse.json({ error: "Aucun email client sur ce devis" }, { status: 400 });
+    }
+
+    if (!process.env.RESEND_API_KEY) {
+      return NextResponse.json({ error: "RESEND_API_KEY non configurée" }, { status: 500 });
+    }
 
     const { Resend } = await import("resend");
     const resend = new Resend(process.env.RESEND_API_KEY);

@@ -12,6 +12,7 @@ import {
   Phone,
   MapPin,
   Calendar,
+  Download,
 } from "lucide-react";
 import { formatMoney } from "@/lib/utils";
 
@@ -92,6 +93,32 @@ export default function DevisDetailPage() {
     }
     return map;
   }, [devis]);
+
+  const handleDownload = async () => {
+    if (!devis) return;
+    setActionLoading("download");
+    try {
+      const res = await fetch(`/api/devis/${id}/send?download=true`, { method: "POST" });
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${devis.numero}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } else {
+        const err = await res.json();
+        alert(err.error || "Erreur lors du téléchargement");
+      }
+    } catch {
+      alert("Erreur réseau");
+    } finally {
+      setActionLoading(null);
+    }
+  };
 
   const handleSend = async () => {
     if (!devis) return;
@@ -351,6 +378,17 @@ export default function DevisDetailPage() {
 
             {/* Actions */}
             <div className="border-t border-[#f0f0eb] pt-4 space-y-2">
+              {/* Télécharger PDF — disponible pour tous les statuts */}
+              <button
+                onClick={handleDownload}
+                disabled={actionLoading !== null}
+                className="btp-btn-secondary w-full flex items-center justify-center gap-2 px-4 py-2.5 font-medium text-sm border border-border"
+              >
+                {actionLoading === "download"
+                  ? <><Loader2 className="h-4 w-4 animate-spin" /> Génération...</>
+                  : <><Download className="h-4 w-4" /> Télécharger PDF</>}
+              </button>
+
               {devis.statut === "brouillon" && (
                 <>
                   <button
