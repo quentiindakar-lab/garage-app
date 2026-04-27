@@ -68,13 +68,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Sidebar */}
       <nav
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex flex-col border-r border-border bg-white py-3 transition-all duration-300 ease-in-out lg:static overflow-hidden",
+          "fixed inset-y-0 left-0 z-50 flex flex-col border-r border-border bg-white py-3 transition-all duration-300 ease-in-out lg:static overflow-x-hidden",
           "w-20",
           mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
         {/* Logo */}
-        <div className="mb-4 border-b border-border pb-4 px-2">
+        <div className="mb-4 border-b border-border pb-4 px-2 shrink-0">
           <div className="flex items-center justify-center">
             <div style={LOGO_CONTAINER_STYLE}>
               <span style={LOGO_TEXT_STYLE}>B</span>
@@ -83,7 +83,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         {/* Nav items */}
-        <div className="space-y-2 flex-1">
+        <div
+          className="space-y-2 flex-1 min-h-0 overflow-y-auto"
+          style={{ WebkitOverflowScrolling: "touch" }}
+        >
           {NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
             return (
@@ -115,7 +118,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         {/* Bottom */}
-        <div className="border-t border-border pt-4 space-y-2 px-0">
+        <div className="border-t border-border pt-4 space-y-2 px-0 shrink-0">
           {BOTTOM_NAV.map((item) => {
             const isActive = pathname === item.href;
             return (

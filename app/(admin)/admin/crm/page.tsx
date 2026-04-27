@@ -7,6 +7,7 @@ import {
   DragOverlay,
   closestCorners,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   type DragStartEvent,
@@ -71,7 +72,10 @@ export default function CrmPage() {
   const [sendingEmail, setSendingEmail] = useState(false);
   const [gagnePopup, setGagnePopup] = useState<{ prospect: Prospect; clientId?: string } | null>(null);
 
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } })
+  );
 
   const fetchProspects = useCallback(async () => {
     try {
