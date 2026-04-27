@@ -300,7 +300,7 @@ export default function BilanPage() {
                   <td className="py-3 text-foreground font-medium">{d.fournisseur}</td>
                   <td className="py-3">
                     <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: CATEGORIE_COLORS[d.categorie] || "#6b7280", color: "#ffffff" }}>
-                      {d.categorie}
+                      {d.categorie.charAt(0).toUpperCase() + d.categorie.slice(1).toLowerCase()}
                     </span>
                   </td>
                   <td className="py-3">

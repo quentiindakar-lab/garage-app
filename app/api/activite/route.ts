@@ -3,6 +3,26 @@ import { supabase } from "@/lib/supabase";
 
 export const revalidate = 30;
 
+const COLONNE_LABELS: Record<string, string> = {
+  TOUS_PROSPECTS: "Nouveau prospect",
+  ENVOI_DEVIS: "Envoi du devis",
+  RELANCE_1: "Relance 1",
+  RELANCE_2: "Relance 2",
+  RELANCE_3: "Relance 3",
+  GAGNE: "Gagné",
+  PERDU: "Perdu",
+  MOVED_TO_GAGNE: "Gagné",
+};
+
+function humanizeLabel(text: string): string {
+  if (!text) return text;
+  let result = text;
+  for (const [key, val] of Object.entries(COLONNE_LABELS)) {
+    result = result.replace(new RegExp(key, "g"), val);
+  }
+  return result;
+}
+
 interface ActivityItem {
   type: string;
   title: string;
@@ -62,7 +82,7 @@ export async function GET() {
       ...prospectActions.map((a: any) => ({
         type: "prospect",
         title: a.type.startsWith("MOVED_TO_GAGNE") ? "Prospect gagné" : "Prospect déplacé",
-        description: `${a.prospect?.nom || "Inconnu"} — ${a.contenu || a.type}`,
+        description: `${a.prospect?.nom || "Inconnu"} — ${humanizeLabel(a.contenu || a.type)}`,
         entityId: a.prospect?.id || a.id,
         href: "/admin/crm",
         createdAt: a.sent_at,

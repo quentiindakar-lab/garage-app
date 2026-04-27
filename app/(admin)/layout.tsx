@@ -174,7 +174,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Menu className="h-5 w-5" />
             </button>
             <h2 className="text-lg font-semibold text-foreground hidden sm:block">
-              {NAV_ITEMS.find(
+              {[...NAV_ITEMS, ...BOTTOM_NAV].find(
                 (i) => pathname === i.href || pathname.startsWith(i.href + "/")
               )?.label ?? "Administration"}
             </h2>

@@ -342,9 +342,6 @@ const StatCard = memo(function StatCard({
             </div>
           </div>
         </div>
-
-        {/* Mini graph placeholder (style screenshot) */}
-        <div className={accent ? "mt-1 h-10 w-16 rounded-xl bg-white/15" : "mt-1 h-10 w-16 rounded-xl bg-[#f5f5f0]"} />
       </div>
     </div>
   );

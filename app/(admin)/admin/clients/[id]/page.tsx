@@ -23,6 +23,9 @@ import {
   Plus,
   Loader2,
   ExternalLink,
+  Pencil,
+  Save,
+  X,
 } from "lucide-react";
 import { formatMoney, formatDate } from "@/lib/utils";
 
@@ -49,6 +52,43 @@ export default function ClientDetailPage() {
   const router = useRouter();
   const [client, setClient] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [editForm, setEditForm] = useState({
+    nom: "", prenom: "", email: "", telephone: "", adresse: "", entreprise: "", typeClient: "PARTICULIER",
+  });
+
+  const startEdit = () => {
+    setEditForm({
+      nom: client.nom || "",
+      prenom: client.prenom || "",
+      email: client.email || "",
+      telephone: client.telephone || "",
+      adresse: client.adresse || "",
+      entreprise: client.entreprise || "",
+      typeClient: client.typeClient || "PARTICULIER",
+    });
+    setIsEditing(true);
+  };
+
+  const cancelEdit = () => setIsEditing(false);
+
+  const saveEdit = async () => {
+    setSaving(true);
+    try {
+      const res = await fetch("/api/clients", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: client.id, ...editForm }),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setClient((prev: any) => ({ ...prev, ...updated }));
+        setIsEditing(false);
+      }
+    } catch {}
+    setSaving(false);
+  };
 
   useEffect(() => {
     const fetchClient = async () => {
@@ -105,53 +145,149 @@ export default function ClientDetailPage() {
         <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="grid h-14 w-14 shrink-0 place-content-center rounded-xl bg-[#4a7c59]/10">
-              {client.typeClient === "ENTREPRISE" ? (
+              {(isEditing ? editForm.typeClient : client.typeClient) === "ENTREPRISE" ? (
                 <Building2 className="h-7 w-7 text-[#4a7c59]" />
               ) : (
                 <User className="h-7 w-7 text-[#4a7c59]" />
               )}
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                {client.nom} {client.prenom || ""}
-              </h1>
-              {client.entreprise && (
-                <p className="text-sm text-gray-500">{client.entreprise}</p>
+              {isEditing ? (
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <input
+                      value={editForm.nom}
+                      onChange={(e) => setEditForm((f) => ({ ...f, nom: e.target.value }))}
+                      placeholder="Nom *"
+                      className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30 w-32"
+                    />
+                    <input
+                      value={editForm.prenom}
+                      onChange={(e) => setEditForm((f) => ({ ...f, prenom: e.target.value }))}
+                      placeholder="Prénom"
+                      className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30 w-32"
+                    />
+                  </div>
+                  <input
+                    value={editForm.entreprise}
+                    onChange={(e) => setEditForm((f) => ({ ...f, entreprise: e.target.value }))}
+                    placeholder="Entreprise (optionnel)"
+                    className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30 w-full"
+                  />
+                  <select
+                    value={editForm.typeClient}
+                    onChange={(e) => setEditForm((f) => ({ ...f, typeClient: e.target.value }))}
+                    className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30"
+                  >
+                    <option value="PARTICULIER">Particulier</option>
+                    <option value="ENTREPRISE">Entreprise</option>
+                  </select>
+                </div>
+              ) : (
+                <>
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    {client.nom} {client.prenom || ""}
+                  </h1>
+                  {client.entreprise && (
+                    <p className="text-sm text-gray-500">{client.entreprise}</p>
+                  )}
+                  <span className="mt-1 inline-block rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">
+                    {client.typeClient === "ENTREPRISE" ? "Entreprise" : "Particulier"}
+                  </span>
+                </>
               )}
-              <span className="mt-1 inline-block rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">
-                {client.typeClient === "ENTREPRISE" ? "Entreprise" : "Particulier"}
-              </span>
             </div>
           </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => router.push(`/admin/chantiers/nouveau?clientId=${client.id}`)}
-              className="flex items-center gap-2 rounded-lg bg-[#f59e0b] px-4 py-2 text-sm font-semibold text-black shadow-sm hover:bg-[#e8960a] transition-colors"
-            >
-              <Plus className="h-4 w-4" />
-              Nouveau chantier
-            </button>
+          <div className="flex gap-2 flex-wrap">
+            {isEditing ? (
+              <>
+                <button
+                  onClick={cancelEdit}
+                  className="flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm text-gray-500 hover:text-gray-900 transition-colors"
+                >
+                  <X className="h-4 w-4" /> Annuler
+                </button>
+                <button
+                  onClick={saveEdit}
+                  disabled={saving || !editForm.nom}
+                  className="flex items-center gap-2 rounded-lg bg-[#4a7c59] hover:bg-[#3d6a4a] disabled:bg-gray-200 px-4 py-2 text-sm font-semibold text-white transition-colors"
+                >
+                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                  Enregistrer
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={startEdit}
+                  className="flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors shadow-sm"
+                >
+                  <Pencil className="h-4 w-4" /> Modifier
+                </button>
+                <button
+                  onClick={() => router.push(`/admin/chantiers/nouveau?clientId=${client.id}`)}
+                  className="flex items-center gap-2 rounded-lg bg-[#f59e0b] px-4 py-2 text-sm font-semibold text-black shadow-sm hover:bg-[#e8960a] transition-colors"
+                >
+                  <Plus className="h-4 w-4" /> Nouveau chantier
+                </button>
+              </>
+            )}
           </div>
         </div>
 
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {client.email && (
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Mail className="h-4 w-4 text-gray-400" />
-              {client.email}
-            </div>
-          )}
-          {client.telephone && (
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Phone className="h-4 w-4 text-gray-400" />
-              {client.telephone}
-            </div>
-          )}
-          {client.adresse && (
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <MapPin className="h-4 w-4 text-gray-400" />
-              {client.adresse}
-            </div>
+          {isEditing ? (
+            <>
+              <div className="flex items-center gap-2">
+                <Mail className="h-4 w-4 text-gray-400 shrink-0" />
+                <input
+                  type="email"
+                  value={editForm.email}
+                  onChange={(e) => setEditForm((f) => ({ ...f, email: e.target.value }))}
+                  placeholder="Email"
+                  className="flex-1 rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <Phone className="h-4 w-4 text-gray-400 shrink-0" />
+                <input
+                  value={editForm.telephone}
+                  onChange={(e) => setEditForm((f) => ({ ...f, telephone: e.target.value }))}
+                  placeholder="Téléphone"
+                  className="flex-1 rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-gray-400 shrink-0" />
+                <input
+                  value={editForm.adresse}
+                  onChange={(e) => setEditForm((f) => ({ ...f, adresse: e.target.value }))}
+                  placeholder="Adresse"
+                  className="flex-1 rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30"
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              {client.email && (
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Mail className="h-4 w-4 text-gray-400" />
+                  {client.email}
+                </div>
+              )}
+              {client.telephone && (
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Phone className="h-4 w-4 text-gray-400" />
+                  {client.telephone}
+                </div>
+              )}
+              {client.adresse && (
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <MapPin className="h-4 w-4 text-gray-400" />
+                  {client.adresse}
+                </div>
+              )}
+            </>
           )}
         </div>
       </MotionDiv>

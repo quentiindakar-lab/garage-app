@@ -44,7 +44,7 @@ interface Prospect {
 }
 
 const COLUMNS = [
-  { id: "TOUS_PROSPECTS", label: "Tous les prospects", color: "border-gray-400" },
+  { id: "TOUS_PROSPECTS", label: "Nouveau / À contacter", color: "border-gray-400" },
   { id: "ENVOI_DEVIS", label: "Envoi du devis", color: "border-blue-500" },
   { id: "RELANCE_1", label: "Relance 1", color: "border-amber-500" },
   { id: "RELANCE_2", label: "Relance 2", color: "border-orange-500" },
