@@ -455,7 +455,7 @@ function AddProspectModal({ onClose, onAdd }: { onClose: () => void; onAdd: (p: 
               className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 resize-none focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30" />
           </div>
           <button type="submit" disabled={saving || !form.nom || !form.email}
-            className="w-full flex items-center justify-center gap-2 bg-[#f59e0b] hover:bg-[#e8960a] disabled:bg-gray-200 text-black disabled:text-gray-400 font-semibold py-2.5 rounded-lg transition-colors">
+            className="w-full flex items-center justify-center gap-2 bg-[#4a7c59] hover:bg-[#3d6a4a] disabled:bg-gray-200 text-white disabled:text-gray-400 font-semibold py-2.5 rounded-lg transition-colors">
             {saving ? <><Loader2 className="h-4 w-4 animate-spin" /> Ajout...</> : <><Plus className="h-4 w-4" /> Ajouter</>}
           </button>
         </form>

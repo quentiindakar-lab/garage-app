@@ -308,7 +308,7 @@ function AddMembreModal({ onClose, onAdd }: { onClose: () => void; onAdd: (m: Me
           <MField label="Email" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} />
           <MField label="Spécialité" value={form.specialite} onChange={(v) => setForm({ ...form, specialite: v })} placeholder="Plomberie, carrelage..." />
           <button type="submit" disabled={saving || !form.nom || !form.prenom}
-            className="w-full flex items-center justify-center gap-2 bg-[#f59e0b] hover:bg-[#e8960a] disabled:bg-gray-200 text-black disabled:text-gray-400 font-semibold py-2.5 rounded-lg transition-colors">
+            className="w-full flex items-center justify-center gap-2 bg-[#4a7c59] hover:bg-[#3d6a4a] disabled:bg-gray-200 text-white disabled:text-gray-400 font-semibold py-2.5 rounded-lg transition-colors">
             {saving ? <><Loader2 className="h-4 w-4 animate-spin" /> Ajout...</> : <><Plus className="h-4 w-4" /> Ajouter</>}
           </button>
         </form>

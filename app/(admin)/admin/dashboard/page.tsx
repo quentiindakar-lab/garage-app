@@ -280,7 +280,7 @@ export default function DashboardPage() {
             <h3 className="text-lg font-semibold text-foreground mb-4">Accès rapide</h3>
             <div className="space-y-2">
               {[
-                { label: "Nouveau chantier", href: "/admin/chantiers/nouveau", icon: HardHat, color: "text-amber-400" },
+                { label: "Nouveau chantier", href: "/admin/chantiers/nouveau", icon: HardHat, color: "text-[#4a7c59]" },
                 { label: "Nouveau client", href: "/admin/clients", icon: UserCheck, color: "text-emerald-400" },
                 { label: "Estimation IA", href: "/admin/estimation", icon: TrendingUp, color: "text-purple-400" },
               ].map((item) => (
