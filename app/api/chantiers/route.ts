@@ -11,14 +11,16 @@ export async function GET(req: NextRequest) {
     const limitParam = req.nextUrl.searchParams.get("limit");
 
     if (upcoming === "true") {
-      const now = new Date().toISOString();
-      const limit = limitParam ? parseInt(limitParam, 10) : 4;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const todayStr = today.toISOString();
+      const limit = limitParam ? parseInt(limitParam, 10) : 3;
 
       const { data, error } = await supabase
         .from("chantiers")
         .select("id, nom, adresse, date_debut")
         .not("statut", "in", '("ANNULE","TERMINE")')
-        .gte("date_debut", now)
+        .or(`date_debut.gte.${todayStr},statut.eq.EN_COURS`)
         .order("date_debut", { ascending: true })
         .limit(limit);
 

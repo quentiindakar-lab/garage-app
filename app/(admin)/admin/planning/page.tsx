@@ -266,7 +266,7 @@ function MonthView({ currentDate, chantiers, onSelect }: { currentDate: Date; ch
               </span>
               <div className="mt-1 space-y-0.5">
                 {dc.slice(0, 2).map((c) => (
-                  <button key={c.id} onClick={() => onSelect(c)}
+                  <button key={c.id} onClick={() => onSelect(c)} title={c.nom}
                     className="w-full text-left px-1.5 py-0.5 rounded text-[10px] font-medium truncate text-[#4a7c59] hover:opacity-80 transition-opacity bg-[#4a7c59]/10 border-l-2 border-[#4a7c59]">
                     {c.nom}
                   </button>
@@ -314,7 +314,7 @@ function WeekView({ currentDate, chantiers, onSelect }: { currentDate: Date; cha
               </div>
               <div className="p-2 space-y-1.5">
                 {dc.map((c) => (
-                  <button key={c.id} onClick={() => onSelect(c)}
+                  <button key={c.id} onClick={() => onSelect(c)} title={c.nom}
                     className="w-full text-left rounded-lg p-2 hover:opacity-80 transition-opacity bg-[#4a7c59]/10 border-l-2 border-[#4a7c59]">
                     <p className="text-xs font-medium text-[#4a7c59] truncate">{c.nom}</p>
                     {c.chef && <p className="text-[10px] text-gray-500 mt-0.5">{c.chef}</p>}

@@ -73,6 +73,9 @@ export default function ChantierDetailPage() {
   const [totalDepenses, setTotalDepenses] = useState(0);
   const [photos, setPhotos] = useState<{ id: string; url: string; description?: string | null; uploadedAt: string }[]>([]);
   const [uploadingPhotos, setUploadingPhotos] = useState(false);
+  const [showChefDropdown, setShowChefDropdown] = useState(false);
+  const [equipe, setEquipe] = useState<{ id: string; nom: string; prenom?: string | null; role: string }[]>([]);
+  const [assigningChef, setAssigningChef] = useState(false);
 
   const fetchChantier = useCallback(async () => {
     try {
@@ -172,7 +175,36 @@ export default function ChantierDetailPage() {
     } catch {}
   };
 
-  useEffect(() => { fetchChantier(); fetchDepenses(); fetchPhotos(); }, [fetchChantier, fetchDepenses, fetchPhotos]);
+  const fetchEquipe = useCallback(async () => {
+    try {
+      const res = await fetch("/api/equipe");
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) setEquipe(data.map((m: any) => ({ id: m.id, nom: m.nom, prenom: m.prenom, role: m.role })));
+      }
+    } catch {}
+  }, []);
+
+  const assignChef = async (membreId: string) => {
+    setAssigningChef(true);
+    try {
+      const res = await fetch("/api/chantiers", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, chefId: membreId }),
+      });
+      if (res.ok) {
+        const membre = equipe.find((m) => m.id === membreId);
+        if (membre) {
+          setChantier((prev) => prev ? { ...prev, chef: { id: membre.id, nom: membre.nom, prenom: membre.prenom } } : prev);
+        }
+      }
+    } catch {}
+    setAssigningChef(false);
+    setShowChefDropdown(false);
+  };
+
+  useEffect(() => { fetchChantier(); fetchDepenses(); fetchPhotos(); fetchEquipe(); }, [fetchChantier, fetchDepenses, fetchPhotos, fetchEquipe]);
 
   const startEdit = () => {
     if (!chantier) return;
@@ -417,9 +449,52 @@ export default function ChantierDetailPage() {
         <div className="space-y-6">
           {/* Chef */}
           <div className="rounded-2xl border border-gray-200 bg-white p-5 space-y-3 shadow-sm">
-            <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-              <User className="h-4 w-4 text-[#4a7c59]" /> Chef de chantier
-            </h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                <User className="h-4 w-4 text-[#4a7c59]" /> Chef de chantier
+              </h3>
+              <div className="relative">
+                <button
+                  onClick={() => { setShowChefDropdown((v) => !v); }}
+                  className="text-xs text-[#4a7c59] hover:text-[#3d6a4a] border border-[#4a7c59]/30 rounded-lg px-2.5 py-1 hover:bg-[#4a7c59]/5 transition-colors flex items-center gap-1"
+                >
+                  {assigningChef ? <Loader2 className="h-3 w-3 animate-spin" /> : <UserCheck className="h-3 w-3" />}
+                  {chantier.chef ? "Changer" : "Assigner"}
+                </button>
+                {showChefDropdown && (
+                  <>
+                    <div className="fixed inset-0 z-10" onClick={() => setShowChefDropdown(false)} />
+                    <div className="absolute right-0 top-full mt-1 z-20 w-52 rounded-xl border border-gray-200 bg-white shadow-lg py-1">
+                    {equipe.length === 0 ? (
+                      <p className="text-xs text-gray-400 px-3 py-2">Aucun membre dans l&apos;équipe</p>
+                    ) : (
+                      equipe.map((m) => (
+                        <button
+                          key={m.id}
+                          onClick={() => assignChef(m.id)}
+                          className="w-full text-left px-3 py-2 text-sm text-gray-900 hover:bg-[#f5f5f0] flex items-center gap-2 transition-colors"
+                        >
+                          <div className="w-7 h-7 rounded-full bg-[#4a7c59]/10 flex items-center justify-center text-[10px] font-bold text-[#4a7c59] shrink-0">
+                            {(m.prenom?.[0] || "")}{m.nom[0]}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="truncate">{m.prenom} {m.nom}</p>
+                            <p className="text-[10px] text-gray-400 truncate">{m.role}</p>
+                          </div>
+                        </button>
+                      ))
+                    )}
+                    <button
+                      onClick={() => setShowChefDropdown(false)}
+                      className="w-full text-left px-3 py-1.5 text-xs text-gray-400 hover:text-gray-700 border-t border-gray-100 mt-1 transition-colors"
+                    >
+                      Annuler
+                    </button>
+                  </div>
+                  </>
+                )}
+              </div>
+            </div>
             {chantier.chef ? (
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-[#4a7c59]/10 flex items-center justify-center text-sm font-bold text-[#4a7c59]">
@@ -431,7 +506,7 @@ export default function ChantierDetailPage() {
                 </div>
               </div>
             ) : (
-              <p className="text-sm text-gray-500">Non assigné</p>
+              <p className="text-sm text-gray-400 italic">Non assigné</p>
             )}
           </div>
 

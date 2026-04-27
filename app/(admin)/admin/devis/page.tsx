@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, FileText, Calendar, Euro } from "lucide-react";
+import { Plus, FileText, Calendar, Euro, Search } from "lucide-react";
 import { formatMoney } from "@/lib/utils";
 
 interface Devis {
@@ -24,10 +24,28 @@ const STATUT_STYLE: Record<string, { bg: string; text: string; label: string }> 
   refuse:    { bg: "bg-[#f0dcdc]", text: "text-[#c04040]", label: "Refusé" },
 };
 
+const STATUT_FILTERS = [
+  { value: "", label: "Tous" },
+  { value: "brouillon", label: "Brouillon" },
+  { value: "envoye", label: "Envoyé" },
+  { value: "signe", label: "Signé" },
+  { value: "refuse", label: "Refusé" },
+];
+
 export default function DevisPage() {
   const router = useRouter();
   const [devis, setDevis] = useState<Devis[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [filterStatut, setFilterStatut] = useState("");
+
+  const filtered = useMemo(() => {
+    return devis.filter((d) => {
+      const matchStatut = !filterStatut || d.statut === filterStatut;
+      const matchSearch = !search || d.clientNom.toLowerCase().includes(search.toLowerCase()) || d.numero.toLowerCase().includes(search.toLowerCase());
+      return matchStatut && matchSearch;
+    });
+  }, [devis, search, filterStatut]);
 
   const fetchDevis = useCallback(async () => {
     try {
@@ -77,7 +95,7 @@ export default function DevisPage() {
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-foreground">Devis</h1>
-          <p className="text-muted-foreground mt-1">{devis.length} devis au total</p>
+          <p className="text-muted-foreground mt-1">{filtered.length} devis{filtered.length !== devis.length ? ` sur ${devis.length}` : " au total"}</p>
         </div>
         <button
           onClick={() => router.push("/admin/devis/nouveau")}
@@ -88,11 +106,46 @@ export default function DevisPage() {
         </button>
       </div>
 
+      {/* Filtres */}
+      <div className="flex items-center gap-3 flex-wrap">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Rechercher un client…"
+            className="btp-input pl-9 pr-3 py-2 text-sm w-52"
+          />
+        </div>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {STATUT_FILTERS.map((f) => (
+            <button
+              key={f.value}
+              onClick={() => setFilterStatut(f.value)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
+                filterStatut === f.value
+                  ? "bg-[#4a7c59] text-white border-[#4a7c59]"
+                  : "bg-white text-muted-foreground border-border hover:text-foreground hover:bg-[#f5f5f0]"
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {devis.length === 0 ? (
         <div className="btp-card p-12 text-center">
           <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
           <p className="text-muted-foreground font-medium">Aucun devis créé</p>
           <p className="text-sm text-muted-foreground/70 mt-1">{'Créez votre premier devis en cliquant sur "+ Nouveau devis"'}</p>
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="btp-card p-12 text-center">
+          <Search className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+          <p className="text-muted-foreground font-medium">Aucun résultat</p>
+          <p className="text-sm text-muted-foreground/70 mt-1">Modifiez vos critères de recherche</p>
         </div>
       ) : (
         <div className="btp-card overflow-hidden">
@@ -109,7 +162,7 @@ export default function DevisPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#f0f0eb]">
-                {devis.map((d) => {
+                {filtered.map((d) => {
                   const style = STATUT_STYLE[d.statut] || STATUT_STYLE.brouillon;
                   return (
                     <tr
