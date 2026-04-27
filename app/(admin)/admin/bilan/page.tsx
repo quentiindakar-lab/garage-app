@@ -129,6 +129,7 @@ export default function BilanPage() {
   const [showAdd, setShowAdd] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [scanResult, setScanResult] = useState<Partial<Depense> | null>(null);
+  const [scanError, setScanError] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -173,6 +174,7 @@ export default function BilanPage() {
 
   const handleScan = async (file: File) => {
     setScanning(true);
+    setScanError(null);
     try {
       const reader = new FileReader();
       reader.onload = async () => {
@@ -186,16 +188,19 @@ export default function BilanPage() {
           if (res.ok) {
             const data = await res.json();
             setScanResult(data);
+            setShowAdd(true);
+          } else {
+            setScanError("Échec de l'analyse, veuillez réessayer ou saisir manuellement.");
           }
         } catch {
-          setScanResult({ montant: 0, fournisseur: "", categorie: "Autre", date: new Date().toISOString().slice(0, 10) });
+          setScanError("Échec de l'analyse, veuillez réessayer ou saisir manuellement.");
         }
         setScanning(false);
-        setShowAdd(true);
       };
       reader.readAsDataURL(file);
     } catch {
       setScanning(false);
+      setScanError("Échec de l'analyse, veuillez réessayer ou saisir manuellement.");
     }
   };
 
@@ -232,6 +237,14 @@ export default function BilanPage() {
           </button>
         </div>
       </div>
+
+      {/* Erreur scan */}
+      {scanError && (
+        <div className="flex items-center justify-between gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <span>{scanError}</span>
+          <button onClick={() => setScanError(null)} className="shrink-0 text-red-400 hover:text-red-700 transition-colors">✕</button>
+        </div>
+      )}
 
       {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

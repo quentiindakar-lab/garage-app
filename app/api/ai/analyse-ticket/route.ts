@@ -10,6 +10,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Image requise" }, { status: 400 });
     }
 
+    const mediaType = image.startsWith("/9j") ? "image/jpeg"
+      : image.startsWith("iVBOR") ? "image/png"
+      : image.startsWith("UklG") ? "image/webp"
+      : "image/jpeg";
+
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
       max_tokens: 2000,
@@ -30,7 +35,7 @@ Réponds UNIQUEMENT en JSON valide avec cette structure :
               type: "image",
               source: {
                 type: "base64",
-                media_type: "image/jpeg",
+                media_type: mediaType,
                 data: image,
               },
             },
@@ -42,7 +47,8 @@ Réponds UNIQUEMENT en JSON valide avec cette structure :
     const text = response.content[0].type === "text" ? response.content[0].text : "";
     if (!text) throw new Error("Pas de réponse de l'IA");
 
-    const result = JSON.parse(text);
+    const clean = text.replace(/```json|```/g, "").trim();
+    const result = JSON.parse(clean);
     return NextResponse.json(result);
   } catch (error) {
     console.error("Erreur analyse ticket:", error);
