@@ -387,7 +387,7 @@ function AddDepenseModal({ onClose, onAdd, scanResult }: { onClose: () => void; 
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60">
-      <div className="w-full max-w-md mx-4 rounded-2xl border border-border bg-white p-6 shadow-sm">
+      <div className="w-full max-w-md mx-4 btp-card p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
             {scanResult ? <><Sparkles className="h-4 w-4 text-[var(--primary)]" /> Dépense scannée</> : "Nouvelle dépense"}

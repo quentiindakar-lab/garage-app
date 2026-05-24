@@ -287,7 +287,7 @@ export default function ChantierDetailPage() {
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-3">
           <button onClick={() => router.push("/admin/chantiers")}
-            className="p-2 rounded-lg border border-gray-200 bg-white text-gray-500 hover:text-gray-900 transition-colors shadow-sm">
+            className="btp-btn-secondary p-2 text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="h-4 w-4" />
           </button>
           <div>
@@ -316,11 +316,11 @@ export default function ChantierDetailPage() {
           ) : (
             <>
               <button onClick={startEdit}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 bg-white text-sm text-gray-600 hover:text-gray-900 transition-colors shadow-sm">
+                className="btp-btn-secondary flex items-center gap-2 px-4 py-2 text-sm transition-colors">
                 <Edit2 className="h-4 w-4" /> Modifier
               </button>
               <button onClick={deleteChantier} disabled={deleting}
-                className="p-2 rounded-lg border border-gray-200 bg-white text-gray-400 hover:text-red-500 disabled:opacity-50 transition-colors shadow-sm">
+                className="p-2 btp-btn-secondary text-muted-foreground hover:text-[var(--destructive)] disabled:opacity-50 transition-colors">
                 {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
               </button>
             </>
@@ -332,7 +332,7 @@ export default function ChantierDetailPage() {
         {/* Main info */}
         <div className="lg:col-span-2 space-y-6">
           {/* Details card */}
-          <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-4 shadow-sm">
+          <div className="btp-card p-6 space-y-4 shadow-sm">
             <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2">
               <FileText className="h-4 w-4 text-[#4a7c59]" /> Informations
             </h2>
@@ -346,7 +346,7 @@ export default function ChantierDetailPage() {
                   <div>
                     <label className="block text-sm font-medium text-gray-600 mb-1">Type</label>
                     <select value={editForm.type || ""} onChange={(e) => setEditForm({ ...editForm, type: e.target.value })}
-                      className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30">
+                      className="btp-input-field px-3 py-2 text-sm w-full">
                       <option value="">—</option>
                       {BTP_CONFIG.metiers.map((m) => <option key={m} value={m}>{m}</option>)}
                     </select>
@@ -372,12 +372,12 @@ export default function ChantierDetailPage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1">Description</label>
                   <textarea rows={3} value={editForm.description || ""} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                    className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 resize-none focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30" />
+                    className="btp-textarea px-3 py-2 text-sm w-full" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1">Notes</label>
                   <textarea rows={2} value={editForm.notes || ""} onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
-                    className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 resize-none focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30" />
+                    className="btp-textarea px-3 py-2 text-sm w-full" />
                 </div>
               </div>
             ) : (
@@ -411,12 +411,12 @@ export default function ChantierDetailPage() {
           </div>
 
           {/* Photos */}
-          <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-4 shadow-sm">
+          <div className="btp-card p-6 space-y-4 shadow-sm">
             <div className="flex items-center justify-between">
               <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2">
                 <Camera className="h-4 w-4 text-[#4a7c59]" /> Photos
               </h2>
-              <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-gray-50 text-xs transition-colors cursor-pointer ${uploadingPhotos ? "text-gray-400 pointer-events-none" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"}`}>
+              <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg btp-btn-secondary text-xs transition-colors cursor-pointer ${uploadingPhotos ? "text-muted-foreground/50 pointer-events-none" : "text-muted-foreground hover:text-foreground"}`}>
                 {uploadingPhotos ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
                 {uploadingPhotos ? "Upload..." : "Ajouter"}
                 <input type="file" accept="image/*" multiple className="hidden" onChange={handlePhotoUpload} disabled={uploadingPhotos} />
@@ -448,7 +448,7 @@ export default function ChantierDetailPage() {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Chef */}
-          <div className="rounded-2xl border border-gray-200 bg-white p-5 space-y-3 shadow-sm">
+          <div className="btp-card p-5 space-y-3 shadow-sm">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
                 <User className="h-4 w-4 text-[#4a7c59]" /> Chef de chantier
@@ -464,7 +464,7 @@ export default function ChantierDetailPage() {
                 {showChefDropdown && (
                   <>
                     <div className="fixed inset-0 z-10" onClick={() => setShowChefDropdown(false)} />
-                    <div className="absolute right-0 top-full mt-1 z-20 w-52 rounded-xl border border-gray-200 bg-white shadow-lg py-1">
+                    <div className="absolute right-0 top-full mt-1 z-20 w-52 glass-dropdown py-1">
                     {equipe.length === 0 ? (
                       <p className="text-xs text-gray-400 px-3 py-2">Aucun membre dans l&apos;équipe</p>
                     ) : (
@@ -511,7 +511,7 @@ export default function ChantierDetailPage() {
           </div>
 
           {/* Membres */}
-          <div className="rounded-2xl border border-gray-200 bg-white p-5 space-y-3 shadow-sm">
+          <div className="btp-card p-5 space-y-3 shadow-sm">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
                 <Users className="h-4 w-4 text-[#4a7c59]" /> Équipe ({chantier.affectations?.length || 0})
@@ -544,14 +544,14 @@ export default function ChantierDetailPage() {
           </div>
 
           {/* Client associé */}
-          <div className="rounded-2xl border border-gray-200 bg-white p-5 space-y-3 shadow-sm">
+          <div className="btp-card p-5 space-y-3 shadow-sm">
             <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
               <UserCheck className="h-4 w-4 text-[#4a7c59]" /> Client
             </h3>
             {chantier.client ? (
               <div
                 onClick={() => router.push(`/admin/clients/${chantier.client!.id}`)}
-                className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-3 cursor-pointer hover:border-[#4a7c59]/30 transition-colors"
+                className="flex items-center justify-between glass-inset p-3 cursor-pointer hover:border-[#4a7c59]/30 transition-colors"
               >
                 <div>
                   <p className="text-sm font-medium text-gray-900">{chantier.client.nom} {chantier.client.prenom || ""}</p>
@@ -565,7 +565,7 @@ export default function ChantierDetailPage() {
           </div>
 
           {/* Dépenses */}
-          <div className="rounded-2xl border border-gray-200 bg-white p-5 space-y-3 shadow-sm">
+          <div className="btp-card p-5 space-y-3 shadow-sm">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
                 <BarChart3 className="h-4 w-4 text-[#4a7c59]" /> Dépenses
@@ -575,7 +575,7 @@ export default function ChantierDetailPage() {
                 Voir tout <ExternalLink className="h-3 w-3" />
               </button>
             </div>
-            <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+            <div className="glass-inset p-3">
               <p className="text-xs text-gray-500">Total dépenses</p>
               <p className="text-lg font-bold text-gray-900">{formatMoney(totalDepenses)}</p>
               <p className="text-xs text-gray-400 mt-1">{depenses.length} dépense{depenses.length > 1 ? "s" : ""}</p>
@@ -584,14 +584,14 @@ export default function ChantierDetailPage() {
 
           {/* Estimations */}
           {chantier.estimations && chantier.estimations.length > 0 && (
-            <div className="rounded-2xl border border-gray-200 bg-white p-5 space-y-3 shadow-sm">
+            <div className="btp-card p-5 space-y-3 shadow-sm">
               <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-[#4a7c59]" /> Estimations ({chantier.estimations.length})
               </h3>
               {chantier.estimations.map((est) => {
                 const couts = est.resultatsJson?.couts;
                 return (
-                  <div key={est.id} className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+                  <div key={est.id} className="glass-inset p-3">
                     <p className="text-xs text-gray-500">{new Date(est.createdAt).toLocaleDateString("fr-FR")}</p>
                     {couts?.total_ttc && <p className="text-sm font-semibold text-[#4a7c59]">{formatMoney(couts.total_ttc)}</p>}
                   </div>
@@ -601,7 +601,7 @@ export default function ChantierDetailPage() {
           )}
 
           {/* Quick actions */}
-          <div className="rounded-2xl border border-gray-200 bg-white p-5 space-y-2 shadow-sm">
+          <div className="btp-card p-5 space-y-2 shadow-sm">
             <h3 className="text-sm font-semibold text-gray-900 mb-2">Actions rapides</h3>
             <button onClick={() => router.push(`/admin/estimation?chantier=${id}`)}
               className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 text-sm text-gray-700 border border-gray-200 transition-colors text-left">
@@ -639,7 +639,7 @@ function EditField({ label, value, onChange, type = "text" }: { label: string; v
     <div>
       <label className="block text-sm font-medium text-gray-600 mb-1">{label}</label>
       <input type={type} value={value} onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30" />
+        className="btp-input-field px-3 py-2 text-sm w-full" />
     </div>
   );
 }

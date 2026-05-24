@@ -181,7 +181,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="flex items-center gap-3">
             <button
               onClick={() => setMobileOpen(true)}
-              className="p-2 rounded-xl text-muted-foreground hover:bg-[#f0f0eb] hover:text-foreground lg:hidden"
+              className="p-2 rounded-xl text-muted-foreground hover:bg-white/40 hover:text-foreground lg:hidden"
             >
               <Menu className="h-5 w-5" />
             </button>

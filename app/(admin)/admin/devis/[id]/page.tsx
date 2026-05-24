@@ -539,7 +539,7 @@ export default function DevisDetailPage() {
       {/* Modal — Devis signé : créer un chantier ? */}
       {signeModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-md rounded-2xl border border-border bg-white p-6 shadow-xl space-y-5">
+          <div className="w-full max-w-md btp-card p-6 shadow-xl space-y-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="grid h-10 w-10 place-content-center rounded-full bg-[#dcf0e4]">

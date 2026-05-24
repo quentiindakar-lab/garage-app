@@ -106,7 +106,7 @@ export default function EmailsIAPage() {
       ]} />
 
       <div className="flex items-center gap-3">
-        <button onClick={() => router.push("/admin/crm")} className="p-2 rounded-lg border border-gray-200 bg-white text-gray-500 hover:text-gray-900 transition-colors shadow-sm">
+        <button onClick={() => router.push("/admin/crm")} className="btp-btn-secondary p-2 text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="h-4 w-4" />
         </button>
         <div>
@@ -117,7 +117,7 @@ export default function EmailsIAPage() {
 
       {/* Onboarding Step 1 */}
       {step === "onboarding_emails" && (
-        <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-5 shadow-sm">
+        <div className="btp-card p-6 space-y-5 shadow-sm">
           <div className="flex items-center gap-3">
             <div className="h-8 w-8 rounded-full bg-[#4a7c59]/10 flex items-center justify-center">
               <span className="text-sm font-bold text-[#4a7c59]">1</span>
@@ -133,7 +133,7 @@ export default function EmailsIAPage() {
                 <label className="block text-sm font-medium text-gray-600 mb-1">Email {i + 1} {i < 5 && "*"}</label>
                 <textarea rows={3} value={email}
                   onChange={(e) => { const arr = [...sampleEmails]; arr[i] = e.target.value; setSampleEmails(arr); }}
-                  className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 resize-none focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30"
+                  className="btp-textarea px-3 py-2 text-sm w-full"
                   placeholder="Collez le texte d'un email envoyé..." />
               </div>
             ))}
@@ -147,7 +147,7 @@ export default function EmailsIAPage() {
 
       {/* Onboarding Step 2 */}
       {step === "onboarding_quiz" && (
-        <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-5 shadow-sm">
+        <div className="btp-card p-6 space-y-5 shadow-sm">
           <div className="flex items-center gap-3">
             <div className="h-8 w-8 rounded-full bg-[#4a7c59]/10 flex items-center justify-center">
               <span className="text-sm font-bold text-[#4a7c59]">2</span>
@@ -163,7 +163,7 @@ export default function EmailsIAPage() {
               <div className="flex gap-2">
                 {(["professionnel", "chaleureux", "direct"] as TonType[]).map((t) => (
                   <button key={t} onClick={() => setQuiz({ ...quiz, ton: t })}
-                    className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors ${quiz.ton === t ? "bg-[#4a7c59] text-white" : "bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200"}`}>
+                    className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors ${quiz.ton === t ? "bg-[#4a7c59] text-white" : "btp-btn-secondary text-muted-foreground"}`}>
                     {t.charAt(0).toUpperCase() + t.slice(1)}
                   </button>
                 ))}
@@ -172,14 +172,14 @@ export default function EmailsIAPage() {
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1.5">Secteur principal</label>
               <input type="text" value={quiz.secteur} onChange={(e) => setQuiz({ ...quiz, secteur: e.target.value })}
-                className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30" />
+                className="btp-input-field px-3 py-2 text-sm w-full" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-2">Longueur préférée</label>
               <div className="flex gap-2">
                 {(["court", "moyen", "detaille"] as LengthType[]).map((l) => (
                   <button key={l} onClick={() => setQuiz({ ...quiz, longueur: l })}
-                    className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors ${quiz.longueur === l ? "bg-[#4a7c59] text-white" : "bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200"}`}>
+                    className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors ${quiz.longueur === l ? "bg-[#4a7c59] text-white" : "btp-btn-secondary text-muted-foreground"}`}>
                     {l === "detaille" ? "Détaillé" : l.charAt(0).toUpperCase() + l.slice(1)}
                   </button>
                 ))}
@@ -196,7 +196,7 @@ export default function EmailsIAPage() {
       {/* Main email interface */}
       {step === "main" && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-4 shadow-sm">
+          <div className="btp-card p-6 space-y-4 shadow-sm">
             <h2 className="text-base font-semibold text-gray-900">Composer un email</h2>
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1.5">Type d&apos;email</label>
@@ -208,7 +208,7 @@ export default function EmailsIAPage() {
                   { id: "remerciement", label: "Remerciement", icon: CheckCircle2 },
                 ].map((t) => (
                   <button key={t.id} onClick={() => setEmailType(t.id)}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${emailType === t.id ? "bg-[#4a7c59]/10 text-[#4a7c59] border border-[#4a7c59]/30" : "bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100"}`}>
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${emailType === t.id ? "bg-[#4a7c59]/10 text-[#4a7c59] border border-[#4a7c59]/30" : "btp-btn-secondary text-muted-foreground"}`}>
                     <t.icon className="h-3.5 w-3.5" /> {t.label}
                   </button>
                 ))}
@@ -219,7 +219,7 @@ export default function EmailsIAPage() {
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1.5">Contexte</label>
               <textarea rows={3} value={contexte} onChange={(e) => setContexte(e.target.value)}
-                className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 resize-none focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30"
+                className="btp-textarea px-3 py-2 text-sm w-full"
                 placeholder="Décrivez en quelques mots..." />
             </div>
             <button onClick={generateEmail} disabled={generating || !dest || !objet}
@@ -228,7 +228,7 @@ export default function EmailsIAPage() {
             </button>
           </div>
 
-          <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-4 shadow-sm">
+          <div className="btp-card p-6 space-y-4 shadow-sm">
             <h2 className="text-base font-semibold text-gray-900">Aperçu</h2>
             {!generatedEmail ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -238,14 +238,14 @@ export default function EmailsIAPage() {
             ) : (
               <>
                 <textarea rows={12} value={generatedEmail} onChange={(e) => setGeneratedEmail(e.target.value)}
-                  className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 resize-none focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30" />
+                  className="btp-textarea px-4 py-3 text-sm w-full" />
                 <div className="flex gap-2">
                   <button onClick={() => setGeneratedEmail("")}
-                    className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-colors">
+                    className="flex-1 py-2.5 btp-btn-secondary text-sm text-muted-foreground transition-colors">
                     Annuler
                   </button>
                   <button onClick={generateEmail} disabled={generating}
-                    className="py-2.5 px-4 rounded-lg border border-gray-200 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-50 disabled:opacity-50 transition-colors">
+                    className="btp-btn-secondary py-2.5 px-4 text-sm text-muted-foreground disabled:opacity-50 transition-colors">
                     {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
                   </button>
                   <button onClick={sendEmail} disabled={sending}
@@ -267,7 +267,7 @@ function Field({ label, value, onChange, placeholder, type = "text" }: { label: 
     <div>
       <label className="block text-sm font-medium text-gray-600 mb-1.5">{label}</label>
       <input type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30" />
+        className="btp-input-field px-3 py-2 text-sm w-full" />
     </div>
   );
 }

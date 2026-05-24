@@ -252,6 +252,70 @@
     box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 28%, transparent);
   }
 
+  .btp-input-field {
+    @apply w-full rounded-xl border text-foreground placeholder:text-muted-foreground focus:outline-none;
+    background: rgba(255, 255, 255, 0.55);
+    border-color: var(--glass-border);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+  .btp-input-field:focus {
+    border-color: var(--ring);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 28%, transparent);
+  }
+
+  .btp-textarea {
+    @apply w-full rounded-xl border text-foreground placeholder:text-muted-foreground focus:outline-none resize-none;
+    background: rgba(255, 255, 255, 0.55);
+    border-color: var(--glass-border);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+  .btp-textarea:focus {
+    border-color: var(--ring);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 28%, transparent);
+  }
+
+  .glass-modal {
+    border-radius: var(--glass-radius-xl);
+    border: 1px solid var(--glass-border);
+    background: var(--glass-card-solid);
+    color: var(--card-foreground);
+    box-shadow: var(--glass-shadow-hover);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(170%);
+    backdrop-filter: blur(var(--glass-blur)) saturate(170%);
+  }
+
+  .glass-row {
+    @apply rounded-xl border transition-[transform,box-shadow,background-color] duration-200;
+    background: rgba(255, 255, 255, 0.38);
+    border-color: var(--glass-border-subtle);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+  }
+  .glass-row:hover {
+    background: rgba(255, 255, 255, 0.55);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .glass-dropdown {
+    @apply rounded-xl border shadow-lg;
+    background: var(--glass-card-solid);
+    border-color: var(--glass-border);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(170%);
+    backdrop-filter: blur(var(--glass-blur)) saturate(170%);
+  }
+
+  .glass-inset {
+    @apply rounded-xl border;
+    background: rgba(255, 255, 255, 0.32);
+    border-color: var(--glass-border-subtle);
+  }
+
+  .glass-filter-inactive {
+    @apply btp-btn-secondary text-sm text-muted-foreground;
+  }
+
   .btp-btn {
     @apply inline-flex items-center justify-center rounded-xl transition-colors disabled:opacity-50 disabled:pointer-events-none;
   }
@@ -329,7 +393,13 @@
   .btp-card,
   .glass-card-soft,
   .glass-kanban-col,
+  .glass-modal,
+  .glass-row,
+  .glass-dropdown,
+  .glass-inset,
   .btp-input,
+  .btp-input-field,
+  .btp-textarea,
   .btp-btn-secondary,
   .btp-btn-glass,
   .glass-search {

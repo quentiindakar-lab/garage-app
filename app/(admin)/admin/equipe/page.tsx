@@ -131,7 +131,7 @@ export default function EquipePage() {
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
         <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Rechercher un membre..."
-          className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30" />
+          className="btp-input w-full pl-10 pr-4 py-2.5 text-sm" />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -207,7 +207,7 @@ export default function EquipePage() {
       {/* Detail modal */}
       {selected && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setSelected(null)}>
-          <div className="w-full max-w-md mx-4 rounded-2xl border border-gray-200 bg-white p-6 space-y-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
+          <div className="w-full max-w-md mx-4 btp-card p-6 space-y-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-900">{selected.prenom} {selected.nom}</h3>
               <button onClick={() => setSelected(null)} className="text-gray-400 hover:text-gray-700"><X className="h-5 w-5" /></button>
@@ -287,7 +287,7 @@ function AddMembreModal({ onClose, onAdd }: { onClose: () => void; onAdd: (m: Me
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40">
-      <div className="w-full max-w-md mx-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-xl">
+      <div className="w-full max-w-md mx-4 btp-card p-6 shadow-xl">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900">Ajouter un membre</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-700"><X className="h-5 w-5" /></button>
@@ -300,7 +300,7 @@ function AddMembreModal({ onClose, onAdd }: { onClose: () => void; onAdd: (m: Me
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1.5">Rôle</label>
             <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}
-              className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30">
+              className="btp-input-field px-3 py-2 text-sm w-full">
               {BTP_CONFIG.roles.map((r) => <option key={r} value={r}>{r}</option>)}
             </select>
           </div>
@@ -322,7 +322,7 @@ function MField({ label, value, onChange, placeholder, type = "text", required =
     <div>
       <label className="block text-sm font-medium text-gray-600 mb-1">{label}</label>
       <input type={type} required={required} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30" />
+        className="btp-input-field px-3 py-2 text-sm w-full" />
     </div>
   );
 }

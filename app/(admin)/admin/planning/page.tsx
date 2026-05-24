@@ -129,20 +129,20 @@ export default function PlanningPage() {
         <div className="flex items-center gap-2">
           {allMembres.length > 0 && (
             <select value={filterMembre || ""} onChange={(e) => setFilterMembre(e.target.value || null)}
-              className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30">
+              className="btp-input-field px-3 py-2 text-sm text-foreground">
               <option value="">Tous les membres</option>
               {allMembres.map((m) => <option key={m} value={m}>{m}</option>)}
             </select>
           )}
-          <div className="flex rounded-lg overflow-hidden border border-gray-200">
-            <button onClick={() => setVue("mois")} className={`px-3 py-2 text-sm font-medium transition-colors ${vue === "mois" ? "bg-[#4a7c59] text-white" : "bg-white text-gray-600 hover:bg-gray-50"}`}>Mois</button>
-            <button onClick={() => setVue("semaine")} className={`px-3 py-2 text-sm font-medium transition-colors ${vue === "semaine" ? "bg-[#4a7c59] text-white" : "bg-white text-gray-600 hover:bg-gray-50"}`}>Semaine</button>
+          <div className="flex rounded-xl overflow-hidden border border-white/60 glass-inset">
+            <button onClick={() => setVue("mois")} className={`px-3 py-2 text-sm font-medium transition-colors ${vue === "mois" ? "bg-[#4a7c59] text-white" : "text-muted-foreground hover:bg-white/40"}`}>Mois</button>
+            <button onClick={() => setVue("semaine")} className={`px-3 py-2 text-sm font-medium transition-colors ${vue === "semaine" ? "bg-[#4a7c59] text-white" : "text-muted-foreground hover:bg-white/40"}`}>Semaine</button>
           </div>
         </div>
       </div>
 
       <div className="flex items-center justify-between shrink-0">
-        <button onClick={() => navigate(-1)} className="p-2 rounded-lg border border-gray-200 bg-white text-gray-500 hover:text-gray-900 transition-colors shadow-sm">
+        <button onClick={() => navigate(-1)} className="btp-btn-secondary p-2 text-muted-foreground hover:text-foreground transition-colors">
           <ChevronLeft className="h-4 w-4" />
         </button>
         <h2 className="text-lg font-semibold text-gray-900">
@@ -151,13 +151,13 @@ export default function PlanningPage() {
             : `Semaine du ${getMonday(currentDate).toLocaleDateString("fr-FR")}`
           }
         </h2>
-        <button onClick={() => navigate(1)} className="p-2 rounded-lg border border-gray-200 bg-white text-gray-500 hover:text-gray-900 transition-colors shadow-sm">
+        <button onClick={() => navigate(1)} className="btp-btn-secondary p-2 text-muted-foreground hover:text-foreground transition-colors">
           <ChevronRight className="h-4 w-4" />
         </button>
       </div>
 
       {loading ? (
-        <div className="flex-1 rounded-2xl border border-gray-200 bg-white p-4 animate-pulse">
+        <div className="flex-1 btp-card p-4 animate-pulse">
           <div className="grid grid-cols-7 gap-1 mb-2">
             {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((d) => (
               <div key={d} className="h-6 flex items-center justify-center">
@@ -183,7 +183,7 @@ export default function PlanningPage() {
 
       {selected && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setSelected(null)}>
-          <div className="w-full max-w-md mx-4 rounded-2xl border border-gray-200 bg-white p-6 space-y-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
+          <div className="w-full max-w-md mx-4 btp-card p-6 space-y-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-900">{selected.nom}</h3>
               <button onClick={() => setSelected(null)} className="text-gray-400 hover:text-gray-700"><X className="h-5 w-5" /></button>
@@ -249,18 +249,18 @@ function MonthView({ currentDate, chantiers, onSelect }: { currentDate: Date; ch
 
   return (
     <div className="btp-card overflow-hidden flex-1">
-      <div className="grid grid-cols-7 border-b border-gray-200 bg-gray-50">
+      <div className="grid grid-cols-7 border-b border-white/40 glass-inset">
         {DAYS_FR.map((d) => (
           <div key={d} className="p-2 text-center text-xs font-semibold text-gray-500 uppercase">{d}</div>
         ))}
       </div>
       <div className="grid grid-cols-7">
         {cells.map((day, i) => {
-          if (!day) return <div key={i} className="min-h-[80px] border-b border-r border-gray-100 bg-gray-50/50" />;
+          if (!day) return <div key={i} className="min-h-[80px] border-b border-r border-white/30 bg-white/20" />;
           const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
           const dc = dayChantiers(day);
           return (
-            <div key={i} className="min-h-[80px] border-b border-r border-gray-100 p-1 bg-white hover:bg-gray-50/50 transition-colors">
+            <div key={i} className="min-h-[80px] border-b border-r border-white/30 p-1 bg-white/25 hover:bg-white/40 transition-colors">
               <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-medium ${isToday ? "bg-[#4a7c59] text-white" : "text-gray-500"}`}>
                 {day}
               </span>
@@ -308,7 +308,7 @@ function WeekView({ currentDate, chantiers, onSelect }: { currentDate: Date; cha
           const dc = dayChantiers(d);
           return (
             <div key={i} className="min-h-[300px]">
-              <div className={`p-3 text-center border-b border-gray-200 ${isToday ? "bg-[#4a7c59]/5" : "bg-gray-50"}`}>
+              <div className={`p-3 text-center border-b border-white/40 ${isToday ? "bg-[#4a7c59]/10" : "glass-inset"}`}>
                 <div className="text-xs text-gray-500 uppercase">{DAYS_FR[i]}</div>
                 <div className={`text-lg font-bold ${isToday ? "text-[#4a7c59]" : "text-gray-900"}`}>{d.getDate()}</div>
               </div>

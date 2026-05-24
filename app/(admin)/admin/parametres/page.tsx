@@ -133,7 +133,7 @@ export default function ParametresPage() {
 
 function Section({ icon: Icon, title, children }: { icon: typeof Building2; title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-4 shadow-sm">
+    <div className="btp-card p-6 space-y-4 shadow-sm">
       <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2">
         <Icon className="h-4 w-4 text-[#4a7c59]" /> {title}
       </h2>
@@ -147,7 +147,7 @@ function Field({ label, value, onChange, placeholder, type = "text" }: { label: 
     <div>
       <label className="block text-sm font-medium text-gray-600 mb-1.5">{label}</label>
       <input type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30" />
+        className="btp-input-field px-3 py-2.5 text-sm w-full" />
     </div>
   );
 }

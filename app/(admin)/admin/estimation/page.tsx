@@ -221,7 +221,7 @@ export default function EstimationPage() {
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Left - Form */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-5 shadow-sm">
+        <div className="btp-card p-6 space-y-5 shadow-sm">
           <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2">
             <Wrench className="h-4 w-4 text-[#4a7c59]" /> Données du chantier
           </h2>
@@ -238,7 +238,7 @@ export default function EstimationPage() {
             <Field label="Matériaux disponibles" value={form.materiaux} onChange={(v) => setForm({ ...form, materiaux: v })} placeholder="Carrelage, placo..." />
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1.5">Description</label>
-              <textarea rows={2} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30 resize-none" placeholder="Travaux à réaliser..." />
+              <textarea rows={2} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="btp-textarea px-3 py-2 text-sm w-full" placeholder="Travaux à réaliser..." />
             </div>
 
             <div>
@@ -246,7 +246,7 @@ export default function EstimationPage() {
               <div className="flex flex-wrap gap-1.5">
                 {BTP_CONFIG.metiers.map((m) => (
                   <button key={m} type="button" onClick={() => toggleMetier(m)}
-                    className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${form.metiers.includes(m) ? "bg-[#4a7c59] text-white" : "bg-gray-100 text-gray-600 border border-gray-200 hover:text-gray-900"}`}>
+                    className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${form.metiers.includes(m) ? "bg-[#4a7c59] text-white" : "btp-btn-secondary text-muted-foreground hover:text-foreground"}`}>
                     {m}
                   </button>
                 ))}
@@ -297,7 +297,7 @@ export default function EstimationPage() {
           )}
 
           {!result && !loading && !error && (
-            <div className="rounded-2xl border border-gray-200 bg-white p-16 flex flex-col items-center text-center shadow-sm">
+            <div className="btp-card p-16 flex flex-col items-center text-center shadow-sm">
               <Sparkles className="h-12 w-12 text-gray-300 mb-4" />
               <h3 className="text-lg font-semibold text-gray-400">Résultats de l&apos;estimation</h3>
               <p className="text-sm text-gray-400 mt-2">Remplissez le formulaire et cliquez sur &quot;Générer&quot;</p>
@@ -305,7 +305,7 @@ export default function EstimationPage() {
           )}
 
           {loading && (
-            <div className="rounded-2xl border border-gray-200 bg-white p-16 flex flex-col items-center shadow-sm">
+            <div className="btp-card p-16 flex flex-col items-center shadow-sm">
               <Loader2 className="h-10 w-10 text-[#4a7c59] animate-spin mb-4" />
               <p className="text-sm text-gray-500">L&apos;IA analyse votre chantier...</p>
             </div>
@@ -322,7 +322,7 @@ export default function EstimationPage() {
               </div>
 
               {/* Pie chart */}
-              <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+              <div className="btp-card p-5 shadow-sm">
                 <h3 className="text-sm font-semibold text-gray-900 mb-3">Répartition des coûts</h3>
                 <div className="h-56">
                   <EstimationPieChart data={pieData} colors={PIE_COLORS} formatMoneyFn={formatMoney} />
@@ -330,7 +330,7 @@ export default function EstimationPage() {
               </div>
 
               {/* Materiaux table */}
-              <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+              <div className="btp-card p-5 shadow-sm">
                 <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
                   <Wrench className="h-4 w-4 text-[#4a7c59]" /> Matériaux nécessaires
                 </h3>
@@ -360,7 +360,7 @@ export default function EstimationPage() {
 
               {/* Recommandations + Risques */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                <div className="btp-card p-5 shadow-sm">
                   <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
                     <Lightbulb className="h-4 w-4 text-[#4a7c59]" /> Recommandations
                   </h3>
@@ -373,7 +373,7 @@ export default function EstimationPage() {
                     ))}
                   </div>
                 </div>
-                <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                <div className="btp-card p-5 shadow-sm">
                   <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
                     <ShieldAlert className="h-4 w-4 text-red-400" /> Risques identifiés
                   </h3>
@@ -402,7 +402,7 @@ export default function EstimationPage() {
                 </div>
               ) : (
                 <div className="flex gap-3">
-                  <button className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-200 bg-white text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors shadow-sm">
+                  <button className="flex-1 flex items-center justify-center gap-2 py-2.5 btp-btn-secondary text-sm transition-colors">
                     <FileDown className="h-4 w-4" /> Exporter en PDF
                   </button>
                   <button onClick={openChantierModal}
@@ -419,7 +419,7 @@ export default function EstimationPage() {
       {/* Modal création chantier depuis estimation */}
       {showChantierModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowChantierModal(false)}>
-          <div onClick={(e) => e.stopPropagation()} className="w-full max-w-lg rounded-2xl border border-gray-200 bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+          <div onClick={(e) => e.stopPropagation()} className="w-full max-w-lg btp-card p-6 shadow-xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                 <HardHat className="h-5 w-5 text-[#4a7c59]" /> Créer le chantier
@@ -460,10 +460,10 @@ export default function EstimationPage() {
                       value={clientSearch}
                       onChange={(e) => { setClientSearch(e.target.value); setShowClientDropdown(true); }}
                       onFocus={() => setShowClientDropdown(true)}
-                      className="w-full rounded-lg border border-gray-200 bg-gray-50 py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30"
+                      className="btp-input py-2.5 pl-10 pr-4 text-sm w-full"
                     />
                     {showClientDropdown && clientResults.length > 0 && (
-                      <div className="absolute z-10 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg">
+                      <div className="absolute z-10 mt-1 w-full glass-dropdown">
                         {clientResults.map((c) => (
                           <button key={c.id} type="button"
                             onClick={() => { setSelectedClient(c); setShowClientDropdown(false); setClientSearch(""); }}
@@ -478,7 +478,7 @@ export default function EstimationPage() {
               </div>
             </div>
             <div className="mt-6 flex justify-end gap-3">
-              <button onClick={() => setShowChantierModal(false)} className="rounded-lg border border-gray-200 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">Annuler</button>
+              <button onClick={() => setShowChantierModal(false)} className="btp-btn-secondary px-4 py-2 text-sm text-muted-foreground">Annuler</button>
               <button onClick={handleCreateChantier} disabled={!chantierForm.nom.trim() || !chantierForm.adresse.trim() || creatingChantier}
                 className="flex items-center gap-2 rounded-lg bg-[#4a7c59] px-4 py-2 text-sm font-semibold text-white hover:bg-[#3d6a4a] shadow-sm disabled:opacity-50">
                 {creatingChantier ? <><Loader2 className="h-4 w-4 animate-spin" /> Création...</> : "Créer le chantier"}
@@ -496,7 +496,7 @@ function Field({ label, value, onChange, placeholder, type = "text" }: { label: 
     <div>
       <label className="block text-sm font-medium text-gray-600 mb-1.5">{label}</label>
       <input type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30" />
+        className="btp-input-field px-3 py-2 text-sm w-full" />
     </div>
   );
 }
@@ -510,7 +510,7 @@ const KpiCard = memo(function KpiCard({ icon: Icon, label, value, color }: { ico
   };
   const c = colors[color] || colors.amber;
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+    <div className="btp-card p-4 shadow-sm">
       <div className="flex items-center gap-2 mb-2">
         <div className={`p-1.5 rounded-lg ${c.bg}`}><Icon className={`h-3.5 w-3.5 ${c.text}`} /></div>
         <span className="text-xs font-medium text-gray-500">{label}</span>

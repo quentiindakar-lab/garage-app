@@ -173,7 +173,7 @@ export default function NouveauChantierPage() {
       <div className="flex items-center gap-3">
         <button
           onClick={() => router.back()}
-          className="p-2 rounded-lg border border-gray-200 bg-white text-gray-500 hover:text-gray-900 transition-colors shadow-sm"
+          className="btp-btn-secondary p-2 text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
         </button>
@@ -185,7 +185,7 @@ export default function NouveauChantierPage() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Client */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-4 shadow-sm">
+        <div className="btp-card p-6 space-y-4 shadow-sm">
           <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2">
             <UserCheck className="h-4 w-4 text-[#4a7c59]" /> Client
           </h2>
@@ -208,10 +208,10 @@ export default function NouveauChantierPage() {
                   value={clientSearch}
                   onChange={(e) => { setClientSearch(e.target.value); setShowClientDropdown(true); }}
                   onFocus={() => setShowClientDropdown(true)}
-                  className="w-full rounded-lg border border-gray-200 bg-gray-50 py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30"
+                  className="btp-input py-2.5 pl-10 pr-4 text-sm w-full"
                 />
                 {showClientDropdown && clientResults.length > 0 && (
-                  <div className="absolute z-10 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-lg">
+                  <div className="absolute z-10 mt-1 w-full glass-dropdown">
                     {clientResults.map((c) => (
                       <button key={c.id} type="button"
                         onClick={() => { setSelectedClient(c); setClientId(c.id); setShowClientDropdown(false); setClientSearch(""); }}
@@ -224,14 +224,14 @@ export default function NouveauChantierPage() {
                 )}
               </div>
               <button type="button" onClick={() => setShowNewClientModal(true)}
-                className="flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-[#4a7c59] hover:bg-[#4a7c59]/5 transition-colors whitespace-nowrap">
+                className="btp-btn-secondary flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-[#4a7c59] transition-colors whitespace-nowrap">
                 <Plus className="h-4 w-4" /> Créer un client
               </button>
             </div>
           )}
         </div>
 
-        <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-5 shadow-sm">
+        <div className="btp-card p-6 space-y-5 shadow-sm">
           <h2 className="text-base font-semibold text-gray-900">Informations générales</h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -245,7 +245,7 @@ export default function NouveauChantierPage() {
               <select
                 value={form.type}
                 onChange={(e) => set("type", e.target.value)}
-                className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30"
+                className="btp-input-field px-3 py-2.5 text-sm w-full"
               >
                 <option value="">Sélectionner</option>
                 {BTP_CONFIG.metiers.map((m) => (
@@ -268,14 +268,14 @@ export default function NouveauChantierPage() {
               rows={3}
               value={form.description}
               onChange={(e) => set("description", e.target.value)}
-              className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30 resize-none"
+              className="btp-input-field px-3 py-2.5 text-sm w-full resize-none"
               placeholder="Détails supplémentaires..."
             />
           </div>
         </div>
 
         {/* Photos */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-6 space-y-4 shadow-sm">
+        <div className="btp-card p-6 space-y-4 shadow-sm">
           <h2 className="text-base font-semibold text-gray-900">Photos du chantier</h2>
           <div className="flex flex-wrap gap-3">
             {photos.map((photo, i) => (
@@ -313,7 +313,7 @@ export default function NouveauChantierPage() {
           <button
             type="button"
             onClick={() => router.push("/admin/estimation")}
-            className="flex items-center gap-2 px-6 py-3 rounded-lg border border-gray-200 bg-white text-[#4a7c59] hover:bg-gray-50 font-medium text-sm transition-colors shadow-sm"
+            className="btp-btn-secondary flex items-center gap-2 px-6 py-3 text-[#4a7c59] font-medium text-sm transition-colors"
           >
             <Sparkles className="h-4 w-4" />
             Estimer avec l&apos;IA
@@ -324,7 +324,7 @@ export default function NouveauChantierPage() {
       {/* Modal création client rapide */}
       {showNewClientModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setShowNewClientModal(false)}>
-          <div onClick={(e) => e.stopPropagation()} className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-xl">
+          <div onClick={(e) => e.stopPropagation()} className="w-full max-w-md btp-card p-6 shadow-xl">
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-bold text-gray-900">Nouveau client</h2>
               <button onClick={() => setShowNewClientModal(false)} className="text-gray-400 hover:text-gray-700"><X className="h-5 w-5" /></button>
@@ -338,7 +338,7 @@ export default function NouveauChantierPage() {
               <InputField label="Téléphone" value={newClient.telephone} onChange={(v) => setNewClient({ ...newClient, telephone: v })} type="tel" />
             </div>
             <div className="mt-5 flex justify-end gap-3">
-              <button onClick={() => setShowNewClientModal(false)} className="rounded-lg border border-gray-200 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">Annuler</button>
+              <button onClick={() => setShowNewClientModal(false)} className="btp-btn-secondary px-4 py-2 text-sm text-muted-foreground">Annuler</button>
               <button onClick={handleCreateClient} disabled={!newClient.nom.trim() || savingClient}
                 className="flex items-center gap-2 rounded-lg bg-[#4a7c59] hover:bg-[#3d6a4a] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">
                 {savingClient ? <><Loader2 className="h-4 w-4 animate-spin" /> Création...</> : "Créer"}
@@ -375,7 +375,7 @@ function InputField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30"
+        className="btp-input-field px-3 py-2.5 text-sm w-full"
       />
     </div>
   );

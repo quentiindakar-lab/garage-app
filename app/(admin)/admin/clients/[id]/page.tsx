@@ -140,7 +140,7 @@ export default function ClientDetailPage() {
       <MotionDiv
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+        className="btp-card p-6 shadow-sm"
       >
         <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
           <div className="flex items-center gap-4">
@@ -159,25 +159,25 @@ export default function ClientDetailPage() {
                       value={editForm.nom}
                       onChange={(e) => setEditForm((f) => ({ ...f, nom: e.target.value }))}
                       placeholder="Nom *"
-                      className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30 w-32"
+                      className="btp-input-field px-3 py-1.5 text-sm w-32"
                     />
                     <input
                       value={editForm.prenom}
                       onChange={(e) => setEditForm((f) => ({ ...f, prenom: e.target.value }))}
                       placeholder="Prénom"
-                      className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30 w-32"
+                      className="btp-input-field px-3 py-1.5 text-sm w-32"
                     />
                   </div>
                   <input
                     value={editForm.entreprise}
                     onChange={(e) => setEditForm((f) => ({ ...f, entreprise: e.target.value }))}
                     placeholder="Entreprise (optionnel)"
-                    className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30 w-full"
+                    className="btp-input-field px-3 py-1.5 text-sm w-full"
                   />
                   <select
                     value={editForm.typeClient}
                     onChange={(e) => setEditForm((f) => ({ ...f, typeClient: e.target.value }))}
-                    className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30"
+                    className="btp-input-field px-3 py-1.5 text-sm"
                   >
                     <option value="PARTICULIER">Particulier</option>
                     <option value="ENTREPRISE">Entreprise</option>
@@ -203,7 +203,7 @@ export default function ClientDetailPage() {
               <>
                 <button
                   onClick={cancelEdit}
-                  className="flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm text-gray-500 hover:text-gray-900 transition-colors"
+                  className="flex items-center gap-2 btp-btn-secondary px-4 py-2 text-sm text-muted-foreground transition-colors"
                 >
                   <X className="h-4 w-4" /> Annuler
                 </button>
@@ -220,7 +220,7 @@ export default function ClientDetailPage() {
               <>
                 <button
                   onClick={startEdit}
-                  className="flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors shadow-sm"
+                  className="flex items-center gap-2 btp-btn-secondary px-4 py-2 text-sm transition-colors shadow-sm"
                 >
                   <Pencil className="h-4 w-4" /> Modifier
                 </button>
@@ -245,7 +245,7 @@ export default function ClientDetailPage() {
                   value={editForm.email}
                   onChange={(e) => setEditForm((f) => ({ ...f, email: e.target.value }))}
                   placeholder="Email"
-                  className="flex-1 rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30"
+                  className="flex-1 btp-input-field px-3 py-1.5 text-sm"
                 />
               </div>
               <div className="flex items-center gap-2">
@@ -254,7 +254,7 @@ export default function ClientDetailPage() {
                   value={editForm.telephone}
                   onChange={(e) => setEditForm((f) => ({ ...f, telephone: e.target.value }))}
                   placeholder="Téléphone"
-                  className="flex-1 rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30"
+                  className="flex-1 btp-input-field px-3 py-1.5 text-sm"
                 />
               </div>
               <div className="flex items-center gap-2">
@@ -263,7 +263,7 @@ export default function ClientDetailPage() {
                   value={editForm.adresse}
                   onChange={(e) => setEditForm((f) => ({ ...f, adresse: e.target.value }))}
                   placeholder="Adresse"
-                  className="flex-1 rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30"
+                  className="flex-1 btp-input-field px-3 py-1.5 text-sm"
                 />
               </div>
             </>
@@ -311,7 +311,7 @@ export default function ClientDetailPage() {
                 <div
                   key={ch.id}
                   onClick={() => router.push(`/admin/chantiers/${ch.id}`)}
-                  className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-4 cursor-pointer hover:bg-gray-50 hover:-translate-y-[3px] hover:scale-[1.01] hover:shadow-lg transition-[transform,box-shadow,background-color] duration-200 ease-in-out"
+                  className="glass-row flex items-center justify-between p-4 cursor-pointer hover:-translate-y-[3px] hover:scale-[1.01] hover:shadow-lg transition-[transform,box-shadow,background-color] duration-200 ease-in-out"
                 >
                   <div>
                     <p className="font-medium text-gray-900">{ch.nom}</p>
@@ -343,7 +343,7 @@ export default function ClientDetailPage() {
               (ch.estimations || []).map((est: any) => {
                 const couts = est.resultatsJson?.couts;
                 return (
-                  <div key={est.id} className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-4">
+                  <div key={est.id} className="glass-row flex items-center justify-between p-4">
                     <div>
                       <p className="font-medium text-gray-900">Estimation pour {ch.nom}</p>
                       <p className="text-xs text-gray-500">{formatDate(est.createdAt)}</p>
@@ -366,7 +366,7 @@ export default function ClientDetailPage() {
         {client.prospects?.length > 0 ? (
           <div className="space-y-3">
             {client.prospects.map((p: any) => (
-              <div key={p.id} className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-4">
+              <div key={p.id} className="glass-row flex items-center justify-between p-4">
                 <div>
                   <p className="font-medium text-gray-900">{p.nom}</p>
                   <p className="text-xs text-gray-500">
@@ -387,11 +387,11 @@ export default function ClientDetailPage() {
       {/* Financier */}
       <Section title="Bilan financier" icon={BarChart3}>
         <div className="grid grid-cols-2 gap-4">
-          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+          <div className="glass-inset p-4">
             <p className="text-xs text-gray-500 uppercase tracking-wider">CA total</p>
             <p className={`mt-1 text-2xl font-bold ${client.caTotal > 0 ? "text-[#4a7c59]" : "text-gray-900"}`}>{formatMoney(client.caTotal || 0)}</p>
           </div>
-          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+          <div className="glass-inset p-4">
             <p className="text-xs text-gray-500 uppercase tracking-wider">Total dépenses</p>
             <p className="mt-1 text-2xl font-bold text-gray-900">{formatMoney(totalDepenses)}</p>
           </div>
@@ -405,7 +405,7 @@ function KpiCard({ icon: Icon, label, value, sub, positive }: {
   icon: any; label: string; value: string | number; sub?: string; positive?: boolean;
 }) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+    <div className="btp-card p-4 shadow-sm">
       <div className="flex items-center gap-2 text-gray-500">
         <Icon className="h-4 w-4" />
         <span className="text-xs font-medium uppercase tracking-wider">{label}</span>
@@ -423,7 +423,7 @@ function Section({ title, icon: Icon, count, children }: {
     <MotionDiv
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+      className="btp-card p-6 shadow-sm"
     >
       <div className="flex items-center gap-2 mb-4">
         <Icon className="h-5 w-5 text-[#4a7c59]" />

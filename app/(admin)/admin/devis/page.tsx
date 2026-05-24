@@ -126,7 +126,7 @@ export default function DevisPage() {
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
                 filterStatut === f.value
                   ? "bg-[#4a7c59] text-white border-[#4a7c59]"
-                  : "bg-white text-muted-foreground border-border hover:text-foreground hover:bg-[#f5f5f0]"
+                  : "btp-btn-secondary text-muted-foreground border-border hover:text-foreground"
               }`}
             >
               {f.label}

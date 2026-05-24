@@ -203,7 +203,7 @@ export default function CrmPage() {
         </div>
         <div className="flex gap-2">
           <button onClick={() => router.push("/admin/crm/emails")}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-sm text-gray-600 hover:text-gray-900 transition-colors shadow-sm">
+            className="btp-btn-secondary flex items-center gap-2 px-4 py-2.5 text-sm transition-colors">
             <Mail className="h-4 w-4" /> Emails IA
           </button>
           <button onClick={() => setShowAdd(true)}
@@ -218,14 +218,14 @@ export default function CrmPage() {
         <div className="flex-1 overflow-x-auto pb-4">
           <div className="flex gap-4" style={KANBAN_MIN_WIDTH_STYLE}>
             {COLUMNS.map((col) => (
-              <div key={col.id} className="w-72 shrink-0 rounded-2xl border border-gray-200 bg-gray-100 p-3 animate-pulse">
+              <div key={col.id} className="glass-kanban-col w-72 shrink-0 p-3 animate-pulse">
                 <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-300">
                   <div className="h-4 w-28 rounded bg-gray-200" />
                   <div className="ml-auto h-5 w-6 rounded-full bg-gray-200" />
                 </div>
                 <div className="space-y-2">
                   {[...Array(col.id === "TOUS_PROSPECTS" ? 3 : col.id === "ENVOI_DEVIS" ? 2 : 1)].map((_, j) => (
-                    <div key={j} className="rounded-lg border border-gray-200 bg-white p-3">
+                    <div key={j} className="btp-card rounded-xl p-3">
                       <div className="flex items-start gap-3">
                         <div className="w-8 h-8 rounded-full bg-gray-200 shrink-0" />
                         <div className="flex-1 space-y-2">
@@ -277,7 +277,7 @@ export default function CrmPage() {
       {/* Popup Gagné */}
       {gagnePopup && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40">
-          <div className="w-full max-w-md mx-4 rounded-2xl border border-gray-200 bg-white p-6 space-y-4 shadow-xl">
+          <div className="w-full max-w-md mx-4 btp-card p-6 space-y-4 shadow-xl">
             <div className="flex items-center gap-3">
               <div className="grid h-10 w-10 place-content-center rounded-full bg-emerald-50">
                 <CheckCircle2 className="h-5 w-5 text-emerald-600" />
@@ -290,7 +290,7 @@ export default function CrmPage() {
             <p className="text-sm text-gray-600">Souhaitez-vous créer un chantier pour ce nouveau client ?</p>
             <div className="flex gap-3">
               <button onClick={() => setGagnePopup(null)}
-                className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-500 hover:text-gray-900 transition-colors">
+                className="btp-btn-secondary flex-1 py-2.5 text-sm text-muted-foreground transition-colors">
                 Non, plus tard
               </button>
               <button
@@ -310,7 +310,7 @@ export default function CrmPage() {
       {/* Email popup */}
       {popup && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40">
-          <div className="w-full max-w-lg mx-4 rounded-2xl border border-gray-200 bg-white p-6 space-y-4 shadow-xl">
+          <div className="w-full max-w-lg mx-4 btp-card p-6 space-y-4 shadow-xl">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-900">
                 {popup.action === "devis" ? "Aperçu du devis" : "Message de relance"}
@@ -321,9 +321,9 @@ export default function CrmPage() {
               <span className="text-gray-900 font-medium">{popup.prospect.nom}</span> — {popup.prospect.email}
             </div>
             <textarea rows={8} value={popup.message} onChange={(e) => setPopup({ ...popup, message: e.target.value })}
-              className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 resize-none focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30" />
+              className="btp-textarea px-4 py-3 text-sm w-full" />
             <div className="flex items-center gap-3">
-              <button onClick={() => setPopup(null)} className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-500 hover:text-gray-900 transition-colors">Annuler</button>
+              <button onClick={() => setPopup(null)} className="btp-btn-secondary flex-1 py-2.5 text-sm text-muted-foreground transition-colors">Annuler</button>
               <button onClick={sendEmail} disabled={sendingEmail}
                 className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#4a7c59] hover:bg-[#3d6a4a] text-white font-semibold text-sm transition-colors">
                 {sendingEmail ? <><Loader2 className="h-4 w-4 animate-spin" /> Envoi...</> : <><Send className="h-4 w-4" /> Envoyer</>}
@@ -460,7 +460,7 @@ function AddProspectModal({ onClose, onAdd }: { onClose: () => void; onAdd: (p: 
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40">
-      <div className="w-full max-w-md mx-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-xl">
+      <div className="w-full max-w-md mx-4 btp-card p-6 shadow-xl">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900">Nouveau prospect</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-700"><X className="h-5 w-5" /></button>
@@ -473,7 +473,7 @@ function AddProspectModal({ onClose, onAdd }: { onClose: () => void; onAdd: (p: 
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">Notes</label>
             <textarea rows={2} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })}
-              className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 resize-none focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30" />
+              className="btp-textarea px-3 py-2 text-sm w-full" />
           </div>
           <button type="submit" disabled={saving || !form.nom || !form.email}
             className="w-full flex items-center justify-center gap-2 bg-[#4a7c59] hover:bg-[#3d6a4a] disabled:bg-gray-200 text-white disabled:text-gray-400 font-semibold py-2.5 rounded-lg transition-colors">
@@ -490,7 +490,7 @@ function ModalField({ label, value, onChange, type = "text", required = false }:
     <div>
       <label className="block text-sm font-medium text-gray-600 mb-1">{label}</label>
       <input type={type} required={required} value={value} onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#4a7c59]/30" />
+        className="btp-input-field px-3 py-2 text-sm w-full" />
     </div>
   );
 }

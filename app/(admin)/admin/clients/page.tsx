@@ -114,7 +114,7 @@ export default function ClientsPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-white">Clients</h1>
+          <h1 className="text-2xl font-bold text-foreground">Clients</h1>
           <p className="text-sm text-muted-foreground">Chargement…</p>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -147,7 +147,7 @@ export default function ClientsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">Clients</h1>
+          <h1 className="text-2xl font-bold text-foreground">Clients</h1>
           <p className="text-sm text-muted-foreground">{clientCount} client{clientCount !== 1 ? "s" : ""} au total</p>
         </div>
         <button
@@ -192,7 +192,7 @@ export default function ClientsPage() {
                     )}
                   </div>
                   <div>
-                    <h3 className="font-semibold text-white">
+                    <h3 className="font-semibold text-foreground">
                       {client.nom} {client.prenom || ""}
                     </h3>
                     {client.entreprise && (
@@ -259,11 +259,11 @@ export default function ClientsPage() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               onClick={(e: any) => e.stopPropagation()}
-              className="w-full max-w-lg rounded-xl border border-border bg-card p-6 shadow-2xl"
+              className="w-full max-w-lg glass-modal p-6"
             >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-bold text-white">Nouveau client</h2>
-                <button onClick={() => setShowModal(false)} className="text-muted-foreground hover:text-white">
+                <h2 className="text-lg font-bold text-foreground">Nouveau client</h2>
+                <button onClick={() => setShowModal(false)} className="text-muted-foreground hover:text-foreground">
                   <X className="h-5 w-5" />
                 </button>
               </div>
