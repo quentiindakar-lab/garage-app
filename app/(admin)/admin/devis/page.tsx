@@ -114,7 +114,7 @@ export default function DevisPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Rechercher un client…"
+            placeholder="Rechercher un devis…"
             className="btp-input pl-9 pr-3 py-2 text-sm w-52"
           />
         </div>

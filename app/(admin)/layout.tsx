@@ -29,7 +29,7 @@ const NAV_ITEMS = [
   { label: "Devis", href: "/admin/devis", icon: FileText },
   { label: "CRM / Pipeline", href: "/admin/crm", icon: Users },
   { label: "Planning", href: "/admin/planning", icon: Calendar },
-  { label: "Bilan financier", href: "/admin/bilan", icon: BarChart3 },
+  { label: "Bilan financier", shortLabel: "Bilan", href: "/admin/bilan", icon: BarChart3 },
   { label: "Équipe", href: "/admin/equipe", icon: UsersRound },
 ];
 
@@ -68,10 +68,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Sidebar */}
       <nav
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex flex-col border-r border-border bg-white py-3 transition-all duration-300 ease-in-out lg:static overflow-x-hidden",
+          "fixed inset-y-0 left-0 z-50 flex flex-col border-r border-border bg-white py-3 transition-all duration-300 ease-in-out lg:static overflow-x-hidden max-lg:overflow-y-auto",
           "w-20",
           mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
+        style={{ WebkitOverflowScrolling: "touch" }}
       >
         {/* Logo */}
         <div className="mb-4 border-b border-border pb-4 px-2 shrink-0">
@@ -82,13 +83,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </div>
 
-        {/* Nav items */}
+        {/* Nav items + bottom (scrollable) */}
         <div
           className="space-y-2 flex-1 min-h-0 overflow-y-auto"
           style={{ WebkitOverflowScrolling: "touch" }}
         >
           {NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+            const displayLabel = "shortLabel" in item ? item.shortLabel : item.label;
             return (
               <Link
                 key={item.href}
@@ -106,51 +108,51 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </div>
                 <span
                   className={cn(
-                    "text-[10px] leading-tight text-center px-1",
+                    "text-[10px] leading-tight text-center px-0.5 max-w-full truncate",
                     isActive ? "text-[#4a7c59]" : "text-muted-foreground"
                   )}
                 >
-                  {item.label}
+                  {displayLabel}
                 </span>
               </Link>
             );
           })}
-        </div>
 
-        {/* Bottom */}
-        <div className="border-t border-border pt-4 space-y-2 px-0 shrink-0">
-          {BOTTOM_NAV.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                prefetch={true}
-                className={cn(
-                  "relative w-full flex flex-col items-center justify-center gap-1 py-2 transition-[transform,background-color] duration-200 ease-in-out hover:bg-[#e8e8e2] hover:-translate-y-[1px]",
-                  isActive ? "border-l-2 border-[#4a7c59]" : "border-l-2 border-transparent"
-                )}
-              >
-                <div className="grid h-10 w-10 place-content-center rounded-xl">
-                  <item.icon className={cn("h-5 w-5", isActive ? "text-[#4a7c59]" : "text-muted-foreground")} />
-                </div>
-                <span
+          <div className="border-t border-border pt-4 space-y-2">
+            {BOTTOM_NAV.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  prefetch={true}
+                  onClick={() => setMobileOpen(false)}
                   className={cn(
-                    "text-[10px] leading-tight text-center px-1",
-                    isActive ? "text-[#4a7c59]" : "text-muted-foreground"
+                    "relative w-full flex flex-col items-center justify-center gap-1 py-2 transition-[transform,background-color] duration-200 ease-in-out hover:bg-[#e8e8e2] hover:-translate-y-[1px]",
+                    isActive ? "border-l-2 border-[#4a7c59]" : "border-l-2 border-transparent"
                   )}
                 >
-                  {item.label}
-                </span>
-              </Link>
-            );
-          })}
+                  <div className="grid h-10 w-10 place-content-center rounded-xl">
+                    <item.icon className={cn("h-5 w-5", isActive ? "text-[#4a7c59]" : "text-muted-foreground")} />
+                  </div>
+                  <span
+                    className={cn(
+                      "text-[10px] leading-tight text-center px-0.5 max-w-full truncate",
+                      isActive ? "text-[#4a7c59]" : "text-muted-foreground"
+                    )}
+                  >
+                    {item.label}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
         </div>
 
         {/* Toggle */}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="mt-2 border-t border-border transition-colors hover:bg-[#f0f0eb] hidden lg:block rounded-xl"
+          className="mt-2 border-t border-border transition-colors hover:bg-[#f0f0eb] hidden lg:block rounded-xl shrink-0"
         >
           <div className="flex items-center justify-center px-3 py-3">
             <div className="grid size-9 place-content-center">

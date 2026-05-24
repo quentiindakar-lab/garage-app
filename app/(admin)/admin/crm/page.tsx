@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   DndContext,
   DragOverlay,
-  closestCorners,
+  rectIntersection,
   PointerSensor,
   TouchSensor,
   useSensor,
@@ -73,8 +73,10 @@ export default function CrmPage() {
   const [gagnePopup, setGagnePopup] = useState<{ prospect: Prospect; clientId?: string } | null>(null);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } })
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 200, tolerance: 8 },
+    })
   );
 
   const fetchProspects = useCallback(async () => {
@@ -243,7 +245,7 @@ export default function CrmPage() {
           </div>
         </div>
       ) : (
-      <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <DndContext sensors={sensors} collisionDetection={rectIntersection} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="flex-1 overflow-x-auto pb-4">
           <div className="flex gap-4" style={KANBAN_MIN_WIDTH_STYLE}>
             {COLUMNS.map((col) => {
@@ -360,13 +362,21 @@ const ProspectCard = memo(function ProspectCard({ prospect }: { prospect: Prospe
   const style = { transform: CSS.Transform.toString(transform), transition };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <ProspectCardUI prospect={prospect} isDragging={isDragging} />
+    <div ref={setNodeRef} style={style} {...attributes}>
+      <ProspectCardUI prospect={prospect} isDragging={isDragging} dragHandleProps={listeners} />
     </div>
   );
 });
 
-function ProspectCardUI({ prospect, isDragging }: { prospect: Prospect; isDragging?: boolean }) {
+function ProspectCardUI({
+  prospect,
+  isDragging,
+  dragHandleProps,
+}: {
+  prospect: Prospect;
+  isDragging?: boolean;
+  dragHandleProps?: React.HTMLAttributes<HTMLElement>;
+}) {
   const router = useRouter();
   const initials = prospect.nom.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
   const hue = prospect.nom.split("").reduce((a, c) => a + c.charCodeAt(0), 0) % 360;
@@ -383,7 +393,14 @@ function ProspectCardUI({ prospect, isDragging }: { prospect: Prospect; isDraggi
             <HardHat className="h-3 w-3" /> <span className="bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded text-[10px]">{prospect.typeChantier}</span>
           </p>
         </div>
-        <GripVertical className="h-4 w-4 text-gray-300 shrink-0" />
+        <button
+          type="button"
+          {...dragHandleProps}
+          className="shrink-0 touch-none cursor-grab active:cursor-grabbing p-0.5 rounded text-gray-300 hover:text-gray-500"
+          aria-label="Déplacer le prospect"
+        >
+          <GripVertical className="h-4 w-4" />
+        </button>
       </div>
       <div className="mt-2 space-y-0.5">
         <p className="text-[11px] text-gray-500 flex items-center gap-1.5 truncate">

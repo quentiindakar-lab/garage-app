@@ -63,7 +63,7 @@ export default function ClientsPage() {
     try {
       const res = await fetch("/api/clients");
       const data = await res.json();
-      setClients(data);
+      setClients(Array.isArray(data) ? data : []);
     } catch (e) {
       console.error(e);
     } finally {
@@ -96,6 +96,7 @@ export default function ClientsPage() {
     }
   };
 
+  const clientCount = Array.isArray(clients) ? clients.length : 0;
   const filtered = Array.isArray(clients)
     ? clients.filter((c) => {
         const q = search.toLowerCase();
@@ -147,7 +148,7 @@ export default function ClientsPage() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white">Clients</h1>
-          <p className="text-sm text-muted-foreground">{clients.length} client{clients.length > 1 ? "s" : ""} au total</p>
+          <p className="text-sm text-muted-foreground">{clientCount} client{clientCount !== 1 ? "s" : ""} au total</p>
         </div>
         <button
           onClick={() => setShowModal(true)}
