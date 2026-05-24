@@ -142,7 +142,7 @@ export default function ChantiersPage() {
         <div className="flex gap-1.5">
           <button
             onClick={() => setFilterStatut(null)}
-            className={`px-3 py-2 rounded-[10px] text-xs font-medium transition-colors border border-border ${!filterStatut ? "bg-[var(--primary)] text-white" : "bg-[#f0f0eb] text-foreground hover:brightness-95"}`}
+            className={`px-3 py-2 rounded-full text-xs font-medium transition-colors border ${!filterStatut ? "bg-[var(--primary)] text-white border-transparent" : "btp-btn-glass"}`}
           >
             Tous
           </button>
@@ -150,7 +150,7 @@ export default function ChantiersPage() {
             <button
               key={key}
               onClick={() => setFilterStatut(key)}
-              className={`px-3 py-2 rounded-[10px] text-xs font-medium transition-colors border border-border ${filterStatut === key ? "bg-[var(--primary)] text-white" : "bg-[#f0f0eb] text-foreground hover:brightness-95"}`}
+              className={`px-3 py-2 rounded-full text-xs font-medium transition-colors border ${filterStatut === key ? "bg-[var(--primary)] text-white border-transparent" : "btp-btn-glass"}`}
             >
               {label}
             </button>

@@ -248,7 +248,7 @@ function MonthView({ currentDate, chantiers, onSelect }: { currentDate: Date; ch
   };
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden flex-1 shadow-sm">
+    <div className="btp-card overflow-hidden flex-1">
       <div className="grid grid-cols-7 border-b border-gray-200 bg-gray-50">
         {DAYS_FR.map((d) => (
           <div key={d} className="p-2 text-center text-xs font-semibold text-gray-500 uppercase">{d}</div>
@@ -301,7 +301,7 @@ function WeekView({ currentDate, chantiers, onSelect }: { currentDate: Date; cha
   };
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden flex-1 shadow-sm">
+    <div className="btp-card overflow-hidden flex-1">
       <div className="grid grid-cols-7 divide-x divide-gray-200">
         {days.map((d, i) => {
           const isToday = d.toDateString() === today.toDateString();

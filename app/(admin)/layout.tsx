@@ -57,7 +57,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [router]);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background text-foreground">
+    <>
+      <div className="app-glass-mesh" aria-hidden>
+        <div className="app-glass-mesh__blob app-glass-mesh__blob--green" />
+        <div className="app-glass-mesh__blob app-glass-mesh__blob--lavender" />
+        <div className="app-glass-mesh__blob app-glass-mesh__blob--sky" />
+        <div className="app-glass-mesh__blob app-glass-mesh__blob--peach" />
+      </div>
+    <div className="app-glass-shell text-foreground">
       {mobileOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/60 lg:hidden"
@@ -68,7 +75,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Sidebar */}
       <nav
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex flex-col border-r border-border bg-white py-3 transition-all duration-300 ease-in-out lg:static overflow-x-hidden max-lg:overflow-y-auto",
+          "glass-sidebar fixed inset-y-0 left-0 z-50 flex flex-col border-r py-3 transition-all duration-300 ease-in-out lg:static overflow-x-hidden max-lg:overflow-y-auto",
           "w-20",
           mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
@@ -99,8 +106,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 onClick={() => setMobileOpen(false)}
                 className={cn(
                   "relative w-full flex flex-col items-center justify-center gap-1 py-2 transition-[transform,background-color] duration-200 ease-in-out",
-                  "hover:bg-[#e8e8e2] hover:-translate-y-[1px]",
-                  isActive ? "border-l-2 border-[#4a7c59]" : "border-l-2 border-transparent"
+                  "hover:bg-white/50 hover:-translate-y-[1px]",
+                  isActive ? "glass-nav-active border-l-2 border-[#4a7c59]" : "border-l-2 border-transparent"
                 )}
               >
                 <div className="grid h-10 w-10 place-content-center rounded-xl">
@@ -128,8 +135,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   prefetch={true}
                   onClick={() => setMobileOpen(false)}
                   className={cn(
-                    "relative w-full flex flex-col items-center justify-center gap-1 py-2 transition-[transform,background-color] duration-200 ease-in-out hover:bg-[#e8e8e2] hover:-translate-y-[1px]",
-                    isActive ? "border-l-2 border-[#4a7c59]" : "border-l-2 border-transparent"
+                    "relative w-full flex flex-col items-center justify-center gap-1 py-2 transition-[transform,background-color] duration-200 ease-in-out hover:bg-white/50 hover:-translate-y-[1px]",
+                    isActive ? "glass-nav-active border-l-2 border-[#4a7c59]" : "border-l-2 border-transparent"
                   )}
                 >
                   <div className="grid h-10 w-10 place-content-center rounded-xl">
@@ -168,9 +175,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </nav>
 
       {/* Main */}
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="app-glass-content flex flex-1 flex-col overflow-hidden">
         {/* Header */}
-        <header className="flex items-center justify-between bg-transparent px-6 h-16 shrink-0">
+        <header className="glass-topbar flex items-center justify-between px-6 h-16 shrink-0">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setMobileOpen(true)}
@@ -191,14 +198,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </span>
             <button
               onClick={() => router.push("/admin/parametres")}
-              className="grid h-10 w-10 place-content-center rounded-xl bg-white border border-border text-muted-foreground hover:bg-[#f0f0eb] hover:text-foreground transition-colors"
+              className="glass-header-btn grid h-10 w-10 place-content-center rounded-xl text-muted-foreground hover:text-foreground transition-colors"
               title="Paramètres"
             >
               <Settings className="h-5 w-5" />
             </button>
             <button
               onClick={() => router.push("/")}
-              className="grid h-10 w-10 place-content-center rounded-xl bg-white border border-border text-muted-foreground hover:bg-[#f0f0eb] hover:text-[var(--destructive)] transition-colors"
+              className="glass-header-btn grid h-10 w-10 place-content-center rounded-xl text-muted-foreground hover:text-[var(--destructive)] transition-colors"
               title="Retour à l'accueil"
             >
               <LogOut className="h-5 w-5" />
@@ -207,12 +214,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </header>
 
         {/* Content */}
-        <main className="flex-1 overflow-y-auto bg-background p-4 lg:p-6">
+        <main className="flex-1 overflow-y-auto p-4 lg:p-6">
           <div key={pathname} className="animate-fadeIn">
             {children}
           </div>
         </main>
       </div>
     </div>
+    </>
   );
 }

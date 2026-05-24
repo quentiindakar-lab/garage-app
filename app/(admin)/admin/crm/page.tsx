@@ -343,14 +343,14 @@ const DroppableColumn = memo(function DroppableColumn({ col, count, children }: 
   return (
     <div
       ref={setNodeRef}
-      className={`w-72 shrink-0 rounded-2xl border bg-gray-100 p-3 transition-colors ${
-        isOver ? "border-[#4a7c59]/50 bg-[#4a7c59]/5" : "border-gray-200"
+      className={`glass-kanban-col w-72 shrink-0 p-3 transition-colors ${
+        isOver ? "border-[#4a7c59]/50 !bg-[#4a7c59]/10" : ""
       }`}
     >
       <div className={`flex items-center gap-2 mb-3 pb-2 border-b ${col.color}`}>
         {Icon && <Icon className={`h-4 w-4 ${col.id === "GAGNE" ? "text-emerald-500" : "text-red-500"}`} />}
         <h3 className="text-sm font-semibold text-gray-900 flex-1">{col.label}</h3>
-        <span className="text-xs bg-white text-gray-500 rounded-full px-2 py-0.5 border border-gray-200">{count}</span>
+        <span className="text-xs glass-header-btn text-gray-500 rounded-full px-2 py-0.5">{count}</span>
       </div>
       {children}
     </div>
@@ -382,7 +382,7 @@ function ProspectCardUI({
   const hue = prospect.nom.split("").reduce((a, c) => a + c.charCodeAt(0), 0) % 360;
 
   return (
-    <div className={`rounded-lg border border-gray-200 bg-white p-3 shadow-sm ${isDragging ? "shadow-xl opacity-90 rotate-2 scale-105" : "hover:border-gray-300 hover:-translate-y-[3px] hover:scale-[1.01] hover:shadow-lg"} transition-[transform,box-shadow] duration-200 ease-in-out cursor-grab active:cursor-grabbing`}>
+    <div className={`btp-card rounded-xl p-3 ${isDragging ? "shadow-xl opacity-90 rotate-2 scale-105" : "glass-hover-lift hover:border-white/60"} cursor-grab active:cursor-grabbing`}>
       <div className="flex items-start gap-3">
         <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0" style={{ background: `hsl(${hue}, 55%, 45%)` }}>
           {initials}

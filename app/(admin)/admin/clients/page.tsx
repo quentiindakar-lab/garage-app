@@ -166,7 +166,7 @@ export default function ClientsPage() {
           placeholder="Rechercher un client..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="btp-input rounded-md py-2.5 pl-10 pr-4 text-sm"
+          className="btp-input py-2.5 pl-10 pr-4 text-sm"
         />
       </div>
 

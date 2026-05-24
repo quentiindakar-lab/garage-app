@@ -119,7 +119,7 @@ export default function DashboardPage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="p-5 rounded-2xl bg-white border border-border shadow-sm animate-pulse">
+            <div key={i} className="btp-card p-5 animate-pulse">
               <div className="h-8 w-8 rounded-xl bg-[#f5f5f0] mb-3" />
               <div className="h-3 w-20 rounded bg-[#f5f5f0] mb-2" />
               <div className="h-7 w-16 rounded bg-[#f5f5f0]" />
@@ -285,7 +285,7 @@ export default function DashboardPage() {
                 { label: "Estimation IA", href: "/admin/estimation", icon: TrendingUp, color: "text-purple-400" },
               ].map((item) => (
                 <button key={item.href} onClick={() => router.push(item.href)}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[#f5f5f0] hover:bg-[#f0f0eb] text-sm text-foreground transition-colors text-left border border-border"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl btp-btn-glass text-sm text-foreground transition-colors text-left"
                 >
                   <item.icon className={`h-4 w-4 ${item.color}`} />
                   {item.label}
@@ -319,12 +319,13 @@ const StatCard = memo(function StatCard({
   return (
     <div
       onClick={onClick}
-      className={accent
-        ? "p-5 rounded-2xl bg-[#4a7c59] border border-[#4a7c59] shadow-sm hover:shadow-lg hover:-translate-y-[3px] hover:scale-[1.01] transition-[transform,box-shadow] duration-200 ease-in-out cursor-pointer"
-        : "p-5 rounded-2xl bg-white border border-border shadow-sm hover:shadow-lg hover:-translate-y-[3px] hover:scale-[1.01] transition-[transform,box-shadow] duration-200 ease-in-out cursor-pointer"
+      className={
+        accent
+          ? "glass-kpi-hero glass-hover-lift p-5 cursor-pointer relative"
+          : "btp-card glass-hover-lift p-5 cursor-pointer"
       }
     >
-      <div className="flex items-start justify-between gap-3">
+      <div className="relative z-[1] flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className={`inline-flex p-2.5 rounded-xl ${iconBg}`}>
             <Icon className={`h-5 w-5 ${iconColor}`} />

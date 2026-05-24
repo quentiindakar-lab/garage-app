@@ -136,7 +136,7 @@ export default function EquipePage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {loading ? [...Array(6)].map((_, i) => (
-          <div key={i} className="rounded-2xl border border-gray-200 bg-white p-5 animate-pulse">
+          <div key={i} className="btp-card p-5 animate-pulse">
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 rounded-full bg-gray-200 shrink-0" />
               <div className="flex-1 space-y-2">
@@ -158,7 +158,7 @@ export default function EquipePage() {
 
           return (
             <div key={m.id}
-              className={`rounded-2xl border bg-white p-5 transition-all cursor-pointer group shadow-sm ${m.actif ? "border-gray-200 hover:border-gray-300" : "border-gray-200 opacity-60"}`}
+              className={`btp-card glass-hover-lift p-5 transition-all cursor-pointer group ${m.actif ? "hover:border-white/70" : "opacity-60"}`}
               onClick={() => setSelected(m)}>
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0" style={{ background: `hsl(${hue}, 55%, 45%)` }}>
