@@ -7,7 +7,9 @@
   "scripts": {
     "start": "node cron.js",
     "test:relance": "node test-relance.js",
-    "test:db": "node -e \"import('./lib/supabase.js').then(m => m.supabase.from('devis').select('id, numero, statut, date_emission').limit(5).then(r => console.log(JSON.stringify(r, null, 2))))\""
+    "test:db": "node -e \"import('./lib/supabase.js').then(m => m.supabase.from('devis').select('id, numero, statut, date_emission').limit(5).then(r => console.log(JSON.stringify(r, null, 2))))\"",
+    "seed:test": "node scripts/seed-test-devis.js",
+    "clean:test": "node scripts/clean-test-devis.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.1",
