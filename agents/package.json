@@ -1,0 +1,19 @@
+{
+  "name": "btp-pro-agents",
+  "version": "1.0.0",
+  "description": "Agents IA backend BTP Pro (Relance Devis, etc.)",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node cron.js",
+    "test:relance": "node test-relance.js",
+    "test:db": "node -e \"import('./lib/supabase.js').then(m => m.supabase.from('devis').select('id, numero, statut, date_emission').limit(5).then(r => console.log(JSON.stringify(r, null, 2))))\""
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
+    "@supabase/supabase-js": "^2.45.4",
+    "dotenv": "^16.4.7",
+    "node-cron": "^3.0.3",
+    "node-telegram-bot-api": "^0.67.0"
+  }
+}
